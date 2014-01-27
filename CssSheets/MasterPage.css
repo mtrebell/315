@@ -1,0 +1,31 @@
+﻿body 
+{
+    background-color: Black;
+    background-image: url(../Background_Images/MainBackground.jpg);
+}
+
+.Button
+{
+    background-color: #DAA520;
+    color: Black;
+    font-family: Bookman Old Style;
+    font-size: large;
+    border: 2px solid white;
+    border-radius: 15px;
+    margin: 5px 5px 5px 5px;
+    width: 180px;
+    height: 30px;
+}
+
+.ButtonMini
+{
+    background-color: #DAA520;
+    color: Black;
+    font-size: small;
+    vertical-align: middle;
+    border-radius: 10px;
+    margin: 5px 0px 5px 0px;
+    width: 100px;
+    height: 20px;
+}
+        

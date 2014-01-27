@@ -1,0 +1,94 @@
+﻿.TextBox 
+{
+    width: 100px;
+}
+
+.Menu
+{
+    font-family: Bookman Old Style; 
+    width: 110px; 
+    font-style: italic;
+    position: relative;
+}
+
+.MenuStatic
+{
+    color: white;
+    background-color: black;
+    font-weight: bold;
+    font-size: Large;
+}
+
+.MenuHover
+{
+    color: Black;
+    background-color: #DAA520;
+    font-weight: bold;
+    font-size: Large;
+}
+
+.MenuSelected
+{
+    color: Black;
+    background-color: White;
+    font-weight: bold;
+    font-size: Large;
+}
+
+.Main
+{
+    width: 99%;
+    display:inline-table;
+}
+
+.MainLeft
+{
+    width: 150px; 
+    display: table-cell;
+    border-right: 4px solid #DAA520;
+    margin-left: 10px; 
+    padding-left: 10px;
+}
+
+.MainRight
+{
+    margin-left: 10px;
+    display: table-cell;
+}
+
+.FloatingMenu 
+{
+    color: white;
+    height: auto;
+    font-size: medium;
+    position: relative;
+}
+
+
+
+div.Item
+{
+    color: White;
+    min-width: 200;
+    max-width: 300px;
+    height: 350;
+    text-align: center;
+    display: inline-block;
+    margin: 20px 20px 20px 20px;
+    padding: 5px 10px 5px 10px;
+    font-family: Sans-Serif;
+    font-size: medium;
+}
+
+.ItemTitle
+{
+    color: #DAA520;
+    height: 60px; 
+    font-size: 130%;
+}
+
+.ItemDiscription
+{
+    color: White;
+    height: 120px;
+}

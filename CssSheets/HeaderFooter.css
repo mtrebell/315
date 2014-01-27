@@ -1,0 +1,58 @@
+﻿div.Header
+{
+    color: #DAA520; 
+    background-image: url(../Background_Images/HeaderImage.png); 
+    width : inherit; 
+    height : auto;
+}
+
+h1.Header
+{
+     color: #DAA520;
+     text-align: center; 
+     font-family: Bookman Old Style; 
+     font-size: 30pt; 
+     background-color: rgba(0,0,0,0.8);
+     border: 5px solid white; 
+     width: 500px;
+     padding: 5px 5px 5px 5px;
+}
+
+hr.Header
+{
+    color: #DAA520;
+    height: 10px; 
+    padding-bottom: 5px;  
+    background-color: #DAA520;
+}
+
+div.Footer
+{
+    color: #DAA520; 
+    background-image: url(../Background_Images/FooterImage.png); 
+    width : inherit; 
+    height : auto;  
+}
+
+h2.Footer
+{
+    color: #DAA520;
+    text-align: center;             
+    width: 200px; 
+    font-family: Bookman Old Style; 
+    background-color: rgba(0,0,0,0.8);
+    border: 2px solid white;
+    font-size: 20pt; 
+    padding: 0px 0px 5px 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+hr.Footer
+{
+    height: 10px; 
+    padding-top: 5px; 
+    color: #DAA520; 
+    background-color: #DAA520;
+}
+

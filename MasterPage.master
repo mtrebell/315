@@ -1,0 +1,74 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" ViewStateMode="Enabled" %>
+<%@ Register Src="~/Header.ascx" TagName="Header" TagPrefix="WUC" %>
+<%@ Register Src="~/Footer.ascx" TagName="Footer" TagPrefix="WUC" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head runat="server">
+    <title>Media Server Db</title>
+    <link href="CssSheets/MasterPage.css" rel="stylesheet" type="text/css" />
+    <link href="CssSheets/HeaderFooter.css" rel="stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+
+<body>
+    <WUC:Header ID="H_Title" runat="server" />
+    <form id="form1" runat="server">
+        <div style="border-bottom: 2px solid #DAA520; margin-bottom: 5px;">
+            <center>                                                                                                                                                                        <div>
+                <asp:LoginStatus ID="LoginStatus1" CssClass="Button" Width="180px" Height="25" runat="server"
+                style="text-align: center; text-decoration: none;"/>
+                <asp:Button ID="BTN_Favorites" runat="server" CssClass="Button" PostBackUrl="~/Members/Favorites.aspx" Text="Favorites" />
+                <asp:Button ID="BTN_MainMenu" runat="server" CssClass="Button" PostBackUrl="~/MainPage.aspx" Text="Main Menu" />
+
+                <asp:LoginView ID="LoginView2" runat="server">
+                <LoggedInTemplate>
+                    <asp:Button ID="BTN_Request" runat="server" Text="Make Request" CssClass="Button" 
+                        PostBackUrl="~/Members/Request.aspx" />
+                </LoggedInTemplate>    
+                </asp:LoginView>
+                <br />
+                <asp:LoginView ID="LoginView1" runat="server">
+                    <RoleGroups>
+                        <asp:RoleGroup Roles="Administrator">
+                            <ContentTemplate>
+                                <asp:Button ID="BTN_AdminEditMovies" runat="server" CssClass="Button" PostBackUrl="~/Admin/EditEntries.aspx"
+                                Text="Edit Movie Entries" Visible="true" />
+                            </ContentTemplate>
+                        </asp:RoleGroup>
+                    </RoleGroups>
+                </asp:LoginView>
+
+                <asp:LoginView ID="LoginView3" runat="server">
+                    <RoleGroups>
+                        <asp:RoleGroup Roles="Administrator">
+                            <ContentTemplate>
+                                <asp:Button ID="BTN_AdminEditAccounts" runat="server" CssClass="Button" PostBackUrl="~/Admin/ManageAccount.aspx"
+                                Text="Edit Accounts" Visible="true" />
+                            </ContentTemplate>
+                        </asp:RoleGroup>
+                    </RoleGroups>
+                </asp:LoginView>
+
+                <asp:LoginView ID="LoginView4" runat="server">
+                    <RoleGroups>
+                        <asp:RoleGroup Roles="Administrator">
+                            <ContentTemplate>
+                                <asp:Button ID="BTN_AdminAddEntries" runat="server" CssClass="Button" PostBackUrl="~/Admin/AddToDataBase.aspx"
+                                Text="Add Media Info" Visible="true" />
+                            </ContentTemplate>
+                        </asp:RoleGroup>
+                    </RoleGroups>
+                </asp:LoginView>
+            </div>
+            </center>
+        </div>
+        <div style="min-height: 400px;">
+            <asp:ContentPlaceHolder ID="body" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+    </form>
+    <WUC:Footer ID="F_Info" runat="server" />
+</body>
+</html>
