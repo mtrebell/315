@@ -14,25 +14,25 @@ public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {       
-        if (!Page.IsPostBack)
-        {
-            TB_Search.Attributes.Add("onkeydown", "return (event.keyCode!=13);");   // add keydown condition to texbox
-            LBL_TotalCount.Text = string.Format("{0} Movies in collection", GenerateMovieAlphaFilters());    // display movies
-        }
-        else if (Page.IsPostBackEventControlRegistered)
-            LBL_TotalCount.Text = string.Format("{0} Movies in collection", GenerateMovieAlphaFilters());    // display movies
+//        if (!Page.IsPostBack)
+//        {
+//            TB_Search.Attributes.Add("onkeydown", "return (event.keyCode!=13);");   // add keydown condition to texbox
+//            LBL_TotalCount.Text = string.Format("{0} Movies in collection", GenerateMovieAlphaFilters());    // display movies
+//        }
+//        else if (Page.IsPostBackEventControlRegistered)
+//            LBL_TotalCount.Text = string.Format("{0} Movies in collection", GenerateMovieAlphaFilters());    // display movies
     }
-
+/*
     protected void Alpha_Menu_MenuItemClick(object sender, EventArgs e)
     {
-        // redo movie list with filtered results
-        LBL_TotalCount.Text = string.Format("{0} Movies in collection", GenerateMovieAlphaFilters());
+//        // redo movie list with filtered results
+ //       LBL_TotalCount.Text = string.Format("{0} Movies in collection", GenerateMovieAlphaFilters());
     }
 
     protected void BTN_Search_Click(object sender, EventArgs e)
     {
         // redo movie list with filtered results
-        LBL_TotalCount.Text = string.Format("Search found {0} results", GenerateMovieSearchFilter());
+ //       LBL_TotalCount.Text = string.Format("Search found {0} results", GenerateMovieSearchFilter());
     }
 
     private int GenerateMovieAlphaFilters()
@@ -117,5 +117,5 @@ public partial class _Default : System.Web.UI.Page
         
         return iTotalCount;
     }
+*/
 }
-
