@@ -80,11 +80,12 @@
         {
             $("#CoverFlow").load("GetMovieList.aspx", function() 
             {
+                $('#CoverFlow .hidden').hide();
                 console.log("got Movie List");
                 if ($.fn.reflect) 
                 {
                     // only possible in very specific situations
-                    $('#CoverFlow .cover').attr("height", "300px").attr("width", "200px").reflect();   
+                    $('#CoverFlow .cover img').attr("height", "300px").attr("width", "200px").reflect();   
                 }
                 coverFlowCtrl = $('#CoverFlow').coverflow(
                 {
@@ -169,9 +170,9 @@
             </div>
             <div id="Content">
                 <ul>
-                    <li><a href="#tabs-1">Nunc tincidunt</a></li>
-                    <li><a href="#tabs-2">Proin dolor</a></li>
-                    <li><a href="#tabs-3">Aenean lacinia</a></li>
+                    <li><a href="#tabs-1">Personal</a></li>
+                    <li><a href="#tabs-2">IMDB</a></li>
+                    <li><a href="#tabs-3">Rotten Toimato</a></li>
                 </ul>
                 <div id="tabs-1">
                     <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.

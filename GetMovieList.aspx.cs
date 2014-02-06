@@ -64,15 +64,13 @@ public partial class GetMovieList : System.Web.UI.Page
 
         while (sdr.Read())      // while data can be read
         {
-            //HtmlGenericControl cell = new HtmlGenericControl("div");       // create new movie cell instance
+            HtmlGenericControl cell = new HtmlGenericControl("div");       // create new movie cell instance
 
-            //cell.Attributes.Add("id", "movID_" + sdr["mov_id"].ToString());
-            //cell.Attributes.Add("class", "cover");
+            cell.Attributes.Add("id", "movID_" + sdr["mov_id"].ToString());
+            cell.Attributes.Add("class", "cover");
             // cell paramters
 
             System.Web.UI.WebControls.Image imgPoster = new System.Web.UI.WebControls.Image();
-            imgPoster.Attributes.Add("class", "cover");
-            imgPoster.Attributes.Add("data-role", "none");
             imgPoster.Attributes.Add("id", "movID_" + sdr["mov_id"].ToString());
 
             if (!sdr[0].ToString().ToLower().Contains("notfound"))
@@ -80,9 +78,21 @@ public partial class GetMovieList : System.Web.UI.Page
             else
                 imgPoster.ImageUrl = "~/Background_Images/MissingPoster.jpg";
 
-            //cell.Controls.Add(imgPoster);
-            //Controls.Add(cell);
-            Controls.Add(imgPoster);
+            cell.Controls.Add(imgPoster);
+            HtmlGenericControl info = new HtmlGenericControl("div");       // create new movie cell instance
+            info.Attributes.Add("id", "info");
+            info.Attributes.Add("class", "hidden");
+            for (int i = 0; i < sdr.FieldCount; i++)
+            {
+                HtmlGenericControl field = new HtmlGenericControl("p");       // create new movie cell instance
+                field.Attributes.Add("id", sdr.GetName(i));
+                field.InnerText = sdr.GetValue(i).ToString();
+                info.Controls.Add(field);
+            }
+            cell.Controls.Add(info);
+            
+            Controls.Add(cell);
+            //Controls.Add(imgPoster);
             iTotalCount ++;
             //if (iTotalCount > 20)
               //  break;
