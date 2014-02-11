@@ -61,7 +61,7 @@
             display:    table;
         }
         div.tableRow{
-            display: tabe-erow;
+            display: table-row;
         }
         section.tableCell {
             display:    table-cell;

@@ -19,7 +19,7 @@ public static class Middleware
     /// </summary>
     /// <param name="sMovieFilter">letter filter string</param>
     /// <returns>returned datasource of filtered info</returns>
-    public static SqlDataReader MovieDisplayContent(string sMovieFilter)
+    public static SqlDataReader MovieDisplayContent()
     {
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(sConnectionString);  // create database connection
@@ -28,13 +28,7 @@ public static class Middleware
         {
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // call stored procedure
-            comm.CommandText = "MovieAlphabetFilter";                   // name of procedure
-            // Make Parameter
-            SqlParameter pCustomerID = new SqlParameter("@Filter", System.Data.SqlDbType.NChar);
-            pCustomerID.Value = sMovieFilter;       // assign filter value
-            pCustomerID.Direction = System.Data.ParameterDirection.Input;
-            // Add the parameter
-            comm.Parameters.Add(pCustomerID);
+            comm.CommandText = "MovieCollectionGrab";                   // name of procedure
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute procedure 
         }
         return reader;  // return result set
@@ -197,6 +191,23 @@ public static class Middleware
             sReturn = pOutput.Value.ToString(); // get output value
         }
         return sReturn;
+    }
+
+
+    public static SqlDataReader GetAllGenreOptions()
+    {
+        SqlDataReader reader = null; // return object
+        string sReturn = "";
+        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "GetAllGenres";           // indicate procedure name
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+        }
+        return reader;      // return filtered dataset
     }
 
     /// <summary>

@@ -9,19 +9,16 @@
         <title>Media Server Db</title>
 
         <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.js"></script-->
-        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-        <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script> 
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+        <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js" type="text/javascript"></script> 
         <link href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />        
-        <script src="scripts/jquery.coverflow.js"></script>
-        <script src="scripts/jquery.interpolate.js"></script>
-        <script src="scripts/jquery.mousewheel.js"></script>
-        <script src="scripts/jquery.touchSwipe.min.js"></script>
-        <script src="scripts/reflection.js"></script>
+        <script src="scripts/jquery.coverflow.js" type="text/javascript"></script>
+        <script src="scripts/jquery.interpolate.js" type="text/javascript"></script>
+        <script src="scripts/jquery.mousewheel.js" type="text/javascript"></script>
+        <script src="scripts/jquery.touchSwipe.min.js" type="text/javascript"></script>
+        <script src="scripts/reflection.js" type="text/javascript"></script>
 
-        <!--link href="CssSheets/MasterPage.css" rel="stylesheet" type="text/css" /-->
-        <!--link href="CssSheets/HeaderFooter.css" rel="Stylesheet" type="text/css" /-->
-        <!--script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script-->
-        <!--link href="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css" rel="Stylesheet" type="text/css" /-->
+        <link href="CssSheets/MasterPage.css" rel="stylesheet" type="text/css" />
         <asp:ContentPlaceHolder ID="head" runat="server"> </asp:ContentPlaceHolder>
     </head>
 
