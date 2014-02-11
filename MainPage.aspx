@@ -10,14 +10,13 @@
             padding-bottom: 150px;
             /*height: 500px;*/
             background: black;
-            border:     solid white 1px;
             background-image:  inherit;
 
         }
         #CoverFlow .cover {
             cursor:     pointer;
             width:      200px;
-            height:     300px;
+            height:     250px;
             box-shadow: 0 0 4em 1em #000040;
         }
         #MenuHandle {
@@ -38,27 +37,35 @@
         }
         #MovieFilterBox {
             background: black;
-            border:     solid white 1px;
-            width:      100%;            
+            width:      100%; 
+            height: 8em;
             background-image:  inherit;
 
         }
         #MovieFilter div.cover {
-            height:     7em;
-            width:      30em;
+            height:     6.5em;
+            width:      60%;
+            background-image:  url(Background_Images/hex-Bkgrd.jpg);
+            background-size: 40%;
+            border: blue double 4px;
+            border-radius: 30px;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
         }
-        #FilterTag
-        {
-            background: green;
+        #MovieFilter div p {
+            text-align: center;
+            margin: 0.3em;
+            color: white;
         }
-        #FilterGenra {
+        #FilterGeneral {
             background: blue;
         }
         #FilterRating {
             background: yellow;
         }
         .MainBodyOffset {
-            padding-left: 35px; 
+            padding-left: 40px; 
+            background: black;
         }
         div.tableContainer{
             display:    table;
@@ -81,24 +88,31 @@
         }
         #FilterAlpha {
             background: black;
+            color: white;
         }
         #FilterAlpha span{
-            display: inline-block;
             text-align: center;
-            vertical-align: middle;       
-            padding: 0.2em;
-            margin: 0.4em;
+            vertical-align: top;       
+            margin: 1em 1.2em 1em 1.0em;
             color: white;     
+            cursor: crosshair;    
+        }
+        #FilterAlpha .filterGrooup {
+            padding-top:   0.2em;
+            padding-bottom: 1em; 
+            text-align: center;
+            margin-left: auto;
+            margin-right:  auto;
         }
         .AlphaFilterActive{
-            background-color: rgba(0,0,255,255);
-            -webkit-box-shadow: 1px 1px 5px 5px rgba(0,0,255,255);
-            -moz-box-shadow: 1px 1px 5px 5px rgba(0,0,255,255);
-            box-shadow: 1px 1px 5px 5px rgba(0,0,255,255);
+            background-color: rgba(0,0,255,128);
+            -webkit-box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
+            -moz-box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
+            box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
 
-            -webkit-border-radius: 50px;
-            -moz-border-radius: 50px;
-            border-radius: 50px;
+            -webkit-border-radius: 70px;
+            -moz-border-radius: 70px;
+            border-radius: 70px;
 
             -webkit-transition: box-shadow .4s ease;
             -moz-transition: box-shadow .4s ease;
@@ -106,11 +120,25 @@
             -ms-transition: box-shadow .4s ease;
             transition: box-shadow .4s ease;
         }
+        #FilterTag
+        {
+            background: black;
+        }
+
+        #FilterBar{
+            height: 3em;
+        }
         #FilterBar span{
             color: white;
+
             /*background: blue;*/
         }
         .ui-icon { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+        .Border{
+            background-image:url("Background_Images/Std_Header.png");
+            background-position: top;
+            background-repeat: no-repeat;   
+        }
     </style>
 
 
@@ -120,11 +148,11 @@
 
 <asp:Content ContentPlaceHolderID="body" Runat="Server">
     <script type="text/javascript">
-
+        var filterTagID = 0;
         var coverFlowCtrl = null;
+        // Add a Filter span to the filter bar. 
         function AddAlphaFilter(filterID)
         {
-            console.log("AddAlphaFilter "+ filterID);
             var filterBar = $("#FilterBar");
             filterBar.append(
                   '<span id="Filter_' 
@@ -145,18 +173,20 @@
                 RemoveFilterSpan($(this));
             })
         };
+        // Remove a filter div
         function DelAlphaFilter(filterID)
         {
-            console.log("DelAlphaFilter "+ filterID);
             RemoveFilterSpan($("#FilterBar").find("span #Filter_" + filterID));
         };
+        // REmove the span, and clean up/ refresh...
         function RemoveFilterSpan(filter)
         {
-            console.log("RemoveFilterSpan");
             $("#"+filter.attr("data")).removeClass('AlphaFilterActive'); 
 
             filter.remove();
         }
+
+        // DOCUMENT READY!
         $(function() 
         {
             $("#CoverFlow").load("GetMovieList.aspx", function() 
@@ -196,7 +226,8 @@
                                 });
                             }
                         }
-                    }
+                    },
+                    filterCover:   function (cover) {}
                 });
             });
 
@@ -210,13 +241,11 @@
                 // containersToPush: [ $( '#mainBody' ), $('#Content') ],
             });
 
+            // Set up the click event for the alpha filters.
             $('.AlphaFilterButton').click(function(e) { 
                 e.preventDefault();
                 $(this).toggleClass('AlphaFilterActive'); 
-                var f = "#FilterBar #Filter_"+$(this).attr('id');
-                console.log(e);
-                console.log(f);
-                if ($(f).length !== 0)
+                if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
                 {
                     DelAlphaFilter($(this).attr('id'));
                 }
@@ -225,7 +254,32 @@
                     AddAlphaFilter($(this).attr('id'));
                 }
             });
+            //$("#TagFilterInput").input();
+            $(".TagFilterButton").button().click(function (e){
+                e.preventDefault();
+                console.log("add tag filter " + $("#TagFilterInput").val());
+                var filterBar = $("#FilterBar");
+                var filterID = filterTagID;
+                filterTagID ++;
+                filterBar.append(
+                  '<span id="Filter_Tag_' 
+                + filterID 
+                +'" data="'
+                // + filterID 
+                + '">' 
+                + "Tag: " + $("#TagFilterInput").val()
+                +'</span>'
+            );
 
+            filterBar.find("#Filter_Tag_"+filterID)
+                .button({icons: {
+                    secondary: "ui-icon-closethick"
+                }})
+                .click(function(e){
+                e.preventDefault();
+                RemoveFilterSpan($(this));
+            })
+            })
             $( window ).resize(function() {
                 $( '#menu' ).multilevelpushmenu( 'redraw' );
             });
@@ -233,9 +287,10 @@
         }); // End Doc Ready.
     </script>
 
-    <div id="mainBody" class="tableContainer MainBodyOffset">
+    <div id="mainBody" class="tableContainer MainBodyOffset Border">
         <div class="tableRow">
             <section class="tableCell">
+                <img src="Background_Images/Std_Header.png" style="width:100%"/>
                 <div id="MovieList">
                     <div id="CoverFlow" > </div>
                 </div>
@@ -245,6 +300,7 @@
         <div class="tableRow">
             <section class="tableCell">
                 <div id="FilterBar"></div>
+                <img src="Background_Images/Std_Seperator.png" style="width:100%"/>
             </section>
         </div>
         <div class="tableRow">
@@ -252,43 +308,61 @@
                 <div id="MovieFilterBox">
                     <div id="MovieFilter">
                         <div id="FilterAlpha" class="cover" > 
-                            <span id="Alpha_A" class="AlphaFilterButton">A</span> 
-                            <span id="Alpha_B" class="AlphaFilterButton">B</span> 
-                            <span id="Alpha_C" class="AlphaFilterButton">C</span> 
-                            <span id="Alpha_D" class="AlphaFilterButton">D</span> 
-                            <span id="Alpha_E" class="AlphaFilterButton">E</span> 
-                            <span id="Alpha_F" class="AlphaFilterButton">F</span> 
-                            <span id="Alpha_G" class="AlphaFilterButton">G</span> 
-                            <span id="Alpha_H" class="AlphaFilterButton">H</span> 
-                            <span id="Alpha_I" class="AlphaFilterButton">I</span> 
-                            <span id="Alpha_J" class="AlphaFilterButton">J</span> 
-                            <span id="Alpha_K" class="AlphaFilterButton">K</span> 
-                            <span id="Alpha_L" class="AlphaFilterButton">L</span> 
-                            <span id="Alpha_M" class="AlphaFilterButton">M</span> 
-                            <span id="Alpha_N" class="AlphaFilterButton">N</span> 
-                            <span id="Alpha_O" class="AlphaFilterButton">O</span> 
-                            <span id="Alpha_P" class="AlphaFilterButton">P</span> 
-                            <span id="Alpha_Q" class="AlphaFilterButton">Q</span> 
-                            <span id="Alpha_R" class="AlphaFilterButton">R</span> 
-                            <span id="Alpha_S" class="AlphaFilterButton">S</span> 
-                            <span id="Alpha_T" class="AlphaFilterButton">T</span> 
-                            <span id="Alpha_U" class="AlphaFilterButton">U</span> 
-                            <span id="Alpha_V" class="AlphaFilterButton">V</span> 
-                            <span id="Alpha_W" class="AlphaFilterButton">W</span> 
-                            <span id="Alpha_X" class="AlphaFilterButton">X</span> 
-                            <span id="Alpha_Y" class="AlphaFilterButton">Y</span> 
-                            <span id="Alpha_Z" class="AlphaFilterButton">Z</span> 
+                            <p>Select movies starting with:</p>
+                            <div class="filterGrooup">
+                                <span id="Alpha_A" class="AlphaFilterButton">A</span> 
+                                <span id="Alpha_B" class="AlphaFilterButton">B</span> 
+                                <span id="Alpha_C" class="AlphaFilterButton">C</span> 
+                                <span id="Alpha_D" class="AlphaFilterButton">D</span> 
+                                <span id="Alpha_E" class="AlphaFilterButton">E</span> 
+                                <span id="Alpha_F" class="AlphaFilterButton">F</span> 
+                                <span id="Alpha_G" class="AlphaFilterButton">G</span> 
+                                <span id="Alpha_H" class="AlphaFilterButton">H</span> 
+                                <span id="Alpha_I" class="AlphaFilterButton">I</span> 
+                                <span id="Alpha_J" class="AlphaFilterButton">J</span> 
+                                <span id="Alpha_K" class="AlphaFilterButton">K</span> 
+                                <span id="Alpha_L" class="AlphaFilterButton">L</span> 
+                                <span id="Alpha_M" class="AlphaFilterButton">M</span>
+                            </div>
+                            <div class="filterGrooup">
+                                <span id="Alpha_N" class="AlphaFilterButton">N</span> 
+                                <span id="Alpha_O" class="AlphaFilterButton">O</span> 
+                                <span id="Alpha_P" class="AlphaFilterButton">P</span> 
+                                <span id="Alpha_Q" class="AlphaFilterButton">Q</span> 
+                                <span id="Alpha_R" class="AlphaFilterButton">R</span> 
+                                <span id="Alpha_S" class="AlphaFilterButton">S</span> 
+                                <span id="Alpha_T" class="AlphaFilterButton">T</span> 
+                                <span id="Alpha_U" class="AlphaFilterButton">U</span> 
+                                <span id="Alpha_V" class="AlphaFilterButton">V</span> 
+                                <span id="Alpha_W" class="AlphaFilterButton">W</span> 
+                                <span id="Alpha_X" class="AlphaFilterButton">X</span> 
+                                <span id="Alpha_Y" class="AlphaFilterButton">Y</span> 
+                                <span id="Alpha_Z" class="AlphaFilterButton">Z</span> 
+                            </div>
                         </div>
-                        <div id="FilterTag" class="cover" > tag Filter </div>
-                        <div id="FilterGenra" class="cover" > genera Filter </div>
-                        <div id="FilterRating" class="cover" > rating Filter </div>
+                        <div id="FilterTag" class="cover" >
+                            <p>Enter a tag to filter movies by:</p>
+
+                            <input id="TagFilterInput"/> 
+                            <button class="TagFilterButton">Add Tag</button> 
+                        </div>
+                        <div id="FilterGeneral" class="cover" >
+                            <p>Enter general filter:</p>
+                        </div>
+                        <div id="FilterRating" class="cover" > 
+                            <p>Enter rating filter:</p>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
 
     </div>
+    <div class="MainBodyOffset">
+        <img src="Background_Images/Std_Seperator.png" style="width:100%"/>
+    </div>
     <div id="Content" class="MainBodyOffset">
+
         <ul>
             <li><a href="#tabs-1">Personal</a></li>
             <li><a href="#tabs-2">IMDB</a></li>
