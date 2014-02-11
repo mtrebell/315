@@ -155,11 +155,11 @@
         {
             var filterBar = $("#FilterBar");
             filterBar.append(
-                  '<span id="Filter_' 
-                + filterID 
-                +'" data="'
-                + filterID 
-                + '">' 
+                  '<span id="Filter_' + filterID + '" '
+                + 'data="' + filterID + '"'
+                + ' filterKind="ALPHA" '
+                + ' filterKey="'+ $("#"+filterID).html() +'" '
+                + '>' 
                 + $("#"+filterID).html() 
                 +'</span>'
             );
@@ -169,15 +169,42 @@
                     secondary: "ui-icon-closethick"
                 }})
                 .click(function(e){
-                e.preventDefault();
-                RemoveFilterSpan($(this));
-            })
+                    e.preventDefault();
+                    RemoveFilterSpan($(this));
+                }
+            );
         };
         // Remove a filter div
         function DelAlphaFilter(filterID)
         {
             RemoveFilterSpan($("#FilterBar").find("span #Filter_" + filterID));
         };
+
+        function AddTagFilter(filterTag)
+        {
+            console.log("add tag filter " + $("#TagFilterInput").val());
+            var filterBar = $("#FilterBar");
+            var filterID = filterTagID;
+            filterTagID ++;
+            filterBar.append(
+                  '<span id="Filter_Tag_' + filterID + '" ' 
+                + ' data="'/* + filterID */ + '" '
+                + ' filterKind="TAG" '
+                + ' filterKey="'+ filterTag +'" '
+                +'>' 
+                + "Tag: " + filterTag
+                +'</span>'
+            );
+
+            filterBar.find("#Filter_Tag_"+filterID)
+                .button({icons: {
+                    secondary: "ui-icon-closethick"
+                }})
+                .click(function(e){
+                e.preventDefault();
+                RemoveFilterSpan($(this));
+            });
+        }
         // REmove the span, and clean up/ refresh...
         function RemoveFilterSpan(filter)
         {
@@ -244,6 +271,10 @@
             // Set up the click event for the alpha filters.
             $('.AlphaFilterButton').click(function(e) { 
                 e.preventDefault();
+                if ( $("#MovieFilter").coverflow('index') !== 0)
+                {
+                    return;
+                }
                 $(this).toggleClass('AlphaFilterActive'); 
                 if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
                 {
@@ -257,28 +288,8 @@
             //$("#TagFilterInput").input();
             $(".TagFilterButton").button().click(function (e){
                 e.preventDefault();
-                console.log("add tag filter " + $("#TagFilterInput").val());
-                var filterBar = $("#FilterBar");
-                var filterID = filterTagID;
-                filterTagID ++;
-                filterBar.append(
-                  '<span id="Filter_Tag_' 
-                + filterID 
-                +'" data="'
-                // + filterID 
-                + '">' 
-                + "Tag: " + $("#TagFilterInput").val()
-                +'</span>'
-            );
-
-            filterBar.find("#Filter_Tag_"+filterID)
-                .button({icons: {
-                    secondary: "ui-icon-closethick"
-                }})
-                .click(function(e){
-                e.preventDefault();
-                RemoveFilterSpan($(this));
-            })
+                AddTagFilter($("#TagFilterInput").val());
+                $("#TagFilterInput").val("");
             })
             $( window ).resize(function() {
                 $( '#menu' ).multilevelpushmenu( 'redraw' );
