@@ -3,26 +3,37 @@ if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'MovieAlphabetFilter'
+	where [name] = 'GetAllGenres'
 )
-drop procedure MovieAlphabetFilter
+drop procedure GetAllGenres
 go
 
 GO
-CREATE PROCEDURE MovieAlphabetFilter
-    @Filter nvarchar(5) = ''
+CREATE PROCEDURE GetAllGenres
 AS 
+    SELECT [genre_id], [genre]
+    FROM dbo.Genre
+	ORDER BY [genre]
+GO
 
-IF (@Filter = '*')
 
+
+
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'MovieCollectionGrab'
+)
+drop procedure MovieCollectionGrab
+go
+
+GO
+CREATE PROCEDURE MovieCollectionGrab
+AS 
     SELECT mov_smPoster, mov_title, mov_rating, mov_runTime, mov_id 
     FROM dbo.MovieSummary
-	ORDER BY mov_title
-
-ELSE
-    SELECT mov_smPoster, mov_title, mov_rating, mov_runTime, mov_id  
-    FROM dbo.MovieSummary
-	WHERE mov_title like (@Filter + '%')
 	ORDER BY mov_title
 GO
 

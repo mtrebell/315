@@ -75,8 +75,11 @@
         }
         div.tableRow{
             display: table-row;
+<<<<<<< HEAD
+=======
             width: 100%;
             background-image:  inherit;
+>>>>>>> origin
         }
         section.tableCell {
             display:    table-cell;

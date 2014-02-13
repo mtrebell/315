@@ -24,12 +24,6 @@ public partial class _Default : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!Page.IsPostBack)
-        {
-            MV_AddMedia.ActiveViewIndex = 1;
-            Session["KillTask"] = "false";
-        }
-
         Percentage = 0;
     }
 
@@ -47,23 +41,16 @@ public partial class _Default : System.Web.UI.Page
     /// <param name="e"></param>
     protected void AddSelected_Click(object sender, EventArgs e)
     {
-        ThreadPool.QueueUserWorkItem(new WaitCallback(GetIMDBData),
-            new string[] { sConnect, Request.Form["HiddenList"].ToString(), Server.MapPath("~/Image_Posters/")});
-
         Session["KillTask"] = "false";
-        MV_AddMedia.ActiveViewIndex = 0;
+        ThreadPool.QueueUserWorkItem(new WaitCallback(GetIMDBData),
+            new string[] { sConnect, Request.Form["HiddenList"].ToString(), Server.MapPath("~/Image_Posters/") });
     }
 
     protected void BTN_Cancel_Click(object sender, EventArgs e)
     {
         Session["KillTask"] = "true";
-        MV_AddMedia.ActiveViewIndex = 1;
     }
 
-    protected void Button1_Click(object sender, EventArgs e)
-    {
-        MV_AddMedia.ActiveViewIndex = 1;
-    }
     #endregion
     /// <summary>
     /// Scraper Method
@@ -159,6 +146,21 @@ public partial class _Default : System.Web.UI.Page
         Regex rgx = new Regex("[^a-zA-Z0-9 -]");   // remove non alpha characters
 
         string sMovieTitle = rgx.Replace(sTitle, "");    // get stripped movie title
+
+        #region Build Genre Code
+        Dictionary<string, string> dicGenres = new Dictionary<string, string>();
+        using (SqlDataReader sdr = Middleware.GetAllGenreOptions())
+        {
+            while (sdr.Read())
+                dicGenres.Add(sdr.GetString(1).ToLower().Trim(), ((int) sdr.GetSqlInt32(0)).ToString("00").ToLower().Trim());
+            sdr.Close();
+        }
+
+        StringBuilder sbGenreCode = new StringBuilder();
+        foreach (string s in IMDbIn.Genres)
+            if (dicGenres.ContainsKey(s.ToLower().Trim()))
+                sbGenreCode.Append(dicGenres[s.ToLower().Trim()]);
+        #endregion
         
         try
         {
@@ -166,10 +168,11 @@ public partial class _Default : System.Web.UI.Page
             {
                 con.Open(); // create insert condition
                 using (SqlCommand ins = new SqlCommand(
-                        "INSERT INTO MovieSummary (mov_title, mov_plot, mov_size, mov_fileType, mov_runtime,mov_rating, mov_smPoster, mov_lgPoster, mov_imdbUrl)" +
-                                    "VALUES (@Ti, @Pl, @Si, @Fi, @Rt, @Ra, @Sm, @Lg, @Im )", con))
+                        "INSERT INTO MovieSummary (mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, mov_runtime,mov_rating, mov_smPoster, mov_lgPoster, mov_imdbUrl)" +
+                                    "VALUES (@Mid, @Ti, @Pl, @Gr, @Si, @Fi, @Rt, @Ra, @Sm, @Lg, @Im )", con))
                 {
                     // add all imdb parameters to insert statement
+                    ins.Parameters.AddWithValue("@Mid", IMDbIn.Id);
                     ins.Parameters.AddWithValue("@Ti", sTitle);
                     ins.Parameters.AddWithValue("@Pl", IMDbIn.Plot);
                     ins.Parameters.AddWithValue("@Si", sSize);
@@ -178,6 +181,7 @@ public partial class _Default : System.Web.UI.Page
                     ins.Parameters.AddWithValue("@Ra", IMDbIn.Rating);
                     ins.Parameters.AddWithValue("@Im", IMDbIn.ImdbURL.ToString());
 
+                    #region Determine IMDB Image Posters
                     string rootImagePath = imagePath;
                     if (!Directory.Exists(rootImagePath))
                         Directory.CreateDirectory(rootImagePath);
@@ -209,7 +213,10 @@ public partial class _Default : System.Web.UI.Page
                     }
                     else
                         ins.Parameters.AddWithValue("@Lg", "NOTFOUND");
-                    
+                    #endregion
+
+                    ins.Parameters.AddWithValue("@Gr", sbGenreCode.Length > 0 ?
+                        sbGenreCode.ToString(): dicGenres["unassigned"]);
 
                     ins.ExecuteNonQuery();  // run insert
                 }
@@ -305,4 +312,5 @@ public partial class _Default : System.Web.UI.Page
         return bExists;
     }
     #endregion
+
 }
