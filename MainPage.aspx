@@ -75,11 +75,8 @@
         }
         div.tableRow{
             display: table-row;
-<<<<<<< HEAD
-=======
             width: 100%;
             background-image:  inherit;
->>>>>>> origin
         }
         section.tableCell {
             display:    table-cell;
@@ -360,6 +357,9 @@
                 e.preventDefault();
                 $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
             })
+            $("#ClearAllFilters").button().click(function(e){
+                console.log("clear all");
+            })
 
         }); // End Doc Ready.
     </script>
@@ -377,7 +377,11 @@
 
         <div class="tableRow">
             <section class="tableCell">
-                <div id="FilterBar"></div>
+                <span>
+                    <a id="ClearAllFilters">Clear all</a>
+                    <div id="FilterBar">
+                    </div>
+                </span>
                 <img src="Background_Images/Std_Seperator.png" style="width:100%"/>
             </section>
         </div>

@@ -3,20 +3,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
-<<<<<<< HEAD
-    <form Runat="Server">
-    <center>
-    <div>
-    <br />
-    <!-- login box for current users -->
-    <asp:Login ID="Login1" runat="server" BackColor="Black" BorderColor="#DAA520" ForeColor="#DAA520"
-      BorderStyle="Solid" BorderWidth="1px" Font-Names="Verdana" Font-Size="10pt"
-      OnLoggedIn="Login1_LoggedIn" DestinationPageUrl="~/MainPage.aspx">
-      <TitleTextStyle BackColor="#6B696B" Font-Bold="True" ForeColor="#FFFFFF" />
-      <LoginButtonStyle CssClass="ButtonMini" />
-    </asp:Login>
-    <asp:ValidationSummary ID="ValidationSummary1" ForeColor="#FFFFFF" runat="server" ValidationGroup="Login1" />
-=======
     <form runat="server">
         <center>
         <div>
@@ -30,7 +16,6 @@
           <LoginButtonStyle CssClass="ButtonMini" />
         </asp:Login>
         <asp:ValidationSummary ID="ValidationSummary1" ForeColor="#FFFFFF" runat="server" ValidationGroup="Login1" />
->>>>>>> 3c0ec6cc5929dda0b25014fb33dfa63c28d42396
 
         <br />
         <!-- create user box for new users -->
@@ -102,31 +87,7 @@
                         </td>
                     </tr>
                 </table>
-<<<<<<< HEAD
-            </ContentTemplate>
-        </asp:CompleteWizardStep>
-      </WizardSteps>
-      <HeaderStyle BackColor="#6B696B" Font-Bold="True" ForeColor="#FFFFFF" HorizontalAlign="Center" />
-      <NavigationButtonStyle BackColor="#FFFBFF" BorderColor="#CCCCCC" BorderStyle="Solid"
-        BorderWidth="1px" Font-Names="Verdana" ForeColor="#284775" />
-      <SideBarButtonStyle ForeColor="#FFFFFF" BorderWidth="0px" Font-Names="Verdana" />
-      <SideBarStyle BackColor="#7C6F57" Font-Size="0.9em" VerticalAlign="Top" BorderWidth="0px" />
-        <StepNavigationTemplate>
-            <asp:Button ID="StepPreviousButton" runat="server" BackColor="#FFFBFF" 
-                BorderColor="#CCCCCC" BorderStyle="Solid" BorderWidth="1px" 
-                CausesValidation="False" CommandName="MovePrevious" Font-Names="Verdana" 
-                ForeColor="#284775" Text="Previous" />
-            <asp:Button ID="StepNextButton" runat="server" BackColor="#FFFBFF" 
-                BorderColor="#CCCCCC" BorderStyle="Solid" BorderWidth="1px" 
-                CommandName="MoveNext" Font-Names="Verdana" ForeColor="#284775" Text="Next" />
-        </StepNavigationTemplate>
-      <StepStyle BorderWidth="0px" />
-      <CreateUserButtonStyle CssClass="ButtonMini" />
-    </asp:CreateUserWizard>
-    </div>
-    </center>
-        </form>
-=======
+
                 </ContentTemplate>
             </asp:CreateUserWizardStep>
             <asp:CompleteWizardStep ID="CompleteWizardStep1" runat="server" >
@@ -173,6 +134,6 @@
         </div>
         </center>
     </form>
->>>>>>> 3c0ec6cc5929dda0b25014fb33dfa63c28d42396
+
 </asp:Content>
 
