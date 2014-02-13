@@ -139,6 +139,21 @@
             background-position: top;
             background-repeat: no-repeat;   
         }
+        
+        .ui-ontop {
+            z-index: 999 !important;
+        }
+        .movieTitle {
+            color: gray;
+            text-shadow: 0px 0px 2em black;
+            background-image: url("Background_Images/semitransparent_black.png");
+            position: absolute;
+            top: 300px;
+            text-align: center;
+            width: 100%;
+            font-size: larger;
+            font-weight: bold;
+        }
     </style>
 
 
@@ -150,20 +165,20 @@
     <script type="text/javascript">
         var filterTagID = 0;
         var coverFlowCtrl = null;
+        var filterFlowCtrl = null;
         // Add a Filter span to the filter bar. 
         function AddAlphaFilter(filterID)
         {
             var filterBar = $("#FilterBar");
             filterBar.append(
-                  '<span id="Filter_' + filterID + '" '
-                + 'data="' + filterID + '"'
-                + ' filterKind="ALPHA" '
-                + ' filterKey="'+ $("#"+filterID).html() +'" '
+                  '<span class = "filter filter_alpha" '
+                + 'id="Filter_' + filterID + '" '
+                + 'data="' + filterID + '" '
+                + 'filterKey="'+ $("#"+filterID).html() +'" '
                 + '>' 
                 + $("#"+filterID).html() 
                 +'</span>'
             );
-
             filterBar.find("#Filter_"+filterID)
                 .button({icons: {
                     secondary: "ui-icon-closethick"
@@ -173,11 +188,15 @@
                     RemoveFilterSpan($(this));
                 }
             );
+
+            coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
         };
         // Remove a filter div
         function DelAlphaFilter(filterID)
         {
-            RemoveFilterSpan($("#FilterBar").find("span #Filter_" + filterID));
+            RemoveFilterSpan($("#FilterBar #Filter_" + filterID));
+            // do this as mutating events cause problems. 
+
         };
 
         function AddTagFilter(filterTag)
@@ -187,7 +206,8 @@
             var filterID = filterTagID;
             filterTagID ++;
             filterBar.append(
-                  '<span id="Filter_Tag_' + filterID + '" ' 
+                  '<span class = "filter filter_tag" '
+                + 'id="Filter_Tag_' + filterID + '" ' 
                 + ' data="'/* + filterID */ + '" '
                 + ' filterKind="TAG" '
                 + ' filterKey="'+ filterTag +'" '
@@ -204,13 +224,43 @@
                 e.preventDefault();
                 RemoveFilterSpan($(this));
             });
+            coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+
         }
+        // Filter the covers based on the current filters
+        function CoverFilter(cover)
+        {
+            var log=false;
+            var title = $(cover).find("#info #mov_title").html();
+            var filters = $("#FilterBar span");
+            var res = filters.length == 0;
+
+            if (log) console.groupCollapsed("filter: %s res= %s", title, res);
+            filters.each(function(idx, value)
+            {
+                if ($(value).hasClass("filter_alpha")) {
+                    res |= title.substr(0,1).toUpperCase() == $(this).attr('filterKey');
+                    if (log) console.log("Alpha: %s res= %s", $(this).attr('filterKey'), res);
+
+                } else if ($(value).hasClass("filter_tag")) {
+                    if (log) console.log("Tag: %s res= %s", $(this).attr('filterKey'), res);
+
+                }
+            });
+            if (log) console.log("Result=" + res);
+            if (log) console.groupEnd()  
+            return res;
+        }
+
+
         // REmove the span, and clean up/ refresh...
         function RemoveFilterSpan(filter)
         {
             $("#"+filter.attr("data")).removeClass('AlphaFilterActive'); 
 
             filter.remove();
+            coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+
         }
 
         // DOCUMENT READY!
@@ -224,6 +274,13 @@
                     // only possible in very specific situations
                     $('#CoverFlow .cover img').attr("height", "300px").attr("width", "200px").reflect();   
                 }
+
+                $('#CoverFlow .cover ').each(function(idx, value) {
+                    if ($(value).find(".missing_poster").length !== 0) {
+                        $(value).append('<span class="movieTitle">' + $(value).find("#info #mov_title").html() + '</span>');
+                    }
+                });
+
                 coverFlowCtrl = $('#CoverFlow').coverflow(
                 {
                     index:          6,
@@ -254,13 +311,13 @@
                             }
                         }
                     },
-                    filterCover:   function (cover) {}
+                    filterCover:  CoverFilter,
                 });
             });
-
-            $('#MovieFilter').coverflow();
+            filterFlowCtrl = $('#MovieFilter').coverflow();
             $("#Content").tabs();
             $("#dialogContainer").hide();
+            $("#LoginDialog").hide();   
             $('#menu').multilevelpushmenu({
                 backItemIcon: 'fa fa-angle-left',
                 groupIcon: 'fa fa-angle-right',
@@ -271,7 +328,7 @@
             // Set up the click event for the alpha filters.
             $('.AlphaFilterButton').click(function(e) { 
                 e.preventDefault();
-                if ( $("#MovieFilter").coverflow('index') !== 0)
+                if ( filterFlowCtrl.coverflow('index') !== 0)
                 {
                     return;
                 }
@@ -295,8 +352,15 @@
                 $( '#menu' ).multilevelpushmenu( 'redraw' );
             });
 
+            $("#LoginDialog").load("Login.aspx");
+            $("#LoginButton").click(function(e) {
+                e.preventDefault();
+                $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
+            })
+
         }); // End Doc Ready.
     </script>
+    
 
     <div id="mainBody" class="tableContainer MainBodyOffset Border">
         <div class="tableRow">
@@ -334,13 +398,13 @@
                                 <span id="Alpha_K" class="AlphaFilterButton">K</span> 
                                 <span id="Alpha_L" class="AlphaFilterButton">L</span> 
                                 <span id="Alpha_M" class="AlphaFilterButton">M</span>
-                            </div>
-                            <div class="filterGrooup">
                                 <span id="Alpha_N" class="AlphaFilterButton">N</span> 
                                 <span id="Alpha_O" class="AlphaFilterButton">O</span> 
                                 <span id="Alpha_P" class="AlphaFilterButton">P</span> 
                                 <span id="Alpha_Q" class="AlphaFilterButton">Q</span> 
                                 <span id="Alpha_R" class="AlphaFilterButton">R</span> 
+                            </div>
+                            <div class="filterGrooup">
                                 <span id="Alpha_S" class="AlphaFilterButton">S</span> 
                                 <span id="Alpha_T" class="AlphaFilterButton">T</span> 
                                 <span id="Alpha_U" class="AlphaFilterButton">U</span> 
@@ -349,6 +413,16 @@
                                 <span id="Alpha_X" class="AlphaFilterButton">X</span> 
                                 <span id="Alpha_Y" class="AlphaFilterButton">Y</span> 
                                 <span id="Alpha_Z" class="AlphaFilterButton">Z</span> 
+                                <span id="Alpha_0" class="AlphaFilterButton">0</span> 
+                                <span id="Alpha_1" class="AlphaFilterButton">1</span> 
+                                <span id="Alpha_2" class="AlphaFilterButton">2</span> 
+                                <span id="Alpha_3" class="AlphaFilterButton">3</span> 
+                                <span id="Alpha_4" class="AlphaFilterButton">4</span> 
+                                <span id="Alpha_5" class="AlphaFilterButton">5</span> 
+                                <span id="Alpha_6" class="AlphaFilterButton">6</span> 
+                                <span id="Alpha_7" class="AlphaFilterButton">7</span> 
+                                <span id="Alpha_8" class="AlphaFilterButton">8</span> 
+
                             </div>
                         </div>
                         <div id="FilterTag" class="cover" >
@@ -398,17 +472,31 @@
         <h2><i class="fa fa-reorder"></i>Movie Madness</h2>
         <ul>
             <li>
-                <a href="#">Login</a>
-            </li>
-            <li>
                 <a href="#">Collections</a>
             </li>
             <li>
                 <a href="#">Credits</a>
             </li>
+            <li>
+                <asp:LoginView ID="LoginView1" runat="server" >
+                    <LoggedInTemplate>
+                        <a href="#">Add Content</a>
+                        <a href="#">Edit Entries</a>
+                        <a href="#">Edit Users</a>
+                        <a href="#">Logout</a>
+                    </LoggedInTemplate> 
+                    <AnonymousTemplate> 
+                        <a id="LoginButton" href="#">Login</a>
+
+                    </AnonymousTemplate> 
+
+                </asp:LoginView>
+
+            </li>
         </ul>
       </nav>
     </div>
     <div id="dialogContainer"> this is a popup</div>
+    <div id="LoginDialog"> </div>
 </asp:Content>
 

@@ -47,7 +47,9 @@
 
 			change:				undefined,		// Whenever index is changed
 			confirm:			undefined,		// Whenever clicking on the current item
-			select:				undefined		// Whenever index is set (also on init)
+			select:				undefined,		// Whenever index is set (also on init)
+			filterCover:        undefined,		// function to use to filter covers
+			coversCache:		$(''),				// the cache of filtered covers
 		},
 
 		_create: function() {
@@ -155,13 +157,32 @@
 		cover: function() {
 			return $(this._getCovers()[this.options.index]);
 		},
+		covers: function() {
+			var that = this;
+			return $(this._getCovers());;
+		},
+		invalidateCache: function (){
+			console.log("invalidated cache " + this.element.attr('id'));
+			this.options.coversCache = $('');
+		},
 
 		/**
 		 *
 		 * @returns {unresolved}
 		 */
 		_getCovers: function() {
-			return $('> *', this.element);
+			var that = this;
+			if (that.options.coversCache.length === 0)
+			{
+				that.options.coversCache = $('> *', this.element);
+				if (this.options.filterCover !== undefined)
+				{
+					that.options.coversCache = that.options.coversCache.filter(function(idx) {
+						return that.options.filterCover(this);
+					});
+				}
+			}
+			return that.options.coversCache;
 		},
 
 		_setIndex: function(index, animate, initial) {
@@ -236,8 +257,9 @@
 
 			duration		= duration || 0;
 
-			that.pagesize	= visible;
+			$('> *', this.element).hide();
 
+			that.pagesize	= visible;
 			that._getCovers().removeClass('current').each(function(index, cover)
 			{
 				var position	= index - target,
@@ -263,7 +285,6 @@
 									) : {}
 								),
 					transform;
-
 				if (Math.abs(position) > 9)
 				{
 					$(cover).hide();
@@ -308,11 +329,10 @@
 
 							// Optional callback
 							that._trigger('animateComplete', cover, [cover, offset, isVisible, isMiddle, sin, cos]);
-						}
-					});
-
-				}
-			});
-		}
+						} // complete
+					}); // animate
+				} // ifabs position
+			});// for each
+		} // refresh
 	});
 }(jQuery));

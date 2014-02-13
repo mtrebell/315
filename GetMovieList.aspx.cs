@@ -38,9 +38,12 @@ public partial class GetMovieList : System.Web.UI.Page
             imgPoster.Attributes.Add("id", "movID_" + sdr["mov_id"].ToString());
 
             if (!sdr[0].ToString().ToLower().Contains("notfound"))
+            {
                 imgPoster.ImageUrl = sdr[0].ToString();
-            else
+            } else {
+                imgPoster.Attributes.Add("class", "missing_poster");
                 imgPoster.ImageUrl = "~/Background_Images/MissingPoster.jpg";
+            }
 
             cell.Controls.Add(imgPoster);
             HtmlGenericControl info = new HtmlGenericControl("div");       // create new movie cell instance
