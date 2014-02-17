@@ -16,7 +16,7 @@
  * Recommended jQuery 1.8+ and jQueryUI 1.9+.
  */
 
-;(function($, undefined) {
+;(function($, undefined){
 	"use strict";
 
 	var sign	= function(number) {
@@ -30,6 +30,8 @@
 		options: {
 			animateComplete:	undefined,
 			animateStep:		undefined,
+			animateDone:		undefined,
+			loadCover:          undefined,
 			density:			1,
 			duration:			'normal',
 			easing:				undefined,
@@ -300,6 +302,11 @@
 				{
 					if (isVisible)
 					{
+						if ($(cover).hasClass("cover-not-loaded"))
+						{
+							$(cover).removeClass("cover-not-loaded")
+							that._trigger('loadCover', cover, [cover, $(cover).attr('id'), $(cover).attr('dataUrl'), $(cover).attr('dataClass')])
+						}
 						$(cover).show();
 					}
 					$(cover).stop().css({
@@ -340,6 +347,10 @@
 					}); // animate
 				} // ifabs position
 			});// for each
+			if (that.index() == target)
+			{
+				that._trigger('animateDone', that.cover(), [that.cover(), that.index()]);
+			}
 		} // refresh
 	});
 }(jQuery));

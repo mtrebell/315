@@ -34,18 +34,36 @@ public partial class GetMovieList : System.Web.UI.Page
             cell.Attributes.Add("class", "cover");
             // cell paramters
 
-            System.Web.UI.WebControls.Image imgPoster = new System.Web.UI.WebControls.Image();
-            imgPoster.Attributes.Add("id", "movID_" + sdr["mov_id"].ToString());
-
-            if (!sdr[0].ToString().ToLower().Contains("notfound"))
+            if (iTotalCount < 20)
             {
-                imgPoster.ImageUrl = sdr[0].ToString();
-            } else {
-                imgPoster.Attributes.Add("class", "missing_poster");
-                imgPoster.ImageUrl = "~/Background_Images/MissingPoster.jpg";
+                System.Web.UI.WebControls.Image imgPoster = new System.Web.UI.WebControls.Image();
+                imgPoster.Attributes.Add("id", "movID_" + sdr["mov_id"].ToString());
+
+                if (!sdr[0].ToString().ToLower().Contains("notfound"))
+                {
+                    imgPoster.ImageUrl = sdr[0].ToString();
+                } else {
+                    imgPoster.Attributes.Add("class", "missing_poster");
+                    imgPoster.ImageUrl = "~/Background_Images/MissingPoster.jpg";
+                }
+
+                cell.Controls.Add(imgPoster);
+                
+            }
+            else
+            {
+                cell.Attributes.Add("class", "cover cover-not-loaded");
+
+                if (!sdr[0].ToString().ToLower().Contains("notfound"))
+                {
+                    cell.Attributes.Add("dataClass", "missing_poster");
+                    cell.Attributes.Add("dataUrl", sdr[0].ToString().Replace("~/", ""));
+                } else {
+                    cell.Attributes.Add("dataUrl", "Background_Images/MissingPoster.jpg");
+                    cell.Attributes.Add("dataClass", "missing_poster");
+                }
             }
 
-            cell.Controls.Add(imgPoster);
             HtmlGenericControl info = new HtmlGenericControl("div");       // create new movie cell instance
             info.Attributes.Add("id", "info");
             info.Attributes.Add("class", "hidden");
@@ -53,7 +71,7 @@ public partial class GetMovieList : System.Web.UI.Page
             {
                 HtmlGenericControl field = new HtmlGenericControl("p");       // create new movie cell instance
                 field.Attributes.Add("id", sdr.GetName(i));
-                field.InnerText = sdr.GetValue(i).ToString();
+                field.InnerText = sdr.GetValue(i).ToString().Replace("~/", "");
                 info.Controls.Add(field);
             }
             cell.Controls.Add(info);

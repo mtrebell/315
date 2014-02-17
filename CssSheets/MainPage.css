@@ -4,13 +4,12 @@
 
 }
 
-#MovieList {
-    padding-top: 50px;
-    padding-bottom: 150px;
-    /*height: 500px;*/
+#CoverFlow {
+
+    padding-top: 25px;
+    padding-bottom: 90px;
     background: black;
     background-image:  inherit;
-
 }
 #CoverFlow .cover {
     cursor:     pointer;
@@ -138,3 +137,10 @@ section.tableCell {
 .ui-ontop {
     z-index: 999 !important;
 }
+.ui-icon { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+.Border{
+    background-image:url(../Background_Images/Std_Header.png);
+    background-position: top;
+    background-repeat: no-repeat;   
+}
+

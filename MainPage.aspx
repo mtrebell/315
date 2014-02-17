@@ -1,21 +1,9 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="MainPage.aspx.cs" Inherits="_Default" %>
 <asp:Content ContentPlaceHolderID="head" Runat="Server">
     <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
+    <script src="scripts/MainPage.js"></script>
+
     <style>
-
-
-.ui-icon { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
-.Border{
-    background-image:url(Background_Images/Std_Header.png);
-    background-position: top;
-    background-repeat: no-repeat;   
-}
-
-
-
-
-
-
 
         .movieTitle {
             color: gray;
@@ -47,102 +35,15 @@
         var filterTagID = 0;
         var coverFlowCtrl = null;
         var filterFlowCtrl = null;
-        // Add a Filter span to the filter bar. 
-        function AddAlphaFilter(filterID)
+        function ShowMovieDetails(e, cover, index)
         {
-            var filterBar = $("#FilterBar");
-            filterBar.append(
-                  '<span class = "filter filter_alpha" '
-                + 'id="Filter_' + filterID + '" '
-                + 'data="' + filterID + '" '
-                + 'filterKey="'+ $("#"+filterID).html() +'" '
-                + '>' 
-                + $("#"+filterID).html() 
-                +'</span>'
-            );
-            filterBar.find("#Filter_"+filterID)
-                .button({icons: {
-                    secondary: "ui-icon-closethick"
-                }})
-                .click(function(e){
-                    e.preventDefault();
-                    RemoveFilterSpan($(this));
-                }
-            );
-
-            coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
-        };
-        // Remove a filter div
-        function DelAlphaFilter(filterID)
-        {
-            RemoveFilterSpan($("#FilterBar #Filter_" + filterID));
-            // do this as mutating events cause problems. 
-
-        };
-
-        function AddTagFilter(filterTag)
-        {
-            console.log("add tag filter " + $("#TagFilterInput").val());
-            var filterBar = $("#FilterBar");
-            var filterID = filterTagID;
-            filterTagID ++;
-            filterBar.append(
-                  '<span class = "filter filter_tag" '
-                + 'id="Filter_Tag_' + filterID + '" ' 
-                + ' data="'/* + filterID */ + '" '
-                + ' filterKind="TAG" '
-                + ' filterKey="'+ filterTag +'" '
-                +'>' 
-                + "Tag: " + filterTag
-                +'</span>'
-            );
-
-            filterBar.find("#Filter_Tag_"+filterID)
-                .button({icons: {
-                    secondary: "ui-icon-closethick"
-                }})
-                .click(function(e){
-                e.preventDefault();
-                RemoveFilterSpan($(this));
-            });
-            coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
-
-        }
-        // Filter the covers based on the current filters
-        function CoverFilter(cover)
-        {
-            var log=false;
-            var title = $(cover).find("#info #mov_title").html();
-            var filters = $("#FilterBar span");
-            var res = filters.length == 0;
-
-            if (log) console.groupCollapsed("filter: %s res= %s", title, res);
-            filters.each(function(idx, value)
-            {
-                if ($(value).hasClass("filter_alpha")) {
-                    res |= title.substr(0,1).toUpperCase() == $(this).attr('filterKey');
-                    if (log) console.log("Alpha: %s res= %s", $(this).attr('filterKey'), res);
-
-                } else if ($(value).hasClass("filter_tag")) {
-                    if (log) console.log("Tag: %s res= %s", $(this).attr('filterKey'), res);
-
-                }
-            });
-            if (log) console.log("Result=" + res);
-            if (log) console.groupEnd()  
-            return res;
+            var info = $(cover).find("div#info");
+            $("#tabs-info>span>.details-info").each(function(idx, val){
+                console.log("val.id %s", $(val).attr('id'));
+                $(val).html(info.find("#"+$(val).attr('id')).html());
+            })
         }
 
-
-        // REmove the span, and clean up/ refresh...
-        function RemoveFilterSpan(filter)
-        {
-            $("#"+filter.attr("data")).removeClass('AlphaFilterActive'); 
-
-            filter.remove();
-            coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
-
-        }
 
         // DOCUMENT READY!
         $(function() 
@@ -192,10 +93,22 @@
                             }
                         }
                     },
-                    filterCover:  CoverFilter,
+                    filterCover: CoverFilter,
+                    animateDone: ShowMovieDetails,
+                    loadCover: function(e, cover, id, dataUrl, dataClass){
+                        $(cover).prepend('<img id="' + $(cover).attr('id') + '" src="' + $(cover).attr('dataUrl') + '"/>"');
+                        var imgObj = $(cover).find("img");
+                        if (dataClass !== undefined && dataClass != "")
+                        {
+                            imgObj.addClass(dataClass);
+                        }
+                        imgObj.attr("height", "300px").attr("width", "200px").reflect();  
+                    },
                 });
             });
+
             filterFlowCtrl = $('#MovieFilter').coverflow();
+
             $("#Content").tabs();
             $("#dialogContainer").hide();
             $("#LoginDialog").hide();   
@@ -205,6 +118,7 @@
                 collapsed: true,
                 // containersToPush: [ $( '#mainBody' ), $('#Content') ],
             });
+
 
             // Set up the click event for the alpha filters.
             $('.AlphaFilterButton').click(function(e) { 
@@ -285,9 +199,7 @@
         <div class="tableRow">
             <section class="tableCell">
                 <img src="Background_Images/Std_Header.png" style="width:100%"/>
-                <div id="MovieList">
-                    <div id="CoverFlow" > </div>
-                </div>
+                <div id="CoverFlow" > </div>
             </section>
         </div>
 
@@ -378,7 +290,10 @@
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
         <div id="tabs-info">
-            <span id="info_title" class="infoline"> <p class="left">Title:</p> <p class="right"></p></span>
+            <span id="info_title" class="infoline"> <p class="left">Title:</p> <p id="mov_title" class="right details-info"></p></span>
+            <span id="info_rating" class="infoline"> <p class="left">Rating:</p> <p id="mov_rating" class="right details-info"></p></span>
+            <span id="info_rating" class="infoline"> <p class="left">Run Time:</p> <p id="mov_runTime" class="right details-info"></p></span>
+            <span id="info_rating" class="infoline"> <p class="left">Title:</p> <img src="" id="mov_rating" class="right details-info"/></span>
         </div>
         <div id="tabs-1">
             <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.
@@ -396,7 +311,7 @@
 
     <div id="menu">
       <nav>
-        <h2><i class="fa fa-reorder"></i>Movie Madness</h2>
+        <h2><i class="fa fa-reorder"></i>Menu</h2>
         <ul>
             <li><a id="" href="#">Favorites</a></li>
             <li><a id="MenuGridView" href="#">Grid View</a></li>
