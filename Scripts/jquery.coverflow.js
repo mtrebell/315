@@ -68,7 +68,7 @@
 			that.element.height(that._getCovers().first().height());
 
 			// Hide all covers and set position to absolute
-			that._getCovers().hide().css('position', 'absolute');
+			that._getCovers().hide().css('position', 'absolute').css('left','9999px');
 
 			// Enable click-jump
 			that.element.on('click', '> *', function() {
