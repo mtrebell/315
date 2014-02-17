@@ -1,148 +1,22 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="MainPage.aspx.cs" Inherits="_Default" %>
-
 <asp:Content ContentPlaceHolderID="head" Runat="Server">
+    <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
     <style>
-        body {
-            margin: 0px;
-        }
-        #MovieList {
-            padding-top: 50px;
-            padding-bottom: 150px;
-            /*height: 500px;*/
-            background: black;
-            background-image:  inherit;
 
-        }
-        #CoverFlow .cover {
-            cursor:     pointer;
-            width:      200px;
-            height:     250px;
-            box-shadow: 0 0 4em 1em #000040;
-        }
-        #MenuHandle {
-            /*float:      left;*/
-            position:   absolute;
-            top:        0px;
-            background: black;
-            height:     100em;
-        }
-        #menu {
-            float:      left;
-            position:   fixed;
-            top:        0px;
-            height:     100em;
-            width:      15em;
-            z-index:    1000;
-            color:      white;
-        }
-        #MovieFilterBox {
-            background: black;
-            width:      100%; 
-            height: 8em;
-            background-image:  inherit;
 
-        }
-        #MovieFilter div.cover {
-            height:     6.5em;
-            width:      60%;
-            background-image:  url(Background_Images/hex-Bkgrd.jpg);
-            background-size: 40%;
-            border: blue double 4px;
-            border-radius: 30px;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
-        #MovieFilter div p {
-            text-align: center;
-            margin: 0.3em;
-            color: white;
-        }
-        #FilterGeneral {
-            background: blue;
-        }
-        #FilterRating {
-            background: yellow;
-        }
-        .MainBodyOffset {
-            padding-left: 40px; 
-            background: black;
-        }
-        div.tableContainer{
-            display:    table;
-            position:   relative;
-            width: 100%;
-            background-image:  url(Background_Images/hex-Bkgrd.jpg);
-        }
-        div.tableRow{
-            display: table-row;
-            width: 100%;
-            background-image:  inherit;
-        }
-        section.tableCell {
-            display:    table-cell;
-            background-image:  inherit;
+.ui-icon { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+.Border{
+    background-image:url(Background_Images/Std_Header.png);
+    background-position: top;
+    background-repeat: no-repeat;   
+}
 
-        }
-        #Content{
-            min-height: 30em;
-        }
-        #FilterAlpha {
-            background: black;
-            color: white;
-        }
-        #FilterAlpha span{
-            text-align: center;
-            vertical-align: top;       
-            margin: 1em 1.2em 1em 1.0em;
-            color: white;     
-            cursor: crosshair;    
-        }
-        #FilterAlpha .filterGrooup {
-            padding-top:   0.2em;
-            padding-bottom: 1em; 
-            text-align: center;
-            margin-left: auto;
-            margin-right:  auto;
-        }
-        .AlphaFilterActive{
-            background-color: rgba(0,0,255,128);
-            -webkit-box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
-            -moz-box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
-            box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
 
-            -webkit-border-radius: 70px;
-            -moz-border-radius: 70px;
-            border-radius: 70px;
 
-            -webkit-transition: box-shadow .4s ease;
-            -moz-transition: box-shadow .4s ease;
-            -o-transition: box-shadow .4s ease;
-            -ms-transition: box-shadow .4s ease;
-            transition: box-shadow .4s ease;
-        }
-        #FilterTag
-        {
-            background: black;
-        }
 
-        #FilterBar{
-            height: 3em;
-        }
-        #FilterBar span{
-            color: white;
 
-            /*background: blue;*/
-        }
-        .ui-icon { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
-        .Border{
-            background-image:url("Background_Images/Std_Header.png");
-            background-position: top;
-            background-repeat: no-repeat;   
-        }
-        
-        .ui-ontop {
-            z-index: 999 !important;
-        }
+
+
         .movieTitle {
             color: gray;
             text-shadow: 0px 0px 2em black;
@@ -153,6 +27,13 @@
             width: 100%;
             font-size: larger;
             font-weight: bold;
+        }
+        .inline-display{
+            display: -webkit-inline-box;
+        }
+        .icon-button{
+            width:  40px;
+            height: 40px;
         }
     </style>
 
@@ -275,7 +156,7 @@
                     $('#CoverFlow .cover img').attr("height", "300px").attr("width", "200px").reflect();   
                 }
 
-                $('#CoverFlow .cover ').each(function(idx, value) {
+                $('#CoverFlow .cover').each(function(idx, value) {
                     if ($(value).find(".missing_poster").length !== 0) {
                         $(value).append('<span class="movieTitle">' + $(value).find("#info #mov_title").html() + '</span>');
                     }
@@ -356,10 +237,45 @@
             $("#LoginButton").click(function(e) {
                 e.preventDefault();
                 $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
-            })
-            $("#ClearAllFilters").button().click(function(e){
-                console.log("clear all");
-            })
+            });
+            $("#ClearAllFilters")
+                .button()//{icons: {secondary: "ui-icon-closethick"}})
+                .click(function(e){
+                    $("#FilterBar .filter").remove();
+                    $('#FilterAlpha .AlphaFilterActive').removeClass('AlphaFilterActive'); 
+
+                    coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+                })
+            <asp:LoginView ID="LoginView1" runat="server" >
+                <LoggedInTemplate>
+                    $("#AddContentButton").click(function(e) {
+                        e.preventDefault();
+                        $("#AddContentDialog").dialog({dialogClass: "ui-ontop"});
+                    });
+                    $("#EdditEntriesButton").click(function(e) {
+                        e.preventDefault();
+                        $("#EditEditEntriesDialog").dialog({dialogClass: "ui-ontop"});
+                    });
+                    $("#EditUsersButton").click(function(e) {
+                        e.preventDefault();
+                        $("#EditUsersDialog").dialog({dialogClass: "ui-ontop"});
+                    });
+                </LoggedInTemplate> 
+                <AnonymousTemplate> 
+                </AnonymousTemplate> 
+            </asp:LoginView>
+            $("#MenuGridView").click(function(e) {
+                e.preventDefault();
+                $("#GridDialog").dialog({dialogClass: "ui-ontop"});
+            });
+            $("#MenuRecomendations").click(function(e) {
+                e.preventDefault();
+                $("#RecomendationsDialog").dialog({dialogClass: "ui-ontop"});
+            });
+            $("#MenuEnterRequest").click(function(e) {
+                e.preventDefault();
+                $("#EnterRequestDialog").dialog({dialogClass: "ui-ontop"});
+            });
 
         }); // End Doc Ready.
     </script>
@@ -377,8 +293,8 @@
 
         <div class="tableRow">
             <section class="tableCell">
-                <span>
-                    <a id="ClearAllFilters">Clear all</a>
+                <span class="inline-display">
+                    <img id="ClearAllFilters" class="icon-button" src="Background_Images/close_icon.png">
                     <div id="FilterBar">
                     </div>
                 </span>
@@ -409,9 +325,9 @@
                                 <span id="Alpha_O" class="AlphaFilterButton">O</span> 
                                 <span id="Alpha_P" class="AlphaFilterButton">P</span> 
                                 <span id="Alpha_Q" class="AlphaFilterButton">Q</span> 
-                                <span id="Alpha_R" class="AlphaFilterButton">R</span> 
                             </div>
                             <div class="filterGrooup">
+                                <span id="Alpha_R" class="AlphaFilterButton">R</span> 
                                 <span id="Alpha_S" class="AlphaFilterButton">S</span> 
                                 <span id="Alpha_T" class="AlphaFilterButton">T</span> 
                                 <span id="Alpha_U" class="AlphaFilterButton">U</span> 
@@ -456,10 +372,14 @@
     <div id="Content" class="MainBodyOffset">
 
         <ul>
+            <li><a href="#tabs-info">Details</a></li>
             <li><a href="#tabs-1">Personal</a></li>
             <li><a href="#tabs-2">IMDB</a></li>
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
+        <div id="tabs-info">
+            <span id="info_title" class="infoline"> <p class="left">Title:</p> <p class="right"></p></span>
+        </div>
         <div id="tabs-1">
             <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.
             </p>
@@ -478,32 +398,43 @@
       <nav>
         <h2><i class="fa fa-reorder"></i>Movie Madness</h2>
         <ul>
-            <li>
-                <a href="#">Collections</a>
-            </li>
-            <li>
-                <a href="#">Credits</a>
-            </li>
-            <li>
-                <asp:LoginView ID="LoginView1" runat="server" >
-                    <LoggedInTemplate>
-                        <a href="#">Add Content</a>
-                        <a href="#">Edit Entries</a>
-                        <a href="#">Edit Users</a>
-                        <a href="#">Logout</a>
-                    </LoggedInTemplate> 
-                    <AnonymousTemplate> 
-                        <a id="LoginButton" href="#">Login</a>
+            <li><a id="" href="#">Favorites</a></li>
+            <li><a id="MenuGridView" href="#">Grid View</a></li>
+            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
+            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+            <li><a id="" href="#">My Settings</a></li>
+            <li><a id="" href="#">Credits</a></li>
+            <asp:LoginView ID="LoginView2" runat="server" >
+                <LoggedInTemplate>
+                    <li><a id="AddContentButton" href="#">Add Content</a></li>
+                    <li><a id="EdditEntriesButton" href="#">Edit Entries</a></li>
+                    <li><a id="EditUsersButton" href="#">Edit Users</a></li>
+                    <li><a id="LogOutButton" href="#">Logout</a></li>
+                </LoggedInTemplate> 
+                <AnonymousTemplate> 
+                    <a id="LoginButton" href="#">Login</a>
 
-                    </AnonymousTemplate> 
+                </AnonymousTemplate> 
 
-                </asp:LoginView>
+            </asp:LoginView>
 
-            </li>
         </ul>
       </nav>
     </div>
-    <div id="dialogContainer"> this is a popup</div>
+    <div id="dialogContainer"></div>
+    <div id="RecomendationsDialog"></div>
+    <div id="EnterRequestDialog"></div>
+    <div id="GridDialog"></div>
     <div id="LoginDialog"> </div>
+    <asp:LoginView ID="LoginView3" runat="server" >
+        <LoggedInTemplate>
+            <div id="AddContentDialog"></div>
+            <div id="EditEditEntriesDialog"></div>
+            <div id="EditUsersDialog"></div>
+        </LoggedInTemplate> 
+        <AnonymousTemplate> 
+        </AnonymousTemplate> 
+
+    </asp:LoginView>
 </asp:Content>
 

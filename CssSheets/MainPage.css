@@ -1,94 +1,140 @@
-﻿.TextBox 
-{
-    width: 100px;
+﻿body {
+    margin: 0;
+    background-image:  url(../Background_Images/hex-Bkgrd.jpg);
+
 }
 
-.Menu
-{
-    font-family: Bookman Old Style; 
-    width: 110px; 
-    font-style: italic;
-    position: relative;
+#MovieList {
+    padding-top: 50px;
+    padding-bottom: 150px;
+    /*height: 500px;*/
+    background: black;
+    background-image:  inherit;
+
+}
+#CoverFlow .cover {
+    cursor:     pointer;
+    width:      200px;
+    height:     250px;
+    box-shadow: 0 0 4em 1em #000040;
+}
+#MenuHandle {
+    /*float:      left;*/
+    position:   absolute;
+    top:        0px;
+    background: black;
+    height:     100em;
+}
+#menu {
+    float:      left;
+    position:   fixed;
+    top:        0px;
+    height:     100em;
+    width:      15em;
+    z-index:    1000;
+    color:      white;
+}
+#MovieFilterBox {
+    background: black;
+    width:      100%; 
+    height:     8em;
+    background-image:  inherit;
+
 }
 
-.MenuStatic
-{
+#MovieFilter div.cover {
+    height:             6.5em;
+    width:              60%;
+    background-image:   url(../Background_Images/hex-Bkgrd.jpg);
+    background-size:    40%;
+    border: blue double 4px;
+    border-radius:      30px;
+    margin-top:         0.5em;
+    margin-bottom:      0.5em;
+}
+#MovieFilter div p {
+    text-align:         center;
+    margin:             0.3em;
+    color:              white;
+}
+#FilterGeneral {
+    background: blue;
+}
+#FilterRating {
+    background: yellow;
+}
+.MainBodyOffset {
+    padding-left: 40px !important; 
+/*    background: black !important;
+*/}
+
+div.tableContainer{
+    display:    table;
+    position:   relative;
+    width: 100%;
+    background-image:  url(../Background_Images/hex-Bkgrd.jpg);
+}
+div.tableRow{
+    display: table-row;
+    width: 100%;
+    background-image:  inherit;
+}
+section.tableCell {
+    display:    table-cell;
+    background-image:  inherit;
+
+}
+#Content{
+    min-height: 30em;
+}
+#FilterAlpha {
+    background: black;
     color: white;
-    background-color: black;
-    font-weight: bold;
-    font-size: Large;
 }
-
-.MenuHover
-{
-    color: Black;
-    background-color: #DAA520;
-    font-weight: bold;
-    font-size: Large;
-}
-
-.MenuSelected
-{
-    color: Black;
-    background-color: White;
-    font-weight: bold;
-    font-size: Large;
-}
-
-.Main
-{
-    width: 99%;
-    display:inline-table;
-}
-
-.MainLeft
-{
-    width: 150px; 
-    display: table-cell;
-    border-right: 4px solid #DAA520;
-    margin-left: 10px; 
-    padding-left: 10px;
-}
-
-.MainRight
-{
-    margin-left: 10px;
-    display: table-cell;
-}
-
-.FloatingMenu 
-{
-    color: white;
-    height: auto;
-    font-size: medium;
-    position: relative;
-}
-
-
-
-div.Item
-{
-    color: White;
-    min-width: 200;
-    max-width: 300px;
-    height: 350;
+#FilterAlpha span{
     text-align: center;
-    display: inline-block;
-    margin: 20px 20px 20px 20px;
-    padding: 5px 10px 5px 10px;
-    font-family: Sans-Serif;
-    font-size: medium;
+    vertical-align: top;       
+    margin: 1em 1.2em 1em 1.0em;
+    color: white;     
+    cursor: crosshair;    
+}
+#FilterAlpha .filterGrooup {
+    padding-top:   0.2em;
+    padding-bottom: 1em; 
+    text-align: center;
+    margin-left: auto;
+    margin-right:  auto;
+}
+.AlphaFilterActive{
+    background-color: rgba(0,0,255,128);
+    -webkit-box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
+    -moz-box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
+    box-shadow: 1px 1px 5px 10px rgba(0,0,255,128);
+
+    -webkit-border-radius: 70px;
+    -moz-border-radius: 70px;
+    border-radius: 70px;
+
+    -webkit-transition: box-shadow .4s ease;
+    -moz-transition: box-shadow .4s ease;
+    -o-transition: box-shadow .4s ease;
+    -ms-transition: box-shadow .4s ease;
+    transition: box-shadow .4s ease;
+}
+#FilterTag
+{
+    background: black;
 }
 
-.ItemTitle
-{
-    color: #DAA520;
-    height: 60px; 
-    font-size: 130%;
+#FilterBar{
+    height: 3em;
 }
 
-.ItemDiscription
-{
-    color: White;
-    height: 120px;
+#FilterBar span{
+    color: white;
+
+    /*background: blue;*/
+}
+.ui-ontop {
+    z-index: 999 !important;
 }
