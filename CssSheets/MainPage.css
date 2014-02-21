@@ -47,6 +47,8 @@
     float: right;
     top: inherit;
     position: relative;
+    padding: 0.2em;
+    border: 2px solid blue; 
 }
 #CoverFlow {
 
