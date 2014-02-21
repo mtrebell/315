@@ -18,9 +18,20 @@ using System.Text;
 public partial class _Default : System.Web.UI.Page
 {
     public static int Percentage { get; set; }
+    private static Thread _tUpload = null;
 
     // connection string to database
-    private string sConnect = ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString;
+    private static string sConnect = ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString;
+
+    public string ServerRootPath
+    {
+        get
+        {
+            string sPath = Server.MapPath("~/Image_Posters/").Replace("/", "\\");
+            sPath = sPath.Replace('\\', '~');
+            return sPath;
+        }
+    }
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -39,16 +50,32 @@ public partial class _Default : System.Web.UI.Page
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    protected void AddSelected_Click(object sender, EventArgs e)
+    [WebMethod()]
+    public static int RunServer(object hiddenListContent, object imageRootPath)
     {
-        Session["KillTask"] = "false";
-        ThreadPool.QueueUserWorkItem(new WaitCallback(GetIMDBData),
-            new string[] { sConnect, Request.Form["HiddenList"].ToString(), Server.MapPath("~/Image_Posters/") });
+        _tUpload = new Thread(
+            delegate()
+            {
+                string sImageRoot = ((string)imageRootPath).Replace('~', '\\');
+                GetIMDBData(new string[] { sConnect, (string) hiddenListContent, sImageRoot });
+            });
+        _tUpload.IsBackground = true;
+        _tUpload.Start();
+
+        return 0;
     }
 
-    protected void BTN_Cancel_Click(object sender, EventArgs e)
+    /// <summary>
+    /// Cancel Scraper event 
+    /// </summary>
+
+    [WebMethod()]
+    public static int CancelServer()
     {
-        Session["KillTask"] = "true";
+        if (_tUpload != null)
+            _tUpload.Abort();
+
+        return 0;
     }
 
     #endregion
@@ -57,7 +84,7 @@ public partial class _Default : System.Web.UI.Page
     /// Used in thead call to compare all filenames in library against a database
     /// search
     /// </summary> 
-    private void GetIMDBData(object state)
+    private static void GetIMDBData(object state)
     {
         #region Get Input arguments
         string[] saData = (string[]) state;
@@ -77,9 +104,6 @@ public partial class _Default : System.Web.UI.Page
         // foreach filename 
         foreach (string sFile in values)
         {
-            if (Session["KillTask"].Equals("true"))
-                return;
-
             string sTitle, sExt, sSize;
             SplitFileInfo(sFile, out sTitle, out sExt, out sSize);
 
@@ -89,7 +113,7 @@ public partial class _Default : System.Web.UI.Page
                 // if title is not currently in the database
                 if (!TitleExists(sTitle, connect))
                 {
-                    Console.WriteLine(sTitle + " dows not exist");
+                    Console.WriteLine(sTitle + " does not exist");
                     IMDb oItem = new IMDb(sTitle, false);                 // Get IMDb database file from file name 
                     UpdateDataBase(oItem, sTitle, sExt, sSize, connect, imagePath);  // call method to add IMDb to database
                 }
@@ -108,7 +132,7 @@ public partial class _Default : System.Web.UI.Page
     /// </summary>
     /// <param name="fi">file info check</param>
     /// <returns></returns>
-    private bool IsMediaContent(string ext)
+    private static bool IsMediaContent(string ext)
     {
         List<string> lsExtensions = new List<string>() 
            { ".wmv", ".mkv", ".avi", "divx", "xvid", ".mp4",".mpeg", ".h264", ".x264", ".m2ts" };
@@ -123,7 +147,7 @@ public partial class _Default : System.Web.UI.Page
     /// <param name="sTitle">file title</param>
     /// <param name="sExtension">file extension</param>
     /// <param name="sSize">size of file</param>
-    private void SplitFileInfo(string sInput, out string sTitle, out string sExtension, out string sSize)
+    private static void SplitFileInfo(string sInput, out string sTitle, out string sExtension, out string sSize)
     {
         string[] saFileAttrib = sInput.Split('~');        // split file sub information
 
@@ -140,7 +164,7 @@ public partial class _Default : System.Web.UI.Page
     /// </summary>
     /// <param name="IMDbIn">imdb info insert</param>
     /// <param name="fiIn">file info insert</param>
-    private void UpdateDataBase(IMDb IMDbIn, string sTitle, string sFileExt, string sFileSize, string connect, string imagePath)
+    private static void UpdateDataBase(IMDb IMDbIn, string sTitle, string sFileExt, string sFileSize, string connect, string imagePath)
     {
         string sSize = string.Format("{0:f3} MBytes", long.Parse(sFileSize)/(1024.0 * 1024.0));   // convert byte size to Mbytes
         Regex rgx = new Regex("[^a-zA-Z0-9 -]");   // remove non alpha characters
@@ -157,9 +181,12 @@ public partial class _Default : System.Web.UI.Page
         }
 
         StringBuilder sbGenreCode = new StringBuilder();
-        foreach (string s in IMDbIn.Genres)
-            if (dicGenres.ContainsKey(s.ToLower().Trim()))
-                sbGenreCode.Append(dicGenres[s.ToLower().Trim()]);
+        if (IMDbIn.Genres != null)
+        { 
+            foreach (string s in IMDbIn.Genres)
+                if (dicGenres.ContainsKey(s.ToLower().Trim()))
+                    sbGenreCode.Append(s.ToLower().Trim()).Append(", ");
+        }
         #endregion
         
         try
@@ -229,7 +256,7 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
-    public byte[] getImageFromURL(String sURL)
+    public static byte[] getImageFromURL(String sURL)
     {
         try
         {
@@ -277,7 +304,7 @@ public partial class _Default : System.Web.UI.Page
     /// </summary>
     /// <param name="fi">file info check</param>
     /// <returns>if found condition</returns>
-    private bool TitleExists(string sMovieTitle, string connect)
+    private static bool TitleExists(string sMovieTitle, string connect)
     {
         try
         {
@@ -312,5 +339,4 @@ public partial class _Default : System.Web.UI.Page
         return bExists;
     }
     #endregion
-
 }

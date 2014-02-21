@@ -388,3 +388,176 @@ AS
 	Delete From MovieSummary
 	Delete From Requests
 GO
+
+/*************************************************************/
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'DeleteTitle'
+)
+drop procedure DeleteTitle
+GO
+
+CREATE PROCEDURE DeleteTitle
+     @mov_id nvarchar(100),
+	 @Output varchar(100) output
+AS
+	DELETE FROM [MovieSummary] WHERE [mov_id] = @mov_id
+
+	IF @@ROWCOUNT > 0
+		BEGIN
+			select @Output = 'Record Deleted'
+			return 0
+		END	
+
+	ELSE
+		BEGIN
+			select @Output = 'No Records deleted, possible error'
+			return 1
+		END
+GO
+
+/*************************************************************/
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'InsertTitle'
+)
+drop procedure InsertTitle
+GO
+
+CREATE PROCEDURE InsertTitle
+     @mov_id nvarchar(100),
+	 @mov_title [nvarchar](100),
+	 @mov_plot [nvarchar](1500),
+	 @mov_genre [nvarchar] (25),
+	 @mov_size [nvarchar](25),
+	 @mov_fileType [nvarchar](10),
+	 @mov_runTime [nvarchar](25),
+	 @mov_dateAdded [datetime],
+	 @mov_rating [nvarchar](10),
+	 @mov_smPoster [nvarchar](255),
+	 @mov_lgPoster [nvarchar](255),
+	 @mov_trailer [nvarchar](1500),
+	 @mov_imdbUrl [nvarchar](255)
+AS
+	INSERT INTO [MovieSummary] ([mov_id],
+								[mov_title], 
+								[mov_plot],
+								[mov_genre], 
+								[mov_size], 
+								[mov_fileType], 
+								[mov_dateAdded], 
+								[mov_rating], 
+								[mov_runTime], 
+								[mov_lgPoster], 
+								[mov_smPoster],
+								[mov_trailer],
+								[mov_imdbUrl]) 
+		VALUES (@mov_id, @mov_title, @mov_plot, @mov_genre, @mov_size, @mov_fileType, @mov_dateAdded, 
+			@mov_rating, @mov_runTime, @mov_lgPoster, @mov_smPoster, @mov_trailer, @mov_imdbUrl)
+GO
+
+/*************************************************************/
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'SelectTitle'
+)
+drop procedure SelectTitle
+GO
+
+CREATE PROCEDURE SelectTitle
+AS
+	SELECT	[mov_id],
+			[mov_title], 
+			[mov_plot],
+			[mov_genre], 
+			[mov_size], 
+			[mov_fileType], 
+			[mov_dateAdded], 
+			[mov_rating], 
+			[mov_runTime], 
+			[mov_lgPoster], 
+			[mov_smPoster],
+			[mov_trailer],
+			[mov_imdbUrl]
+		FROM [MovieSummary] 
+		ORDER BY [mov_title]
+GO
+
+/*************************************************************/
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'SelectTitleInfo'
+)
+drop procedure SelectTitleInfo
+GO
+
+CREATE PROCEDURE SelectTitleInfo
+@mov_id nvarchar(100)
+AS
+	SELECT	[mov_id],
+			[mov_title], 
+			[mov_plot],
+			[mov_genre], 
+			[mov_size], 
+			[mov_fileType], 
+			[mov_dateAdded], 
+			[mov_rating], 
+			[mov_runTime], 
+			[mov_lgPoster], 
+			[mov_smPoster],
+			[mov_trailer],
+			[mov_imdbUrl]
+	FROM [MovieSummary] 
+	WHERE @mov_id = [mov_id]	
+GO
+
+/*************************************************************/
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'UpdateTitle'
+)
+drop procedure UpdateTitle
+GO
+
+CREATE PROCEDURE UpdateTitle
+     @mov_id nvarchar(100),
+	 @mov_title [nvarchar](100),
+	 @mov_plot [nvarchar](1500),
+	 @mov_genre [nvarchar] (25),
+	 @mov_size [nvarchar](25),
+	 @mov_fileType [nvarchar](10),
+	 @mov_runTime [nvarchar](25),
+	 @mov_dateAdded [datetime],
+	 @mov_rating [nvarchar](10),
+	 @mov_smPoster [nvarchar](255),
+	 @mov_lgPoster [nvarchar](255),
+	 @mov_trailer [nvarchar](1500),
+	 @mov_imdbUrl [nvarchar](255)
+AS
+	UPDATE [MovieSummary] SET [mov_id] = @mov_id,
+							  [mov_title] = @mov_title, 
+							  [mov_plot] = @mov_plot, 
+							  [mov_size] = @mov_size, 
+							  [mov_fileType] = @mov_fileType, 
+							  [mov_dateAdded] = @mov_dateAdded, 
+							  [mov_rating] = @mov_rating, 
+							  [mov_runTime] = @mov_runTime, 
+							  [mov_lgPoster] = @mov_lgPoster, 
+							  [mov_smPoster] = @mov_smPoster 
+		WHERE [mov_id] = @mov_id
+GO

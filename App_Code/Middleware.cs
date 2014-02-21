@@ -160,7 +160,7 @@ public static class Middleware
     /// <param name="iMovID">movie id to add</param>
     /// <param name="gUser">user id to assign movie to</param>
     /// <returns>return progress message</returns>
-    public static string InsertIntoFavorites(int iMovID, Guid gUser)
+    public static string InsertIntoFavorites(string iMovID, Guid gUser)
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
@@ -173,7 +173,7 @@ public static class Middleware
             comm.CommandText = "InsertFavorites";           // indicate procedure name
             // Make Parameter
             SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
-            SqlParameter pMovieID = new SqlParameter("@MovID", System.Data.SqlDbType.Int);
+            SqlParameter pMovieID = new SqlParameter("@MovID", System.Data.SqlDbType.NVarChar, 100);
             SqlParameter pOutput = new SqlParameter("@output", System.Data.SqlDbType.NVarChar, 100);
             pUserID.Value = gUser;      // assign user filter
             pMovieID.Value = iMovID;    // assign movie id filter
@@ -193,7 +193,6 @@ public static class Middleware
         return sReturn;
     }
 
-
     public static SqlDataReader GetAllGenreOptions()
     {
         SqlDataReader reader = null; // return object
@@ -204,6 +203,21 @@ public static class Middleware
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
             comm.CommandText = "GetAllGenres";           // indicate procedure name
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+        }
+        return reader;      // return filtered dataset
+    }
+
+    public static SqlDataReader GetNonAdminUsers()
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "GetNonAdminUsers";           // indicate procedure name
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
         return reader;      // return filtered dataset
@@ -272,5 +286,60 @@ public static class Middleware
             comm.Parameters.Add(pMovieTitle);
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
+    }
+
+    /// <summary>
+    /// remove entry from content database
+    /// </summary>
+    /// <param name="sMovID">movie id to add</param>
+    /// <returns>return progress message</returns>
+    public static string DeleteEntry(string sMovID)
+    {
+        SqlDataReader reader = null; // return object
+        string sReturn = "";
+        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "DeleteTitle";           // indicate procedure name
+            // Make Parameter
+            SqlParameter pMovieID = new SqlParameter("@mov_id", System.Data.SqlDbType.NVarChar, 100);
+            SqlParameter pOutput = new SqlParameter("@output", System.Data.SqlDbType.NVarChar, 100);
+            pMovieID.Value = sMovID;    // assign movie id filter
+
+            pMovieID.Direction = System.Data.ParameterDirection.Input;
+            pOutput.Direction = System.Data.ParameterDirection.Output;
+
+            // Add the parameter
+            comm.Parameters.Add(pMovieID);
+            comm.Parameters.Add(pOutput);
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection); // execute query
+
+            sReturn = pOutput.Value.ToString(); // get output value
+        }
+        return sReturn;
+    }
+
+    public static SqlDataReader GetMovieData(string sMovID)
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "SelectTitleInfo";           // indicate procedure name
+
+            SqlParameter pMovieID = new SqlParameter("@mov_id", System.Data.SqlDbType.NVarChar, 100);
+            pMovieID.Value = sMovID;    // assign movie id filter
+            pMovieID.Direction = System.Data.ParameterDirection.Input;
+
+            comm.Parameters.Add(pMovieID);
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+        }
+        return reader;      // return filtered dataset
     }
 }

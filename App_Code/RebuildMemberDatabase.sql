@@ -123,3 +123,5 @@ CREATE TABLE FavoriteDetails
 )
 GO
 
+
+

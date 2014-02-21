@@ -84,19 +84,19 @@ public partial class _Default : System.Web.UI.Page
 
         sTemp = sTemp.Remove(0, iEliminate + 1);
 
-        int iMovieIndex= -1;
+        string sMovieIndex= "";
         try
         {
-            iMovieIndex = int.Parse(sTemp.Replace("MoreInfo.aspx?idx=", ""));   // get movie index
+            sMovieIndex = sTemp.Replace("MoreInfo.aspx?idx=", "");   // get movie index
         }
         catch (FormatException)
         {
-            iMovieIndex = -1;
+            sMovieIndex = "";
         }
-        if (iMovieIndex != -1)
+        if (sMovieIndex != "")
         {
             Guid gUserID = (Guid)Membership.GetUser().ProviderUserKey;  // get current user
-            Middleware.InsertIntoFavorites(iMovieIndex, gUserID);       // add to favorites table
+            Middleware.InsertIntoFavorites(sMovieIndex, gUserID);       // add to favorites table
         }
     }
 }
