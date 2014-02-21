@@ -4,7 +4,6 @@
     <script src="scripts/MainPage.js"></script>
 
     <style>
-
         .movieTitle {
             color: gray;
             text-shadow: 0px 0px 2em black;
@@ -24,11 +23,7 @@
             height: 40px;
         }
     </style>
-
-
 </asp:Content>
-
-
 
 <asp:Content ContentPlaceHolderID="body" Runat="Server">
     <script type="text/javascript">
@@ -43,7 +38,6 @@
                 $(val).html(info.find("#"+$(val).attr('id')).html());
             })
         }
-
 
         // DOCUMENT READY!
         $(function() 
@@ -152,6 +146,12 @@
                 e.preventDefault();
                 $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
             });
+
+            $("#LogOutButton").click(function (e) {
+                e.preventDefault();
+                window.location.replace("Logout.aspx");
+            });
+
             $("#ClearAllFilters")
                 .button()//{icons: {secondary: "ui-icon-closethick"}})
                 .click(function(e){
@@ -160,24 +160,7 @@
 
                     coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
                 })
-            <asp:LoginView ID="LoginView1" runat="server" >
-                <LoggedInTemplate>
-                    $("#AddContentButton").click(function(e) {
-                        e.preventDefault();
-                        $("#AddContentDialog").dialog({dialogClass: "ui-ontop"});
-                    });
-                    $("#EdditEntriesButton").click(function(e) {
-                        e.preventDefault();
-                        $("#EditEditEntriesDialog").dialog({dialogClass: "ui-ontop"});
-                    });
-                    $("#EditUsersButton").click(function(e) {
-                        e.preventDefault();
-                        $("#EditUsersDialog").dialog({dialogClass: "ui-ontop"});
-                    });
-                </LoggedInTemplate> 
-                <AnonymousTemplate> 
-                </AnonymousTemplate> 
-            </asp:LoginView>
+
             $("#MenuGridView").click(function(e) {
                 e.preventDefault();
                 $("#GridDialog").dialog({dialogClass: "ui-ontop"});
@@ -193,7 +176,39 @@
 
         }); // End Doc Ready.
     </script>
-    
+
+    <asp:LoginView ID="LoginView1" runat="server" >
+        <RoleGroups>
+            <asp:RoleGroup Roles="Administrator">
+                <ContentTemplate>
+                    <script type="text/javascript">
+                        $(function () {
+                            $("#AddContentDialog").load("/Admin/AddToDataBase.aspx");
+                            $("#AddContentDialog").hide();
+                            $("#AddContentButton").click(function (e) {
+                                e.preventDefault();
+                                $("#AddContentDialog").dialog({ dialogClass: "ui-ontop", width: "50%", });
+                            });
+
+                            $("#EditEntriesDialog").load("/Admin/EditEntries.aspx");
+                            $("#EditEntriesDialog").hide();
+                            $("#EditEntriesButton").click(function (e) {
+                                e.preventDefault();
+                                $("#EditEntriesDialog").dialog({ dialogClass: "ui-ontop", width: "600px" });
+                            });
+
+                            $("#EditUsersDialog").load("/Admin/ManageAccount.aspx");
+                            $("#EditUsersDialog").hide();
+                            $("#EditUsersButton").click(function (e) {
+                                e.preventDefault();
+                                $("#EditUsersDialog").dialog({ dialogClass: "ui-ontop", width: "540px" });
+                            });
+                        })
+                    </script>
+                </ContentTemplate>
+            </asp:RoleGroup>
+        </RoleGroups>
+    </asp:LoginView>
 
     <div id="mainBody" class="tableContainer MainBodyOffset Border">
         <div class="tableRow">
@@ -315,24 +330,34 @@
         <ul>
             <li><a id="" href="#">Favorites</a></li>
             <li><a id="MenuGridView" href="#">Grid View</a></li>
-            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
-            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
             <li><a id="" href="#">My Settings</a></li>
             <li><a id="" href="#">Credits</a></li>
             <asp:LoginView ID="LoginView2" runat="server" >
-                <LoggedInTemplate>
-                    <li><a id="AddContentButton" href="#">Add Content</a></li>
-                    <li><a id="EdditEntriesButton" href="#">Edit Entries</a></li>
-                    <li><a id="EditUsersButton" href="#">Edit Users</a></li>
-                    <li><a id="LogOutButton" href="#">Logout</a></li>
-                </LoggedInTemplate> 
+                <RoleGroups>
+                    <asp:RoleGroup Roles="Administrator">
+                        <ContentTemplate>
+                            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
+                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+                            <li><a id="AddContentButton" href="#">Add Content</a></li>
+                            <li><a id="EditEntriesButton" href="#">Edit Entries</a></li>
+                            <li><a id="EditUsersButton" href="#">Edit Users</a></li>
+                            <li><a id="LogOutButton" href="#">Logout</a></li>
+                        </ContentTemplate>
+                    </asp:RoleGroup>
+                </RoleGroups>
+                <RoleGroups>
+                    <asp:RoleGroup Roles="Members">
+                        <ContentTemplate>
+                            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
+                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+                            <li><a id="LogOutButton" href="#">Logout</a></li>
+                        </ContentTemplate>
+                    </asp:RoleGroup>
+                </RoleGroups>
                 <AnonymousTemplate> 
-                    <a id="LoginButton" href="#">Login</a>
-
+                    <li><a id="LoginButton" href="#">Login</a></li>
                 </AnonymousTemplate> 
-
             </asp:LoginView>
-
         </ul>
       </nav>
     </div>
@@ -342,14 +367,15 @@
     <div id="GridDialog"></div>
     <div id="LoginDialog"> </div>
     <asp:LoginView ID="LoginView3" runat="server" >
-        <LoggedInTemplate>
-            <div id="AddContentDialog"></div>
-            <div id="EditEditEntriesDialog"></div>
-            <div id="EditUsersDialog"></div>
-        </LoggedInTemplate> 
-        <AnonymousTemplate> 
-        </AnonymousTemplate> 
-
+        <RoleGroups>
+            <asp:RoleGroup Roles="Administrator">
+                <ContentTemplate>
+                    <div id="AddContentDialog"></div>
+                    <div id="EditEntriesDialog"></div>
+                    <div id="EditUsersDialog"></div>
+                </ContentTemplate>
+            </asp:RoleGroup>
+        </RoleGroups>
     </asp:LoginView>
 </asp:Content>
 
