@@ -35,12 +35,27 @@
         var filterTagID = 0;
         var coverFlowCtrl = null;
         var filterFlowCtrl = null;
+
         function ShowMovieDetails(e, cover, index)
         {
             var info = $(cover).find("div#info");
-            $("#tabs-info>span>.details-info").each(function(idx, val){
-                console.log("val.id %s", $(val).attr('id'));
-                $(val).html(info.find("#"+$(val).attr('id')).html());
+            $("#cover-details>*>.details-info").each(function(idx, val){
+                var htmlData = info.find("#"+$(val).attr('id')).html();
+                if ($(val).is("img"))
+                {
+                    $(val).attr("src", htmlData);
+                }
+                else
+                {
+                    $(val).html(htmlData);
+                }
+                $(".cover-details-infoline #mov_rating i").remove();
+                $(".cover-details-infoline #mov_rating").remove('i')
+                    .each (function(idx, val) {
+                        for (var i= 0; i <= parseInt($(val).html())/2; i++) {
+                            $(val).append('<i class="fa fa-star star-theme"/>')
+                        }  
+                    });
             })
         }
 
@@ -289,11 +304,34 @@
             <li><a href="#tabs-2">IMDB</a></li>
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
-        <div id="tabs-info">
-            <span id="info_title" class="infoline"> <p class="left">Title:</p> <p id="mov_title" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Rating:</p> <p id="mov_rating" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Run Time:</p> <p id="mov_runTime" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Title:</p> <img src="" id="mov_rating" class="right details-info"/></span>
+        <div id="tabs-info" class="hex-background">
+            <div class="tableContainer">
+                <div class="tableRow">
+                    <section id="cover-details" class="tableCell table-thirds">
+                        <span class="cover-details-infoline"> 
+                            <img src="" id="mov_smPoster" class="details-info theme"/>
+                        </span>        
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Title:</p> 
+                            <p id="mov_title" class="cover-details-element-detail theme details-info"></p>
+                        </span>
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Rating:</p> 
+                            <p id="mov_rating" class="cover-details-element-detail theme details-info"></p>
+                        </span>
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Run Time:</p> 
+                            <p id="mov_runTime" class="cover-details-element-detail theme details-info"></p>
+                        </span>
+                    </section>
+                    <section class="tableCell table-thirds">
+                        <p> hi there center</p>
+                    </section>
+                    <section class="tableCell table-thirds">
+                        <p> hi there right</p>
+                    </section>
+                </div>
+            </div>
         </div>
         <div id="tabs-1">
             <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.
