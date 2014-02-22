@@ -23,6 +23,9 @@
             width:  40px;
             height: 40px;
         }
+        .no-tab-padding {
+            padding:    0 !important;
+        }
     </style>
 </asp:Content>
 
@@ -31,20 +34,42 @@
         var filterTagID = 0;
         var coverFlowCtrl = null;
         var filterFlowCtrl = null;
+        var genreList = [];
+
 
         function ShowMovieDetails(e, cover, index)
         {
             var info = $(cover).find("div#info");
-            $("#cover-details>*>.details-info").each(function(idx, val){
+            $(".details-info").each(function(idx, val){
                 var htmlData = info.find("#"+$(val).attr('id')).html();
+                console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
                 if ($(val).is("img"))
                 {
+                    //console.log("image");
                     $(val).attr("src", htmlData);
                 }
+
+                else if ($(val).is("ul"))
+                {
+                    //console.log("ul %s",htmlData);
+                    var str = htmlData;
+                    $(val).empty();
+                    str.split(",").forEach(function(value, idx){
+                        var v = value.trim();
+                        if (v !== undefined && v.length > 0)
+                        {
+                            $(val).append("<li>" + value.trim() +"</li>");
+                        }
+                    });
+
+                }
+
                 else
                 {
+                    //console.log("default");
                     $(val).html(htmlData);
                 }
+
                 $(".cover-details-infoline #mov_rating i").remove();
                 $(".cover-details-infoline #mov_rating").remove('i')
                     .each (function(idx, val) {
@@ -54,12 +79,44 @@
                     });
             })
         }
-
+        function AlphaFilterButtonClick(e) { 
+            e.preventDefault();
+            if ( filterFlowCtrl.coverflow('index') !== 0)
+            {
+                return;
+            }
+            $(this).toggleClass('AlphaFilterActive'); 
+            if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
+            {
+                DelAlphaFilter($(this).attr('id'));
+            }
+            else
+            {
+                AddAlphaFilter($(this).attr('id'));
+            }
+        };
+        function GenreFilterButtonClick(e) {
+            e.preventDefault();
+            if ( filterFlowCtrl.coverflow('index') !== 2)
+            {
+                return;
+            }
+            $(this).toggleClass('genre-selected'); 
+            if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
+            {
+                DelGenreFilter($(this).attr('id'));
+            }
+            else
+            {
+                AddGenreFilter($(this).attr('id'), $(this).find("span").html());
+            }
+        };
         // DOCUMENT READY!
         $(function() 
         {
             $("#CoverFlow").load("GetMovieList.aspx", function() 
             {
+
                 $('#CoverFlow .hidden').hide();
                 if ($.fn.reflect) 
                 {
@@ -67,11 +124,32 @@
                     $('#CoverFlow .cover img').attr("height", "300px").attr("width", "200px").reflect();   
                 }
 
+                // store in a object of each type of genre that we have a cover flow for. 
+                var genre_list = {};
                 $('#CoverFlow .cover').each(function(idx, value) {
-                    if ($(value).find(".missing_poster").length !== 0) {
+                    if ($(value).find(".missing_poster").length !== 0) 
+                    {
                         $(value).append('<span class="movieTitle">' + $(value).find("#info #mov_title").html() + '</span>');
                     }
+                    // get the genre from the info and add them to the object, we are using the object
+                    // as a poor mans set. 
+                    var htmlData = $(value).find("#info #mov_genre").html();
+                    htmlData.split(",").forEach(function(data) {
+                        data = data.trim();
+                        if (data !== undefined && data.length > 0)
+                        {
+                            genre_list[data] = 1;
+                        }
+                    });
                 });
+
+                // turn the object into a list of strings. 
+                var filter_genre_list = $("#FilterGenreList").empty();
+                $.each(genre_list, function(name){
+                    genreList.push(name);
+                    $(filter_genre_list).append('<span id="Genre_'+name+'" class="GenreFilterButton theme">'+name+'</span>');
+                });
+                $(".GenreFilterButton").button().click(GenreFilterButtonClick);
 
                 coverFlowCtrl = $('#CoverFlow').coverflow(
                 {
@@ -131,22 +209,8 @@
 
 
             // Set up the click event for the alpha filters.
-            $('.AlphaFilterButton').click(function(e) { 
-                e.preventDefault();
-                if ( filterFlowCtrl.coverflow('index') !== 0)
-                {
-                    return;
-                }
-                $(this).toggleClass('AlphaFilterActive'); 
-                if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
-                {
-                    DelAlphaFilter($(this).attr('id'));
-                }
-                else
-                {
-                    AddAlphaFilter($(this).attr('id'));
-                }
-            });
+            $('.AlphaFilterButton').click(AlphaFilterButtonClick);
+
             //$("#TagFilterInput").input();
             $(".TagFilterButton").button().click(function (e){
                 e.preventDefault();
@@ -297,8 +361,10 @@
                             <input id="TagFilterInput"/> 
                             <button class="TagFilterButton">Add Tag</button> 
                         </div>
-                        <div id="FilterGeneral" class="cover" >
-                            <p>Enter general filter:</p>
+                        <div id="FilterGenre" class="cover" >
+                            <p>Select genre to filter by:</p>
+                            <div id="FilterGenreList" class="filter-list-genre theme">
+                            </div>
                         </div>
                         <div id="FilterRating" class="cover" > 
                             <p>Enter rating filter:</p>
@@ -320,31 +386,46 @@
             <li><a href="#tabs-2">IMDB</a></li>
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
-        <div id="tabs-info" class="hex-background">
+        <div id="tabs-info" class="hex-background no-tab-padding">
             <div class="tableContainer">
                 <div class="tableRow">
                     <section id="cover-details" class="tableCell table-thirds">
                         <span class="cover-details-infoline"> 
-                            <img src="" id="mov_smPoster" class="details-info theme"/>
-                        </span>        
-                        <span class="cover-details-infoline"> 
                             <p class="cover-details-element-label theme">Title:</p> 
                             <p id="mov_title" class="cover-details-element-detail theme details-info"></p>
                         </span>
+                        <br/>
+                        <span class="cover-details-infoline multi-line"> 
+                            <p class="cover-details-element-label theme multi-line">Plot<br>Summary:</p> 
+                            <p id="mov_plot" class="cover-details-element-detail theme details-info multi-line"></p>
+                        </span>
+                        <br/>
                         <span class="cover-details-infoline"> 
                             <p class="cover-details-element-label theme">Rating:</p> 
                             <p id="mov_rating" class="cover-details-element-detail theme details-info"></p>
                         </span>
                         <span class="cover-details-infoline"> 
                             <p class="cover-details-element-label theme">Run Time:</p> 
-                            <p id="mov_runTime" class="cover-details-element-detail theme details-info"></p>
+                            <p id="mov_runTime" class="cover-details-element-detail theme details-info">
+                            </p>
+                        </span>
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Genre:</p> 
+                            <!--p id="mov_genre" class="cover-details-element-detail theme details-info"></p-->
+                            <ul id="mov_genre" class="cover-details-element-detail theme details-info">
+                            </ul>
                         </span>
                     </section>
-                    <section class="tableCell table-thirds">
-                        <p> hi there center</p>
+                    <section id="cover-details" class="tableCell table-thirds">
+                        <span class="cover-details-infoline"> 
+                            <img src="" id="mov_lgPoster" class="details-info theme"/>
+                        </span>        
                     </section>
-                    <section class="tableCell table-thirds">
-                        <p> hi there right</p>
+                    <section id="cover-details" class="tableCell table-thirds">
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Run Time:</p> 
+                            <p id="mov_trailer" class="cover-details-element-detail theme details-info"></p>
+                        </span>
                     </section>
                 </div>
             </div>
@@ -369,29 +450,27 @@
         <ul>
             <li><a id="" href="#">Favorites</a></li>
             <li><a id="MenuGridView" href="#">Grid View</a></li>
-            <li><a id="" href="#">My Settings</a></li>
-            <li><a id="" href="#">Credits</a></li>
             <asp:LoginView ID="LoginView2" runat="server" >
-                <RoleGroups>
-                    <asp:RoleGroup Roles="Administrator">
-                        <ContentTemplate>
+                <RoleGroups> <asp:RoleGroup Roles="Administrator"> 
+                    <ContentTemplate>
+                    <li>
+                        <ul>
                             <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
                             <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
                             <li><a id="AddContentButton" href="#">Add Content</a></li>
                             <li><a id="EditEntriesButton" href="#">Edit Entries</a></li>
                             <li><a id="EditUsersButton" href="#">Edit Users</a></li>
                             <li><a id="LogOutButton" href="#">Logout</a></li>
-                        </ContentTemplate>
-                    </asp:RoleGroup>
+                        </ul>
+                    </li>
+                    </ContentTemplate> </asp:RoleGroup> 
                 </RoleGroups>
-                <RoleGroups>
-                    <asp:RoleGroup Roles="Members">
-                        <ContentTemplate>
-                            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
-                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
-                            <li><a id="LogOutButton" href="#">Logout</a></li>
-                        </ContentTemplate>
-                    </asp:RoleGroup>
+                <RoleGroups> <asp:RoleGroup Roles="Members">
+                    <ContentTemplate>
+                    <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
+                    <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+                    <li><a id="LogOutButton" href="#">Logout</a></li>
+                    </ContentTemplate></asp:RoleGroup>
                 </RoleGroups>
                 <AnonymousTemplate> 
                     <li><a id="LoginButton" href="#">Login</a></li>
@@ -407,13 +486,11 @@
     <div id="LoginDialog"> </div>
     <asp:LoginView ID="LoginView3" runat="server" >
         <RoleGroups>
-            <asp:RoleGroup Roles="Administrator">
-                <ContentTemplate>
-                    <div id="AddContentDialog"></div>
-                    <div id="EditEntriesDialog"></div>
-                    <div id="EditUsersDialog"></div>
-                </ContentTemplate>
-            </asp:RoleGroup>
+            <asp:RoleGroup Roles="Administrator"><ContentTemplate>
+            <div id="AddContentDialog"></div>
+            <div id="EditEntriesDialog"></div>
+            <div id="EditUsersDialog"></div>
+            </ContentTemplate></asp:RoleGroup>
         </RoleGroups>
     </asp:LoginView>
 </asp:Content>

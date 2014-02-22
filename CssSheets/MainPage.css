@@ -11,8 +11,11 @@
     width: 30%;
 }
 .cover-details-infoline {
-    display: block;
+    display: inline-table;
     margin-top: 1em;
+}
+.cover-details-infoline.multi-line{
+    display: inline-flex;
 }
 .cover-details-element-label {
     display: inline;
@@ -23,6 +26,12 @@
     padding-right: 1em;
     padding-top: 0.2em;
     padding-bottom: 0.2em;
+}
+.cover-details-element-label.multi-line {
+    padding-right: 4em;
+    text-align:  center;
+    padding-top: 0.5em; 
+    width:;
 }
 .cover-details-element-label.theme {
     background: blue;
@@ -43,12 +52,37 @@
 .cover-details-element-detail.theme {
     border-color: yellow;
 }
+.cover-details-element-detail.multi-line {
+    display: inline-flex;
+}
+.filter-list-genre{
+    padding-left: 1em;
+    padding-right: 1em;
+}
+.filter-list-genre.theme{
+
+}
+.GenreFilterButton {
+    font-size: 0.8em !important;
+    padding: 0.1em  !important;
+}
+.genre-selected {
+    border: 1px solid #ffaf0f !important;
+	background: #f58400 url(images/ui-bg_inset-soft_30_f58400_1x100.png) 50% 50% repeat-x !important;
+	font-weight: bold !important;
+	color: #ffffff !important;
+}
+.GenreFilterButton.theme{
+    color: white;   
+}
 .cover-details-infoline img{
     float: right;
     top: inherit;
     position: relative;
     padding: 0.2em;
     border: 2px solid blue; 
+    width: 300px;
+    height:450px;
 }
 #CoverFlow {
 
@@ -127,6 +161,8 @@ div.tableRow{
 section.tableCell {
     display:    table-cell;
     background-image:  inherit;
+    vertical-align: top;
+    padding-right: 1em;
 
 }
 #Content{

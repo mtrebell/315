@@ -49,6 +49,44 @@ function DelAlphaFilter(filterID)
 
 };
 //------------------------------------------------------------------------
+// Functions for adding and removing the Alpha filters
+//------------------------------------------------------------------------
+function AddGenreFilter(filterID, key)
+// Add a Filter span to the filter bar.
+{
+    var filterBar = $("#FilterBar");
+    console.log("add genere %o", filterID);
+    filterBar.append(
+          '<span class = "filter filter_genre" '
+        + 'id="Filter_' + filterID + '" '
+        + 'data="' + filterID + '" '
+        + 'filterKey="'+ key +'" '
+        + '>'
+        + key
+        +'</span>'
+    );
+    filterBar.find("#Filter_"+filterID)
+        .button({icons: {
+            secondary: "ui-icon-closethick"
+        }})
+        .click(function(e){
+            e.preventDefault();
+            RemoveFilterSpan($(this));
+        }
+    );
+
+    coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+};
+
+
+function DelGenreFilter(filterID)
+// Remove a filter div
+{
+    RemoveFilterSpan($("#FilterBar #Filter_" + filterID));
+    // do this as mutating events cause problems.
+
+};
+//------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
 // Handle the adding of Tag filters.
@@ -92,7 +130,7 @@ function CoverFilter(cover)
 // hide the some covers based on these filtering criteria
 //
 {
-    var log=false;
+    var log=true;
     var title = $(cover).find("#info #mov_title").html();
     var filters = $("#FilterBar span");
     var res = filters.length === 0;
@@ -106,6 +144,9 @@ function CoverFilter(cover)
 
         } else if ($(value).hasClass("filter_tag")) {
             if (log) console.log("Tag: %s res= %s", $(this).attr('filterKey'), res);
+
+        } else if ($(value).hasClass("filter_genre")) {
+            if (log) console.log("Genre: %s res= %s", $(this).attr('filterKey'), res);
 
         }
     });

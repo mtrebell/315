@@ -39,9 +39,9 @@ public partial class GetMovieList : System.Web.UI.Page
                 System.Web.UI.WebControls.Image imgPoster = new System.Web.UI.WebControls.Image();
                 imgPoster.Attributes.Add("id", "movID_" + sdr["mov_id"].ToString());
 
-                if (!sdr[0].ToString().ToLower().Contains("notfound"))
+                if (!sdr["mov_smPoster"].ToString().Equals("NOTFOUND"))
                 {
-                    imgPoster.ImageUrl = sdr[0].ToString();
+                    imgPoster.ImageUrl = sdr["mov_smPoster"].ToString();
                 } else {
                     imgPoster.Attributes.Add("class", "missing_poster");
                     imgPoster.ImageUrl = "~/Background_Images/MissingPoster.jpg";
@@ -54,10 +54,10 @@ public partial class GetMovieList : System.Web.UI.Page
             {
                 cell.Attributes.Add("class", "cover cover-not-loaded");
 
-                if (!sdr[0].ToString().ToLower().Contains("notfound"))
+                if (!sdr["mov_smPoster"].ToString().Equals("NOTFOUNDs"))
                 {
                     cell.Attributes.Add("dataClass", "missing_poster");
-                    cell.Attributes.Add("dataUrl", sdr[0].ToString().Replace("~/", ""));
+                    cell.Attributes.Add("dataUrl", sdr["mov_smPoster"].ToString().Replace("~/", ""));
                 } else {
                     cell.Attributes.Add("dataUrl", "Background_Images/MissingPoster.jpg");
                     cell.Attributes.Add("dataClass", "missing_poster");

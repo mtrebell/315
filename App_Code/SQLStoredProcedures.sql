@@ -32,7 +32,8 @@ go
 GO
 CREATE PROCEDURE MovieCollectionGrab
 AS 
-    SELECT mov_smPoster, mov_title, mov_rating, mov_runTime, mov_id 
+    SELECT *
+	/*mov_smPoster, mov_title, mov_rating, mov_runTime, mov_id */
     FROM dbo.MovieSummary
 	ORDER BY mov_title
 GO
