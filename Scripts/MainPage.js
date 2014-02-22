@@ -4,7 +4,7 @@
 function RemoveFilterSpan(filter)
 // Remove the span, and clean up/ refresh...
 {
-    $("#"+filter.attr("data")).removeClass('AlphaFilterActive');
+    $("#"+filter.attr("data")).removeClass('AlphaFilterActive').removeClass("genre-selected");
 
     filter.remove();
     coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
@@ -132,6 +132,7 @@ function CoverFilter(cover)
 {
     var log=true;
     var title = $(cover).find("#info #mov_title").html();
+    var genre = $(cover).find("#info #mov_genre").html().trim().toLowerCase();
     var filters = $("#FilterBar span");
     var res = filters.length === 0;
 
@@ -146,10 +147,12 @@ function CoverFilter(cover)
             if (log) console.log("Tag: %s res= %s", $(this).attr('filterKey'), res);
 
         } else if ($(value).hasClass("filter_genre")) {
-            if (log) console.log("Genre: %s res= %s", $(this).attr('filterKey'), res);
+            if (log) console.log("Genre: %s %s res= %s, %s",genre, $(this).attr('filterKey'), res, genre.indexOf($(this).attr('filterKey')+','));
+            res |= genre.indexOf($(this).attr('filterKey').trim().toLowerCase()+',') >= 0;
 
         }
     });
+    if (res) res = true;
     if (log) console.log("Result=" + res);
     if (log) console.groupEnd();
     return res;

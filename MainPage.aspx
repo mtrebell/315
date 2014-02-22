@@ -52,16 +52,21 @@
                 else if ($(val).is("ul"))
                 {
                     //console.log("ul %s",htmlData);
-                    var str = htmlData;
-                    $(val).empty();
-                    str.split(",").forEach(function(value, idx){
-                        var v = value.trim();
-                        if (v !== undefined && v.length > 0)
-                        {
-                            $(val).append("<li>" + value.trim() +"</li>");
-                        }
-                    });
-
+                    if (htmlData !== undefined)
+                    {
+                        $(val).empty();
+                        htmlData.split(",").forEach(function(value, idx){
+                            var v = value.trim();
+                            if (v !== undefined && v.length > 0)
+                            {
+                                $(val).append("<li>" + value.trim() +"</li>");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        //todo: make all the fields get cleared.
+                    }
                 }
 
                 else
