@@ -76,11 +76,12 @@
     color: white;   
 }
 .genre-label {
-    padding-left: 0.1em;
-    padding-right: 0.1em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    margin-right: 1em;
 }
 .genre-label.theme {
-
+    
 }
 .cover-details-infoline img{
     float: right;

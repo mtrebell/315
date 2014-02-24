@@ -60,7 +60,12 @@
                             if (v !== undefined && v.length > 0)
                             {
                                 var genreStr = value.replace(",","").trim();
-                                $(val).append('<span class="genre_'+genreStr+' genre-label theme">' + genreStr + "</span>");
+                                var selectedStr = ""
+                                if ($('#FilterGenreList#genre_'+genreStr).hasClass("genre-selected"))
+                                {
+                                    selectedStr = "genre-selected";
+                                }
+                                $(val).append('<span class="genre_'+genreStr+' genre-label theme ' + selectedStr + '">' + genreStr + "</span>");
                             }
                         });
                     }
@@ -121,7 +126,7 @@
                 var filter_genre_list = $("#FilterGenreList").empty();
                 $.each(genre_list, function(name){
                     genreList.push(name);
-                    $(filter_genre_list).append('<span id="Genre_'+name+'" class="GenreFilterButton theme">'+name+'</span>');
+                    $(filter_genre_list).append('<span id="genre_'+name+'" class="GenreFilterButton theme">'+name+'</span>');
                 });
                 $(".GenreFilterButton").button().click(GenreFilterButtonClick);
 
