@@ -75,6 +75,13 @@
 .GenreFilterButton.theme{
     color: white;   
 }
+.genre-label {
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+}
+.genre-label.theme {
+
+}
 .cover-details-infoline img{
     float: right;
     top: inherit;

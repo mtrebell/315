@@ -49,7 +49,7 @@
                     $(val).attr("src", htmlData);
                 }
 
-                else if ($(val).is("ul"))
+                else if ($(val).is("div"))
                 {
                     //console.log("ul %s",htmlData);
                     if (htmlData !== undefined)
@@ -59,7 +59,8 @@
                             var v = value.trim();
                             if (v !== undefined && v.length > 0)
                             {
-                                $(val).append("<li>" + value.trim() +"</li>");
+                                var genreStr = value.replace(",","").trim();
+                                $(val).append('<span class="genre_'+genreStr+' genre-label theme">' + genreStr + "</span>");
                             }
                         });
                     }
@@ -385,9 +386,7 @@
                         </span>
                         <span class="cover-details-infoline"> 
                             <p class="cover-details-element-label theme">Genre:</p> 
-                            <!--p id="mov_genre" class="cover-details-element-detail theme details-info"></p-->
-                            <ul id="mov_genre" class="cover-details-element-detail theme details-info">
-                            </ul>
+                            <div id="mov_genre" class="cover-details-element-detail theme details-info"></div>
                         </span>
                     </section>
                     <section id="cover-details" class="tableCell table-thirds">
