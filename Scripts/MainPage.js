@@ -14,6 +14,25 @@ function RemoveFilterSpan(filter)
 //------------------------------------------------------------------------
 // Functions for adding and removing the Alpha filters
 //------------------------------------------------------------------------
+function AlphaFilterButtonClick(e)
+// when the alpha filter is clicked then this is called
+{
+    e.preventDefault();
+    if ( filterFlowCtrl.coverflow('index') !== 0)
+    {
+        return;
+    }
+    $(this).toggleClass('AlphaFilterActive');
+    if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
+    {
+        DelAlphaFilter($(this).attr('id'));
+    }
+    else
+    {
+        AddAlphaFilter($(this).attr('id'));
+    }
+};
+
 function AddAlphaFilter(filterID)
 // Add a Filter span to the filter bar.
 {
@@ -47,10 +66,34 @@ function DelAlphaFilter(filterID)
     RemoveFilterSpan($("#FilterBar #Filter_" + filterID));
     // do this as mutating events cause problems.
 
-};
+}
 //------------------------------------------------------------------------
 // Functions for adding and removing the Alpha filters
 //------------------------------------------------------------------------
+function GenreFilterButtonClick(e)
+// When the genre filter buttons are clicked, then this is activated.
+{
+    e.preventDefault();
+    if ( filterFlowCtrl.coverflow('index') !== 2)
+    {
+        return;
+    }
+    $(this).toggleClass('genre-selected');
+    var idStr = $(this).attr('id');
+    if ($("#FilterBar #Filter_" + idStr).length !== 0)
+    {
+        console.log(" remove selected %o", $("." + idStr));
+        $("." + idStr).removeClass("genre-selected");
+        DelGenreFilter($(this).attr('id'));
+    }
+    else
+    {
+        console.log(" add selected %o", $("." + idStr));
+        $("." + idStr).addClass("genre-selected");
+        AddGenreFilter($(this).attr('id'), $(this).find("span").html());
+    }
+}
+
 function AddGenreFilter(filterID, key)
 // Add a Filter span to the filter bar.
 {
@@ -130,7 +173,7 @@ function CoverFilter(cover)
 // hide the some covers based on these filtering criteria
 //
 {
-    var log=true;
+    var log=false;
     var title = $(cover).find("#info #mov_title").html();
     var genre = $(cover).find("#info #mov_genre").html().trim().toLowerCase();
     var filters = $("#FilterBar span");
