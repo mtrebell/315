@@ -33,11 +33,10 @@
         function ShowMovieDetails(e, cover, index)
         {
             var info = $(cover).find("div#info");
-<<<<<<< HEAD
             $("#tabs-info>span>.details-info").each(function(idx, val){
                 console.log("val.id %s", $(val).attr('id'));
                 $(val).html(info.find("#"+$(val).attr('id')).html());
-=======
+
             $(".details-info").each(function(idx, val){
                 var htmlData = info.find("#"+$(val).attr('id')).html();
                 console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
@@ -81,7 +80,6 @@
                             $(val).append('<i class="fa fa-star star-theme"/>')
                         }  
                     });
->>>>>>> 2abfcf88af6a5ce534b8786950e6793355e06d6d
             })
         }
 
@@ -359,13 +357,13 @@
             <li><a href="#tabs-2">IMDB</a></li>
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
-<<<<<<< HEAD
+
         <div id="tabs-info">
             <span id="info_title" class="infoline"> <p class="left">Title:</p> <p id="mov_title" class="right details-info"></p></span>
             <span id="info_rating" class="infoline"> <p class="left">Rating:</p> <p id="mov_rating" class="right details-info"></p></span>
             <span id="info_rating" class="infoline"> <p class="left">Run Time:</p> <p id="mov_runTime" class="right details-info"></p></span>
             <span id="info_rating" class="infoline"> <p class="left">Title:</p> <img src="" id="mov_rating" class="right details-info"/></span>
-=======
+
         <div id="tabs-info" class="hex-background no-tab-padding">
             <div class="tableContainer">
                 <div class="tableRow">
@@ -407,7 +405,6 @@
                     </section>
                 </div>
             </div>
->>>>>>> 2abfcf88af6a5ce534b8786950e6793355e06d6d
         </div>
         <div id="tabs-1">
             <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.

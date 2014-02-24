@@ -22,8 +22,12 @@
         <link href="scripts/jquery-ui-1.10.4.css" rel="stylesheet" type="text/css" />
         <link href="scripts/jquery-ui-1.10.4.custom.css" rel="stylesheet" type="text/css" /> 
         <link href="scripts/jquery.multilevelpushmenu.css" rel="stylesheet" type="text/css" /> 
+<<<<<<< HEAD
 
         <link href="scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
+=======
+        <link href="scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
+>>>>>>> 2abfcf88af6a5ce534b8786950e6793355e06d6d
 
         <asp:ContentPlaceHolder ID="head" runat="server"> </asp:ContentPlaceHolder>
     </head>
