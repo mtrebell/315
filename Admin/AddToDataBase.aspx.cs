@@ -74,7 +74,7 @@ public partial class _Default : System.Web.UI.Page
     {
         if (_tUpload != null)
             _tUpload.Abort();
-
+        Percentage = 0;
         return 0;
     }
 

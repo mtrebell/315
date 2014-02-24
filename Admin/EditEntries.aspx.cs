@@ -10,10 +10,13 @@ using System.IO;
 using System.Data;
 using System.Web.Services;
 using System.Text;
+using System.Security.Cryptography;
 
 public partial class _Default : System.Web.UI.Page
 {
     private static string sConnectionString = ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString;
+    private static string sUpload;
+    private static string sImages;
 
     public string ServerRootPath
     {
@@ -29,6 +32,31 @@ public partial class _Default : System.Web.UI.Page
     {
         if (!Page.IsPostBack)
             createAccordianUsingRepeater();
+
+        sUpload = Server.MapPath("~/Upload");
+        sImages = Server.MapPath("/Image_Posters");
+
+        using (SqlDataReader sdr = Middleware.MovieDisplayContent())
+        {
+            StringBuilder sb = new StringBuilder();
+            if (sdr.HasRows)
+            {
+                while (sdr.Read())
+                    sb.Append(sdr[4].ToString()).Append('|');
+                sb.Remove(sb.Length - 1, 1);
+
+                hf_usedindexes.Value = sb.ToString();
+            }
+        }
+
+        using (SqlDataReader sdr = Middleware.GetAllGenreOptions())
+        {
+            while (sdr.Read())
+            {
+                Edit_mov_genre.Items.Add(sdr[1].ToString());
+                Add_mov_genre.Items.Add(sdr[1].ToString());
+            }
+        }
     }
 
 
@@ -76,6 +104,69 @@ public partial class _Default : System.Web.UI.Page
         return sb.ToString();
     }
 
+    [WebMethod()]
+    public static string commitUpdateDB(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size, 
+			string mov_fileType, string mov_dateAdded, string mov_rating, string mov_runTime, string mov_lgPoster, 
+			string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm)
+    {
+        string lgPoster = "",
+               smPoster = "";
+
+        using (SqlDataReader sdr = Middleware.CheckChange(mov_id))
+        {
+            sdr.Read();
+            lgPoster = sdr[0].ToString().Replace("~", "..");
+            smPoster = sdr[1].ToString().Replace("~", "..");
+        }
+
+        if (updatedLg)
+            lgPoster= TransferImageFromUpload(mov_lgPoster, "lg");
+        if (updatedSm)
+            smPoster = TransferImageFromUpload(mov_smPoster, "sm");
+
+        Middleware.UpdateEntry(mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, mov_dateAdded,
+            mov_rating, mov_runTime, lgPoster.Replace("..", "~"), smPoster.Replace("..", "~"), 
+            mov_trailer, mov_imdbUrl, "UpdateTitle");
+
+        foreach (FileInfo f in new DirectoryInfo(sUpload).EnumerateFiles())
+            File.Delete(f.FullName);
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append(mov_id).Append("|").Append(mov_title).Append("|").Append(mov_plot).Append("|");
+        sb.Append(mov_genre).Append("|").Append(mov_size).Append("|").Append(mov_fileType).Append("|");
+        sb.Append(mov_dateAdded).Append("|").Append(mov_rating).Append("|");
+        sb.Append(mov_runTime).Append("|").Append(lgPoster).Append("|").Append(smPoster).Append("|");
+        sb.Append(mov_trailer).Append("|").Append(mov_imdbUrl);
+
+        return sb.ToString();
+    }
+
+    [WebMethod()]
+    public static string AddEntryDB(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size,
+        string mov_fileType, string mov_rating, string mov_runTime, string mov_lgPoster,
+        string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm)
+    {
+        string lgPoster = "",
+               smPoster = "";
+
+        if (updatedLg)
+            lgPoster = TransferImageFromUpload(mov_lgPoster, "lg");
+        if (updatedSm)
+            smPoster = TransferImageFromUpload(mov_smPoster, "sm");
+
+        Middleware.UpdateEntry(mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, DateTime.Now.ToShortDateString(),
+        mov_rating, mov_runTime, lgPoster.Replace("..", "~"), smPoster.Replace("..", "~"),mov_trailer, mov_imdbUrl, "InsertTitle");
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append(mov_id).Append("|").Append(mov_title).Append("|").Append(mov_plot).Append("|");
+        sb.Append(mov_genre).Append("|").Append(mov_size).Append("|").Append(mov_fileType).Append("|");
+        sb.Append(DateTime.Now.ToShortDateString()).Append("|").Append(mov_rating).Append("|");
+        sb.Append(mov_runTime).Append("|").Append(lgPoster.Replace("~", "..")).Append("|").Append(smPoster.Replace("~", "..")).Append("|");
+        sb.Append(mov_trailer).Append("|").Append(mov_imdbUrl);
+
+        return sb.ToString();
+    }
+
 
     public void createAccordianUsingRepeater()
     {
@@ -98,5 +189,45 @@ public partial class _Default : System.Web.UI.Page
         da.Fill(dt);
 
         return dt;
+    }
+
+    private static string TransferImageFromUpload(string newImg, string type)
+    {
+        string newImageName = newImg.Substring(newImg.LastIndexOf("/") + 1, 
+            newImg.Length - newImg.LastIndexOf("/") -1);
+        string newImageExt = newImageName.Substring(newImageName.LastIndexOf("."),
+            newImageName.Length - newImageName.LastIndexOf("."));
+
+        string newConverted = 
+            GetMd5Hash(MD5.Create(), newImageName.Replace(newImageExt,"") + type) + newImageExt;
+
+        if (File.Exists(Path.Combine(sUpload, newImageName)))
+        {
+            if (File.Exists(Path.Combine(sImages, newConverted)))
+                File.Delete(Path.Combine(sImages, newConverted));
+            File.Move(Path.Combine(sUpload, newImageName), Path.Combine(sImages, newConverted));
+        }
+
+        return "../Image_Posters/" + newConverted;
+    }
+
+    private static string GetMd5Hash(MD5 md5Hash, string input)
+    {
+        // Convert the input string to a byte array and compute the hash. 
+        byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+        // Create a new Stringbuilder to collect the bytes 
+        // and create a string.
+        StringBuilder sBuilder = new StringBuilder();
+
+        // Loop through each byte of the hashed data  
+        // and format each one as a hexadecimal string. 
+        for (int i = 0; i < data.Length; i++)
+        {
+            sBuilder.Append(data[i].ToString("x2"));
+        }
+
+        // Return the hexadecimal string. 
+        return sBuilder.ToString();
     }
 }

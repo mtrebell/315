@@ -12,10 +12,29 @@ IF EXISTS
 (
 	select [name]
 	from sys.tables
+	where [name] = 'Recomended'
+)
+DROP TABLE Recomended
+GO
+
+IF EXISTS
+(
+	select [name]
+	from sys.tables
+	where [name] = 'Similar'
+)
+DROP TABLE Similar
+GO
+
+IF EXISTS
+(
+	select [name]
+	from sys.tables
 	where [name] = 'Favorites'
 )
 DROP TABLE Favorites
 GO
+
 
 IF EXISTS
 (
@@ -69,12 +88,12 @@ CREATE TABLE [MovieSummary](
 	[mov_id] [nvarchar](100) NOT NULL,
 	[mov_title] [nvarchar](100) NOT NULL,
 	[mov_plot] [nvarchar](1500) NULL,
-	[mov_genre] [nvarchar] (25) NOT NULL,
+	[mov_genre] [nvarchar] (200) NOT NULL,
 	[mov_size] [nvarchar](25) NULL,
 	[mov_fileType] [nvarchar](10) NULL,
 	[mov_runTime] [nvarchar](25) NULL,
 	[mov_dateAdded] [datetime] NULL,
-	[mov_rating] [nvarchar](10) NULL,
+	[mov_rating] [float] NULL,
 	[mov_smPoster] [nvarchar](255) NULL,
 	[mov_lgPoster] [nvarchar](255) NULL,
 	[mov_trailer] [nvarchar](1500) NULL,
@@ -123,5 +142,27 @@ CREATE TABLE FavoriteDetails
 )
 GO
 
+/************** Create Dynamic Tables *******************/
 
+CREATE TABLE Recomended
+(
+	[users_id] uniqueidentifier
+		FOREIGN KEY REFERENCES aspnet_Users(UserId),	
+	[mov_id] [nvarchar](100)
+		FOREIGN KEY REFERENCES MovieSummary(mov_id),
+	[mov_rating] [float],
+	PRIMARY KEY ([mov_id],[users_id])
+)
+GO
 
+CREATE TABLE Similar
+(
+	[mov_id] [nvarchar](100)
+		FOREIGN KEY REFERENCES MovieSummary(mov_id),
+	[match_id] [nvarchar](100)
+		FOREIGN KEY REFERENCES MovieSummary(mov_id),
+	[similarity] [float],
+	[mov_rating] [float],
+	Primary Key ([mov_id],[match_id])
+)
+GO
