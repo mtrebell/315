@@ -33,9 +33,55 @@
         function ShowMovieDetails(e, cover, index)
         {
             var info = $(cover).find("div#info");
+<<<<<<< HEAD
             $("#tabs-info>span>.details-info").each(function(idx, val){
                 console.log("val.id %s", $(val).attr('id'));
                 $(val).html(info.find("#"+$(val).attr('id')).html());
+=======
+            $(".details-info").each(function(idx, val){
+                var htmlData = info.find("#"+$(val).attr('id')).html();
+                console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
+                if ($(val).is("img"))
+                {
+                    //console.log("image");
+                    $(val).attr("src", htmlData);
+                }
+
+                else if ($(val).is("div"))
+                {
+                    //console.log("ul %s",htmlData);
+                    if (htmlData !== undefined)
+                    {
+                        $(val).empty();
+                        htmlData.split(",").forEach(function(value, idx){
+                            var v = value.trim();
+                            if (v !== undefined && v.length > 0)
+                            {
+                                var genreStr = value.replace(",","").trim();
+                                $(val).append('<span class="genre_'+genreStr+' genre-label theme">' + genreStr + "</span>");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        //todo: make all the fields get cleared.
+                    }
+                }
+
+                else
+                {
+                    //console.log("default");
+                    $(val).html(htmlData);
+                }
+
+                $(".cover-details-infoline #mov_rating i").remove();
+                $(".cover-details-infoline #mov_rating").remove('i')
+                    .each (function(idx, val) {
+                        for (var i= 0; i <= parseInt($(val).html())/2; i++) {
+                            $(val).append('<i class="fa fa-star star-theme"/>')
+                        }  
+                    });
+>>>>>>> 2abfcf88af6a5ce534b8786950e6793355e06d6d
             })
         }
 
@@ -313,11 +359,55 @@
             <li><a href="#tabs-2">IMDB</a></li>
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
+<<<<<<< HEAD
         <div id="tabs-info">
             <span id="info_title" class="infoline"> <p class="left">Title:</p> <p id="mov_title" class="right details-info"></p></span>
             <span id="info_rating" class="infoline"> <p class="left">Rating:</p> <p id="mov_rating" class="right details-info"></p></span>
             <span id="info_rating" class="infoline"> <p class="left">Run Time:</p> <p id="mov_runTime" class="right details-info"></p></span>
             <span id="info_rating" class="infoline"> <p class="left">Title:</p> <img src="" id="mov_rating" class="right details-info"/></span>
+=======
+        <div id="tabs-info" class="hex-background no-tab-padding">
+            <div class="tableContainer">
+                <div class="tableRow">
+                    <section id="cover-details" class="tableCell table-thirds">
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Title:</p> 
+                            <p id="mov_title" class="cover-details-element-detail theme details-info"></p>
+                        </span>
+                        <br/>
+                        <span class="cover-details-infoline multi-line"> 
+                            <p class="cover-details-element-label theme multi-line">Plot<br>Summary:</p> 
+                            <p id="mov_plot" class="cover-details-element-detail theme details-info multi-line"></p>
+                        </span>
+                        <br/>
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Rating:</p> 
+                            <p id="mov_rating" class="cover-details-element-detail theme details-info"></p>
+                        </span>
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Run Time:</p> 
+                            <p id="mov_runTime" class="cover-details-element-detail theme details-info">
+                            </p>
+                        </span>
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Genre:</p> 
+                            <div id="mov_genre" class="cover-details-element-detail theme details-info"></div>
+                        </span>
+                    </section>
+                    <section id="cover-details" class="tableCell table-thirds">
+                        <span class="cover-details-infoline"> 
+                            <img src="" id="mov_lgPoster" class="details-info theme"/>
+                        </span>        
+                    </section>
+                    <section id="cover-details" class="tableCell table-thirds">
+                        <span class="cover-details-infoline"> 
+                            <p class="cover-details-element-label theme">Run Time:</p> 
+                            <p id="mov_trailer" class="cover-details-element-detail theme details-info"></p>
+                        </span>
+                    </section>
+                </div>
+            </div>
+>>>>>>> 2abfcf88af6a5ce534b8786950e6793355e06d6d
         </div>
         <div id="tabs-1">
             <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.
