@@ -33,10 +33,6 @@
         function ShowMovieDetails(e, cover, index)
         {
             var info = $(cover).find("div#info");
-            $("#tabs-info>span>.details-info").each(function(idx, val){
-                console.log("val.id %s", $(val).attr('id'));
-                $(val).html(info.find("#"+$(val).attr('id')).html());
-
             $(".details-info").each(function(idx, val){
                 var htmlData = info.find("#"+$(val).attr('id')).html();
                 console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
