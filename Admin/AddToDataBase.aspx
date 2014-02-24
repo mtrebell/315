@@ -28,7 +28,6 @@
 <form runat="server">
     <script type="text/javascript">
         $(document).ready(function () {
-            updateProgress();
             $("#pBar").progressbar({ value: 0 });
         });
 
@@ -45,15 +44,18 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
-                success: function (msg) {
+                success: function (msg) {                  
                     $("#lblProgress").text(msg.d);
                     $("#pBar").progressbar({ value: msg.d });
 
                     if (msg.d < 100) {
                         setTimeout(updateProgress, 100);
                     }
-                    else
+                    else {
+                        $("#pBar").progressbar({ value: "0" });
                         $("#Cancel").attr('value', 'Back');
+                        $('#messages').empty();
+                    }
                 },
                 cache: false
             });
@@ -65,6 +67,8 @@
         function StartProcess() {
             var content = document.getElementById("HiddenList").value.toString();
             var path = '<%= ServerRootPath %>';
+
+            updateProgress();
 
             var objectdata = { 'hiddenListContent': content.toString() , 'imageRootPath':  path.toString() };
 

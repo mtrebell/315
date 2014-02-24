@@ -32,8 +32,7 @@ go
 GO
 CREATE PROCEDURE MovieCollectionGrab
 AS 
-    SELECT *
-	/*mov_smPoster, mov_title, mov_rating, mov_runTime, mov_id */
+    SELECT mov_smPoster, mov_title, mov_rating, mov_runTime, mov_id 
     FROM dbo.MovieSummary
 	ORDER BY mov_title
 GO
@@ -435,12 +434,12 @@ CREATE PROCEDURE InsertTitle
      @mov_id nvarchar(100),
 	 @mov_title [nvarchar](100),
 	 @mov_plot [nvarchar](1500),
-	 @mov_genre [nvarchar] (25),
+	 @mov_genre [nvarchar] (200),
 	 @mov_size [nvarchar](25),
 	 @mov_fileType [nvarchar](10),
 	 @mov_runTime [nvarchar](25),
 	 @mov_dateAdded [datetime],
-	 @mov_rating [nvarchar](10),
+	 @mov_rating Float,
 	 @mov_smPoster [nvarchar](255),
 	 @mov_lgPoster [nvarchar](255),
 	 @mov_trailer [nvarchar](1500),
@@ -539,26 +538,48 @@ CREATE PROCEDURE UpdateTitle
      @mov_id nvarchar(100),
 	 @mov_title [nvarchar](100),
 	 @mov_plot [nvarchar](1500),
-	 @mov_genre [nvarchar] (25),
+	 @mov_genre [nvarchar] (200),
 	 @mov_size [nvarchar](25),
 	 @mov_fileType [nvarchar](10),
 	 @mov_runTime [nvarchar](25),
 	 @mov_dateAdded [datetime],
-	 @mov_rating [nvarchar](10),
+	 @mov_rating Float,
 	 @mov_smPoster [nvarchar](255),
 	 @mov_lgPoster [nvarchar](255),
 	 @mov_trailer [nvarchar](1500),
 	 @mov_imdbUrl [nvarchar](255)
 AS
-	UPDATE [MovieSummary] SET [mov_id] = @mov_id,
-							  [mov_title] = @mov_title, 
+	UPDATE [MovieSummary] SET [mov_title] = @mov_title, 
 							  [mov_plot] = @mov_plot, 
 							  [mov_size] = @mov_size, 
 							  [mov_fileType] = @mov_fileType, 
+							  [mov_genre] = @mov_genre,
 							  [mov_dateAdded] = @mov_dateAdded, 
 							  [mov_rating] = @mov_rating, 
 							  [mov_runTime] = @mov_runTime, 
 							  [mov_lgPoster] = @mov_lgPoster, 
-							  [mov_smPoster] = @mov_smPoster 
+							  [mov_smPoster] = @mov_smPoster,
+							  [mov_trailer] = @mov_trailer,
+							  [mov_imdbUrl] = @mov_imdbUrl
 		WHERE [mov_id] = @mov_id
+GO
+
+
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'DetermineChanges'
+)
+drop procedure DetermineChanges
+GO
+
+CREATE PROCEDURE DetermineChanges
+@mov_id nvarchar(100)
+AS
+	SELECT	[mov_lgPoster], 
+			[mov_smPoster]
+	FROM [MovieSummary] 
+	WHERE @mov_id = [mov_id]	
 GO

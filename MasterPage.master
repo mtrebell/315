@@ -2,7 +2,6 @@
 <%@ Register Src="~/Header.ascx" TagName="Header" TagPrefix="WUC" %>
 <%@ Register Src="~/Footer.ascx" TagName="Footer" TagPrefix="WUC" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head runat="server">
@@ -18,14 +17,11 @@
         <script src="scripts/jquery.multilevelpushmenu.js"></script>
         <script src="scripts/reflection.js"></script>
         <script src='scripts/jquery.fileupload.js'></script>
-        <script src='scripts/jquery.tagit.js'></script>
 
         <link href="CssSheets/font-awesome.min.css" rel="stylesheet" type="text/css"/>
         <link href="scripts/jquery-ui-1.10.4.css" rel="stylesheet" type="text/css" />
         <link href="scripts/jquery-ui-1.10.4.custom.css" rel="stylesheet" type="text/css" /> 
         <link href="scripts/jquery.multilevelpushmenu.css" rel="stylesheet" type="text/css" /> 
-        <link href="scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
-        jquery.tagit
 
         <asp:ContentPlaceHolder ID="head" runat="server"> </asp:ContentPlaceHolder>
     </head>
