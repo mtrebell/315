@@ -562,3 +562,144 @@ AS
 							  [mov_smPoster] = @mov_smPoster 
 		WHERE [mov_id] = @mov_id
 GO
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'GetUserAverages'
+)
+drop procedure GetUserAverages
+go
+
+GO
+CREATE PROCEDURE GetUserAverages
+
+AS 
+    SELECT user_id, AVG(rating)
+    FROM dbo.MovieRatings
+	GROUP BY user_id
+GO
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'GetMovieAverages'
+)
+drop procedure GetMovieAverages
+go
+
+GO
+CREATE PROCEDURE GetMovieAverages
+
+AS 
+    SELECT movie_id, AVG(rating)
+    FROM dbo.ratings
+	GROUP BY movie_id
+GO
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'GetMoiveRatings'
+)
+drop procedure GetMovieRatings
+go
+
+GO
+CREATE PROCEDURE GetMovieRatings
+
+AS 
+    SELECT movie_id,user_id,rating
+    FROM dbo.MovieRatings
+	ORDER BY movie_id
+GO
+
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'GetSimilarMoive'
+)
+drop procedure GetSimilarMovie
+go
+
+GO
+CREATE PROCEDURE GetSimilarMovie
+@mov_id nvarchar(100)
+
+AS 
+    SELECT mov_id,match_id,similarity,rating
+    FROM dbo.MovieRatings
+	WHERE [mov_id] = @mov_id OR [match_id] = @mov_id
+	ORDER BY match_id
+GO
+
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'GetUnwatchedMovie'
+)
+drop procedure GetUnwatchedMovie
+go
+
+GO
+CREATE PROCEDURE GetUnwatchedMovie
+@user_id nvarchar(100)
+
+AS 
+    SELECT mov_id
+    FROM dbo.MovieRatings AS t1
+	WHERE t1.mov_id NOT IN (SELECT mov_id FROM dbo.MovieRatings AS t2 WHERE [user_id] = @user_id)
+GO
+
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'AddSimilar'
+)
+drop procedure AddSimilar
+go
+
+GO
+
+GO
+CREATE PROCEDURE AddSimilar
+@mov_id nvarchar(100),
+@match nvarchar(100),
+@similar nvarchar(100),
+@rating nvarchar(100)
+AS
+BEGIN
+ INSERT INTO dbo.similar (mov_id, match,similar,rating) 
+ VALUES (@mov_id, @match,@similar,@rating)
+END
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'AddRating'
+)
+drop procedure AddRating
+go
+
+GO
+
+GO
+CREATE PROCEDURE AddRating
+@mov_id nvarchar(100),
+@user_id nvarchar(100),
+@rating nvarchar(100)
+AS
+BEGIN
+ INSERT INTO dbo.ratings(user_id,moive_id,rating) 
+ VALUES (@user_id, @movie_id, @rating)
+ END
