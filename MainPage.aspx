@@ -30,6 +30,7 @@
         var filterTagID = 0;
         var coverFlowCtrl = null;
         var filterFlowCtrl = null;
+        var genreList = [];
         function ShowMovieDetails(e, cover, index)
         {
             var info = $(cover).find("div#info");
@@ -376,12 +377,6 @@
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
 
-        <div id="tabs-info">
-            <span id="info_title" class="infoline"> <p class="left">Title:</p> <p id="mov_title" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Rating:</p> <p id="mov_rating" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Run Time:</p> <p id="mov_runTime" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Title:</p> <img src="" id="mov_rating" class="right details-info"/></span>
-        </div>
         <div id="tabs-info" class="hex-background no-tab-padding">
             <div class="tableContainer">
                 <div class="tableRow">

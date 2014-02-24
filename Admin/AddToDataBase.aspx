@@ -1,9 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" EnableEventValidation="true" Async="true" AutoEventWireup="true" CodeFile="AddToDataBase.aspx.cs" Inherits="_Default" ViewStateMode="Enabled" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <script src="../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
-    <script src="../Scripts/jquery-ui-1.10.4.custom.js" type="text/javascript"></script> 
-
     <link href="../CssSheets/AddToDataBase.css" rel="stylesheet" type="text/css" /> 
     <style type="text/css">
         .Button
