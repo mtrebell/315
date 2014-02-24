@@ -100,7 +100,6 @@
                     if ($(value).find(".missing_poster").length !== 0) {
                         $(value).append('<span class="movieTitle">' + $(value).find("#info #mov_title").html() + '</span>');
                     }
-<<<<<<< HEAD
                     // get the genre from the info and add them to the object, we are using the object
                     // as a poor mans set. 
                     var htmlData = $(value).find("#info #mov_genre").html();
@@ -118,8 +117,6 @@
                 $.each(genre_list, function(name){
                     genreList.push(name);
                     $(filter_genre_list).append('<span id="genre_'+name+'" class="GenreFilterButton theme">'+name+'</span>');
-=======
->>>>>>> 9dd8feccf6603e2d2b119666f05dcd4977f30279
                 });
 
                 coverFlowCtrl = $('#CoverFlow').coverflow(
