@@ -27,7 +27,6 @@
 
         <link href="scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
 
-
         <asp:ContentPlaceHolder ID="head" runat="server"> </asp:ContentPlaceHolder>
     </head>
 
