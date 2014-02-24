@@ -14,6 +14,25 @@ function RemoveFilterSpan(filter)
 //------------------------------------------------------------------------
 // Functions for adding and removing the Alpha filters
 //------------------------------------------------------------------------
+function AlphaFilterButtonClick(e)
+// when the alpha filter is clicked then this is called
+{
+    e.preventDefault();
+    if ( filterFlowCtrl.coverflow('index') !== 0)
+    {
+        return;
+    }
+    $(this).toggleClass('AlphaFilterActive');
+    if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
+    {
+        DelAlphaFilter($(this).attr('id'));
+    }
+    else
+    {
+        AddAlphaFilter($(this).attr('id'));
+    }
+};
+
 function AddAlphaFilter(filterID)
 // Add a Filter span to the filter bar.
 {
@@ -51,6 +70,25 @@ function DelAlphaFilter(filterID)
 //------------------------------------------------------------------------
 // Functions for adding and removing the Alpha filters
 //------------------------------------------------------------------------
+function GenreFilterButtonClick(e)
+// When the genre filter buttons are clicked, then this is activated.
+{
+    e.preventDefault();
+    if ( filterFlowCtrl.coverflow('index') !== 2)
+    {
+        return;
+    }
+    $(this).toggleClass('genre-selected');
+    if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
+    {
+        DelGenreFilter($(this).attr('id'));
+    }
+    else
+    {
+        AddGenreFilter($(this).attr('id'), $(this).find("span").html());
+    }
+};
+
 function AddGenreFilter(filterID, key)
 // Add a Filter span to the filter bar.
 {

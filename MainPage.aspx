@@ -84,38 +84,6 @@
                     });
             })
         }
-        function AlphaFilterButtonClick(e) { 
-            e.preventDefault();
-            if ( filterFlowCtrl.coverflow('index') !== 0)
-            {
-                return;
-            }
-            $(this).toggleClass('AlphaFilterActive'); 
-            if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
-            {
-                DelAlphaFilter($(this).attr('id'));
-            }
-            else
-            {
-                AddAlphaFilter($(this).attr('id'));
-            }
-        };
-        function GenreFilterButtonClick(e) {
-            e.preventDefault();
-            if ( filterFlowCtrl.coverflow('index') !== 2)
-            {
-                return;
-            }
-            $(this).toggleClass('genre-selected'); 
-            if ($("#FilterBar #Filter_"+$(this).attr('id')).length !== 0)
-            {
-                DelGenreFilter($(this).attr('id'));
-            }
-            else
-            {
-                AddGenreFilter($(this).attr('id'), $(this).find("span").html());
-            }
-        };
         // DOCUMENT READY!
         $(function() 
         {
@@ -365,6 +333,7 @@
 
                             <input id="TagFilterInput"/> 
                             <button class="TagFilterButton">Add Tag</button> 
+                            <!-- Add a new movie filter flag.-->
                         </div>
                         <div id="FilterGenre" class="cover" >
                             <p>Select genre to filter by:</p>
