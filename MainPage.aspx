@@ -1,41 +1,65 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="MainPage.aspx.cs" Inherits="_Default" %>
-<asp:Content ContentPlaceHolderID="head" Runat="Server">
-    <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
-    <script src="scripts/MainPage.js"></script>
-
-    <style>
-        .movieTitle {
-            color: gray;
-            text-shadow: 0px 0px 2em black;
-            background-image: url("Background_Images/semitransparent_black.png");
-            position: absolute;
-            top: 300px;
-            text-align: center;
-            width: 100%;
-            font-size: larger;
-            font-weight: bold;
-        }
-        .inline-display{
-            display: -webkit-inline-box;
-        }
-        .icon-button{
-            width:  40px;
-            height: 40px;
-        }
-    </style>
-</asp:Content>
-
 <asp:Content ContentPlaceHolderID="body" Runat="Server">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head runat="server">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Media Server Db</title>
+
+        <script src="Scripts/jquery-1.10.2.js"></script>
+        <script src="Scripts/jquery-ui-1.10.4.custom.js"></script> 
+        <script src="Scripts/jquery.coverflow.js"></script>
+        <script src="Scripts/jquery.interpolate.js"></script>
+        <script src="Scripts/jquery.mousewheel.js"></script>
+        <script src="Scripts/jquery.touchSwipe.min.js"></script>
+        <script src="Scripts/jquery.multilevelpushmenu.js"></script>
+        <script src="Scripts/reflection.js"></script>
+        <script src='Scripts/jquery.fileupload.js'></script>
+
+        <link href="CssSheets/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <link href="Scripts/jquery-ui-1.10.4.css" rel="stylesheet" type="text/css" />
+        <link href="Scripts/jquery-ui-1.10.4.custom.css" rel="stylesheet" type="text/css" /> 
+        <link href="Scripts/jquery.multilevelpushmenu.css" rel="stylesheet" type="text/css" /> 
+        <link href="Scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
+
+        <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
+        <script src="scripts/MainPage.js"></script>
+
+        <style>
+            .movieTitle {
+                color: gray;
+                text-shadow: 0px 0px 2em black;
+                background-image: url("Background_Images/semitransparent_black.png");
+                position: absolute;
+                top: 300px;
+                text-align: center;
+                width: 100%;
+                font-size: larger;
+                font-weight: bold;
+            }
+            .inline-display{
+                display: -webkit-inline-box;
+            }
+            .icon-button{
+                width:  40px;
+                height: 40px;
+            }
+        </style>
+    </head>
+
     <script type="text/javascript">
         var filterTagID = 0;
         var coverFlowCtrl = null;
         var filterFlowCtrl = null;
+        var genreList = [];
+
         function ShowMovieDetails(e, cover, index)
         {
             var info = $(cover).find("div#info");
             $(".details-info").each(function(idx, val){
                 var htmlData = info.find("#"+$(val).attr('id')).html();
-                console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
+        //        console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
                 if ($(val).is("img"))
                 {
                     //console.log("image");
@@ -172,6 +196,7 @@
                 backItemIcon: 'fa fa-angle-left',
                 groupIcon: 'fa fa-angle-right',
                 collapsed: true,
+                onExpandMenuStart: function (e){console.log("on expand");}
                 // containersToPush: [ $( '#mainBody' ), $('#Content') ],
             });
 
@@ -179,7 +204,7 @@
             // Set up the click event for the alpha filters.
             $('.AlphaFilterButton').click(function(e) { 
                 e.preventDefault();
-                if ( filterFlowCtrl.coverflow('index') !== 0)
+                if ( filterFlowCtrl.coverflow('index') !== 0 || $('.ui-dialog-content').dialog('isOpen'))
                 {
                     return;
                 }
@@ -243,36 +268,73 @@
         <RoleGroups>
             <asp:RoleGroup Roles="Administrator">
                 <ContentTemplate>
+                    <link href="CssSheets/Admin.css" rel="stylesheet" type="text/css" />
+                    <link href="CssSheets/AddToDataBase.css" rel="stylesheet" type="text/css" /> 
+
                     <script type="text/javascript">
                         $(function () {
-                            $("#AddContentDialog").load("/Admin/AddToDataBase.aspx");
                             $("#AddContentDialog").hide();
-                            $("#AddContentButton").click(function (e) {
-                                e.preventDefault();
-                                $("#AddContentDialog").dialog({ dialogClass: "ui-ontop", width: "50%", });
-                            });
+                            $("#AddContentDialog").load("Admin/AddToDataBase.aspx", function(){
+                                $("#AddContentDialog").dialog({ 
+                                    dialogClass: "ui-ontop", 
+                                    width: "50%", 
+                                    modal: true,
+                                    resizable: false,
+                                    title: "Add new content",
+                                    autoOpen: false,
+                                    draggable: false,
+                                    // open: function(e, ui) { $('#menu').hide();},
+                                    // close: function(e, ui) { $('#menu').show();}
+                                });
+                                $("#AddContentButton").click(function (e) {
+                                    e.preventDefault();
+                                    $("#AddContentDialog").dialog('open');
 
-                            $("#EditEntriesDialog").load("/Admin/EditEntries.aspx");
+                                });
+                                
+                            });
+    
                             $("#EditEntriesDialog").hide();
-                            $("#EditEntriesButton").click(function (e) {
-                                e.preventDefault();
+                            $("#EditEntriesDialog").load("Admin/EditEntries.aspx", function(){
                                 $("#EditEntriesDialog").dialog({
                                     dialogClass: "ui-ontop",
-                                    width: "540px",
+                                    width: "50%",
+                                    minHeight: 350,
+                                    modal: true,
+                                    resizable: false,
+                                    title: "Edit Movies",
+                                    autoOpen: false,
+                                    draggable: false,
+
                                     create: function () {
                                         $(this).css("maxHeight", 350);
                                     }
                                 });
+                                $("#EditEntriesButton").click(function (e) {
+                                    e.preventDefault();
+                                    $("#EditEntriesDialog").dialog('open');
+                                });
+                                
                             });
 
-                            $("#EditUsersDialog").load("/Admin/ManageAccount.aspx");
                             $("#EditUsersDialog").hide();
-                            $("#EditUsersButton").click(function (e) {
-                                e.preventDefault();
+                            $("#EditUsersDialog").load("Admin/ManageAccount.aspx", function(){
                                 $("#EditUsersDialog").dialog({
                                     dialogClass: "ui-ontop",
-                                    width: "540px"
+                                    width: "540px",
+                                    minHeight: 350,
+                                    modal: true,
+                                    resizable: false,
+                                    title: "Edit Users",
+                                    autoOpen: false,
+                                    draggable: false,
+
+
                                 });
+                                $("#EditUsersButton").click(function (e) {
+                                    e.preventDefault();
+                                    $("#EditUsersDialog").dialog('open');
+                                });                            
                             });
                         })
                     </script>
@@ -376,12 +438,6 @@
             <li><a href="#tabs-3">Rotten Toimato</a></li>
         </ul>
 
-        <div id="tabs-info">
-            <span id="info_title" class="infoline"> <p class="left">Title:</p> <p id="mov_title" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Rating:</p> <p id="mov_rating" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Run Time:</p> <p id="mov_runTime" class="right details-info"></p></span>
-            <span id="info_rating" class="infoline"> <p class="left">Title:</p> <img src="" id="mov_rating" class="right details-info"/></span>
-        </div>
         <div id="tabs-info" class="hex-background no-tab-padding">
             <div class="tableContainer">
                 <div class="tableRow">
@@ -443,16 +499,20 @@
             <li><a id="" href="#">Favorites</a></li>
             <li><a id="MenuGridView" href="#">Grid View</a></li>
             <li><a id="" href="#">My Settings</a></li>
-            <li><a id="" href="#">Credits</a></li>
             <asp:LoginView ID="LoginView2" runat="server" >
                 <RoleGroups>
                     <asp:RoleGroup Roles="Administrator">
                         <ContentTemplate>
                             <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
                             <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
-                            <li><a id="AddContentButton" href="#">Add Content</a></li>
-                            <li><a id="EditEntriesButton" href="#">Edit Entries</a></li>
-                            <li><a id="EditUsersButton" href="#">Edit Users</a></li>
+                            <li> <a href="#">Admin</a>
+                                <h2>Admin</h2>
+                                <ul>
+                                    <li><a id="AddContentButton" href="#">Add Content</a></li>
+                                    <li><a id="EditEntriesButton" href="#">Edit Movies</a></li>
+                                    <li><a id="EditUsersButton" href="#">Edit Users</a></li>
+                                </ul>
+                            </li>
                             <li><a id="LogOutButton" href="#">Logout</a></li>
                         </ContentTemplate>
                     </asp:RoleGroup>

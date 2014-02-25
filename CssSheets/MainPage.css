@@ -120,6 +120,7 @@
     width:      15em;
     z-index:    1000;
     color:      white;
+    z-index:    99;
 }
 #MovieFilterBox {
     background: black;
@@ -151,7 +152,7 @@
     background: yellow;
 }
 .MainBodyOffset {
-    padding-left: 40px !important; 
+    padding-left: 70px !important; 
 /*    background: black !important;
 */}
 
@@ -232,7 +233,7 @@ section.tableCell {
     /*background: blue;*/
 }
 .ui-ontop {
-    z-index: 999 !important;
+    /*z-index: 999 !important;*/
 }
 .ui-icon { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
 .Border{

@@ -34,7 +34,7 @@ public partial class _Default : System.Web.UI.Page
             createAccordianUsingRepeater();
 
         sUpload = Server.MapPath("~/Upload");
-        sImages = Server.MapPath("/Image_Posters");
+        sImages = Server.MapPath("~/Image_Posters");
 
         using (SqlDataReader sdr = Middleware.MovieDisplayContent())
         {
