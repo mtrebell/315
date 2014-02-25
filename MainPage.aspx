@@ -135,7 +135,6 @@
                         }
                     });
                 });
-
                 // turn the object into a list of strings. 
                 var filter_genre_list = $("#FilterGenreList").empty();
                 $.each(genre_list, function(name){
@@ -196,8 +195,6 @@
                 backItemIcon: 'fa fa-angle-left',
                 groupIcon: 'fa fa-angle-right',
                 collapsed: true,
-                onExpandMenuStart: function (e){console.log("on expand");}
-                // containersToPush: [ $( '#mainBody' ), $('#Content') ],
             });
 
 

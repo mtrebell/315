@@ -1,5 +1,4 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" EnableEventValidation="true" Async="true" AutoEventWireup="true" CodeFile="AddToDataBase.aspx.cs" Inherits="_Default" ViewStateMode="Enabled" %>
-
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
 <form runat="server">
     <script src="Admin/filedrag.js" type="text/javascript"></script>
