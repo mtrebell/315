@@ -71,7 +71,7 @@ public partial class GetMovieList : System.Web.UI.Page
             {
                 HtmlGenericControl field = new HtmlGenericControl("p");       // create new movie cell instance
                 field.Attributes.Add("id", sdr.GetName(i));
-                field.InnerText = sdr.GetValue(i).ToString().Replace("~/", "");
+                field.InnerText = sdr.GetValue(i).ToString().Replace("~/", "").Replace("NOTFOUND","Background_Images/MissingPoster.jpg");
                 info.Controls.Add(field);
             }
             cell.Controls.Add(info);

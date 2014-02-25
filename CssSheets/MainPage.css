@@ -121,6 +121,7 @@
     z-index:    1000;
     color:      white;
     z-index:    99;
+    left:       0;
 }
 #MovieFilterBox {
     background: black;
@@ -152,7 +153,7 @@
     background: yellow;
 }
 .MainBodyOffset {
-    padding-left: 70px !important; 
+    padding-left: 60px !important; 
 /*    background: black !important;
 */}
 

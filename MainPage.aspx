@@ -283,8 +283,6 @@
                                     title: "Add new content",
                                     autoOpen: false,
                                     draggable: false,
-                                    // open: function(e, ui) { $('#menu').hide();},
-                                    // close: function(e, ui) { $('#menu').show();}
                                 });
                                 $("#AddContentButton").click(function (e) {
                                     e.preventDefault();
@@ -461,6 +459,7 @@
                             <p id="mov_runTime" class="cover-details-element-detail theme details-info">
                             </p>
                         </span>
+                        <br/>
                         <span class="cover-details-infoline"> 
                             <p class="cover-details-element-label theme">Genre:</p> 
                             <div id="mov_genre" class="cover-details-element-detail theme details-info"></div>

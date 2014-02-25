@@ -1,43 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ManageAccount.aspx.cs" Inherits="_Default" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <style type="text/css">
-        .UserTable
-        {
-            border: 1px solid #fff;
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .Header {
-            color: #fff;
-            background-color: #000;
-            border: 1px solid #fff;
-        }
-        .UserCell{
-            color: white;
-            border-bottom: 2px dashed #0b0a65;
-            border-right: 2px dashed #0b0a65;
-            padding: 2px 5px 2px 5px;
-        }
-        .DeleteButton
-        {
-            font-size: 120%;
-            color: white;
-            border-right: 5px outset #fff;
-            border-left: 5px outset #fff; 
-            border-top: 2px outset #fff;
-            border-bottom: 2px outset #fff;
-
-            background-color: #0e3b98;
-        }
-        .DeleteButton:hover
-        {
-            background-color: #fff;
-            color: black;
-        }
-    </style>
-</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
 <form runat="server">
     <script language="javascript" type="text/javascript">
