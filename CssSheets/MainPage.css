@@ -234,9 +234,18 @@ section.tableCell {
     /*background: blue;*/
 }
 .ui-ontop {
-    /*z-index: 999 !important;*/
+    z-index: 999 !important;
 }
-.ui-icon { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+
+.ui-icon { 
+    display: inline; 
+    text-indent: -99999px; 
+    overflow: hidden; 
+    background-repeat: no-repeat; 
+}
+.no-tab-padding {
+    padding: 0 !important;
+}
 .Border{
     background-image:url(../Background_Images/Std_Header.png);
     background-position: top;

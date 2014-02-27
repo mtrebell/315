@@ -141,7 +141,7 @@
                     genreList.push(name);
                     $(filter_genre_list).append('<span id="genre_'+name+'" class="GenreFilterButton theme">'+name+'</span>');
                 });
-
+                $(".GenreFilterButton").button().click(GenreFilterButtonClick);
                 coverFlowCtrl = $('#CoverFlow').coverflow(
                 {
                     index:          6,
@@ -409,8 +409,10 @@
                             <input id="TagFilterInput"/> 
                             <button class="TagFilterButton">Add Tag</button> 
                         </div>
-                        <div id="FilterGeneral" class="cover" >
-                            <p>Enter general filter:</p>
+                        <div id="FilterGenrePage" class="cover" >
+                            <p>Filter by Genre:</p>
+                            <div id="FilterGenreList">
+                            </div>
                         </div>
                         <div id="FilterRating" class="cover" > 
                             <p>Enter rating filter:</p>
@@ -488,7 +490,7 @@
         </div>
     </div>
 
-    <div id="menu">
+    <div id="menu" class="ui-ontop">
       <nav>
         <h2><i class="fa fa-reorder"></i>Menu</h2>
         <ul>
