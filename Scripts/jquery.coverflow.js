@@ -72,11 +72,14 @@
 
 			// Enable click-jump
 			that.element.on('click', '> *', function() {
-				var index = that._getCovers().index(this);
-				if (index === that.currentIndex) {
-					that._callback('confirm');
-				} else {
-					that._setIndex(index, true);
+				if (that.element.hasClass("cover-disabled") === false)
+				{
+					var index = that._getCovers().index(this);
+					if (index === that.currentIndex) {
+						that._callback('confirm');
+					} else {
+						that._setIndex(index, true);
+					}
 				}
 			});
 
@@ -88,17 +91,23 @@
 			// Mousewheel
 			that.element.on('mousewheel', function(event, delta) {
 				event.preventDefault();
-				that._setIndex(that.options.index - delta, true);
+				if (that.element.hasClass("cover-disable") === false)
+				{
+					that._setIndex(that.options.index - delta, true);
+				}
 			});
 
 			// Swipe
 			if ($.isFunction(that.element.swipe)) {
-				that.element.swipe({
-					swipe: function(event, direction, distance, duration, fingerCount) {
-						var count = Math.round((direction === 'left' ? 1 : -1) * 1.25 * that.pagesize * distance / that.element.width());
-						that._setIndex(that.options.index + count, true);
-					}
-				});
+				if (that.element.hasClass("cover-disabled") === false)
+				{
+					that.element.swipe({
+						swipe: function(event, direction, distance, duration, fingerCount) {
+							var count = Math.round((direction === 'left' ? 1 : -1) * 1.25 * that.pagesize * distance / that.element.width());
+							that._setIndex(that.options.index + count, true);
+						}
+					});
+				}
 			}
 
 			// Keyboard
@@ -108,7 +117,7 @@
 			);
 
 			$(window).on('keydown', function(event) {
-				if (that.hovering) {
+				if (that.element.hasClass("cover-disabled") === false && that.hovering) {
 					switch (event.which) {
 						case 36:	// home
 							event.preventDefault();

@@ -1,6 +1,8 @@
 //------------------------------------------------------------------------
 // generic filtering support functions
 //------------------------------------------------------------------------
+var FILTER_COVER_ALPHA = 0;
+var FILTER_COVER_GENRE = 1;
 function RemoveFilterSpan(filter)
 // Remove the span, and clean up/ refresh...
 {
@@ -18,7 +20,7 @@ function AlphaFilterButtonClick(e)
 // when the alpha filter is clicked then this is called
 {
     e.preventDefault();
-    if ( filterFlowCtrl.coverflow('index') !== 0)
+    if ( filterFlowCtrl.coverflow('index') !== FILTER_COVER_ALPHA)
     {
         return;
     }
@@ -74,8 +76,9 @@ function GenreFilterButtonClick(e)
 // When the genre filter buttons are clicked, then this is activated.
 {
     e.preventDefault();
-    if ( filterFlowCtrl.coverflow('index') !== 2)
+    if ( filterFlowCtrl.coverflow('index') !== FILTER_COVER_GENRE)
     {
+        console.log("GenreFilterButtonClick %s", filterFlowCtrl.coverflow('index'));
         return;
     }
     $(this).toggleClass('genre-selected');

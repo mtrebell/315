@@ -280,6 +280,12 @@
                                     title: "Add new content",
                                     autoOpen: false,
                                     draggable: false,
+                                    open: function() {
+                                        $(".cover-div").addClass("cover-disabled");
+                                    },
+                                    close: function() {
+                                        $(".cover-div").removeClass("cover-disabled");
+                                    },
                                 });
                                 $("#AddContentButton").click(function (e) {
                                     e.preventDefault();
@@ -303,13 +309,18 @@
 
                                     create: function () {
                                         $(this).css("maxHeight", 350);
-                                    }
+                                    },
+                                    open: function() {
+                                        $(".cover-div").addClass("cover-disabled");
+                                    },
+                                    close: function() {
+                                        $(".cover-div").removeClass("cover-disabled");
+                                    },
                                 });
                                 $("#EditEntriesButton").click(function (e) {
                                     e.preventDefault();
                                     $("#EditEntriesDialog").dialog('open');
                                 });
-                                
                             });
 
                             $("#EditUsersDialog").hide();
@@ -323,8 +334,12 @@
                                     title: "Edit Users",
                                     autoOpen: false,
                                     draggable: false,
-
-
+                                    open: function() {
+                                        $(".cover-div").addClass("cover-disabled");
+                                    },
+                                    close: function() {
+                                        $(".cover-div").removeClass("cover-disabled");
+                                    },
                                 });
                                 $("#EditUsersButton").click(function (e) {
                                     e.preventDefault();
@@ -342,7 +357,7 @@
         <div class="tableRow">
             <section class="tableCell">
                 <img src="Background_Images/Std_Header.png" style="width:100%"/>
-                <div id="CoverFlow" > </div>
+                <div id="CoverFlow" class="cover-div"> </div>
             </section>
         </div>
 
@@ -359,7 +374,7 @@
         <div class="tableRow">
             <section class="tableCell">
                 <div id="MovieFilterBox">
-                    <div id="MovieFilter">
+                    <div id="MovieFilter" class="cover-div">
                         <div id="FilterAlpha" class="cover" > 
                             <p>Select movies starting with:</p>
                             <div class="filterGrooup">
@@ -403,16 +418,16 @@
 
                             </div>
                         </div>
+                        <div id="FilterGenrePage" class="cover" >
+                            <p>Filter by Genre:</p>
+                            <div id="FilterGenreList" class="filter-list-genre">
+                            </div>
+                        </div>
                         <div id="FilterTag" class="cover" >
                             <p>Enter a tag to filter movies by:</p>
 
                             <input id="TagFilterInput"/> 
                             <button class="TagFilterButton">Add Tag</button> 
-                        </div>
-                        <div id="FilterGenrePage" class="cover" >
-                            <p>Filter by Genre:</p>
-                            <div id="FilterGenreList">
-                            </div>
                         </div>
                         <div id="FilterRating" class="cover" > 
                             <p>Enter rating filter:</p>
