@@ -94,6 +94,7 @@ public class Recomender
         Dictionary<string, Dictionary<String, double>> similarity = new Dictionary<string, Dictionary<string, double>>();
         foreach (string key in ratings.Keys)
         {
+            int count = 0;
             double[] movie;
             ratings.TryGetValue(key, out movie);
 
@@ -108,8 +109,12 @@ public class Recomender
 
                 //Normalized Cosine Dist
                 double sim = movie[0] * movieComp[0] / (movie[1] * movie[1]);
-                if (sim > 0.7)
+                if ( sim > 0.7 && count <50 ) //stops our model from growing to large
+                {
                     temp.Add(comp, sim);
+                    count++;
+                }
+            
             }
             similarity.Add(key, temp);
         }
@@ -143,16 +148,25 @@ public class Recomender
         Middleware.AddSimilar(model);
     }
 
-    public double getProb(string user,string movie)
+    public double getProb(Guid user,string movie)
     {
         double p = 0;
         int count = 0;
         //sql call similar that has watched
-        SqlDataReader rdr = Middleware.GetSimilarMovie(user,movie);
+        SqlDataReader rdr = Middleware.GetSimilarMovie(user, movie);
          while (rdr.Read())
          {
              count++;
-             p += Convert.ToInt32(rdr[0])*Convert.ToInt32(rdr[1]);
+             string match = rdr[0].ToString();
+             int rating =Convert.ToInt32(rdr[3]);
+
+             //Extract the rating
+             if (match.CompareTo(movie) == 0)
+                 rating = (int)rating/4; 
+             else
+                 rating = rating%4;
+
+             p += Convert.ToInt32(rdr[2])*rating;
          }
 
          if (count == 0)
@@ -161,24 +175,22 @@ public class Recomender
         return p/count;
     }
 
-    public List<string> notWatched(string user)
-    {
-        List<String> notWatched = new List<string>();
-        return notWatched;
-    }
 
-    public List<string> allRecomendations(string user)
+    public List<string> allRecomendations(Guid user)
     {
         List<string> recomend = new List<string>();
-        List<string> nWatched = notWatched(user);
 
-        foreach (string movie in nWatched)
+        SqlDataReader rdr = Middleware.GetMovieAverages();
+        while (rdr.Read())
         {
+            string movie = rdr["mov_id"].ToString();
+
             double prob = getProb(user, movie);
             if (prob > cap)
                 recomend.Add(movie);
         }
-            return recomend;
+
+       return recomend;
     }
 
     public class Model

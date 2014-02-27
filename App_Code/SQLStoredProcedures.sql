@@ -578,9 +578,9 @@ GO
 CREATE PROCEDURE GetUserAverages
 
 AS 
-    SELECT user_id, AVG(rating)
+    SELECT users_id, AVG(rating)
     FROM dbo.MovieRatings
-	GROUP BY user_id
+	GROUP BY users_id
 GO
 /*************************************************************/
 if exists
@@ -598,7 +598,7 @@ CREATE PROCEDURE GetMovieAverages
 AS 
     SELECT movie_id, AVG(rating)
     FROM dbo.ratings
-	GROUP BY movie_id
+	GROUP BY mov_id
 GO
 /*************************************************************/
 if exists(
@@ -614,9 +614,9 @@ GO
 CREATE PROCEDURE GetMovieRatings
 
 AS 
-    SELECT movie_id,user_id,rating
+    SELECT mov_id,users_id,rating
     FROM dbo.MovieRatings
-	ORDER BY movie_id
+	ORDER BY mov_id
 GO
 
 /*************************************************************/
@@ -634,10 +634,9 @@ CREATE PROCEDURE GetSimilarMovie
 @mov_id nvarchar(100)
 
 AS 
-    SELECT mov_id,match_id,similarity,rating
+    SELECT mov_id,match,similarity,rating
     FROM dbo.MovieRatings
-	WHERE [mov_id] = @mov_id OR [match_id] = @mov_id
-	ORDER BY match_id
+	WHERE [mov_id] = @mov_id OR [match] = @mov_id;
 GO
 
 /*************************************************************/
@@ -657,7 +656,7 @@ CREATE PROCEDURE GetUnwatchedMovie
 AS 
     SELECT mov_id
     FROM dbo.MovieRatings AS t1
-	WHERE t1.mov_id NOT IN (SELECT mov_id FROM dbo.MovieRatings AS t2 WHERE [user_id] = @user_id)
+	WHERE t1.mov_id NOT IN (SELECT mov_id FROM dbo.MovieRatings AS t2 WHERE [users_id] = @user_id)
 GO
 
 /*************************************************************/
@@ -702,7 +701,7 @@ CREATE PROCEDURE AddRating
 @rating nvarchar(100)
 AS
 BEGIN
- INSERT INTO dbo.ratings(user_id,moive_id,rating) 
+ INSERT INTO dbo.ratings(users_id,moive_id,rating) 
  VALUES (@user_id, @movie_id, @rating)
  END
 
