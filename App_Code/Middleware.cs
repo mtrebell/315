@@ -417,7 +417,6 @@ public static class Middleware
     public static SqlDataReader CheckChange(string sMovID)
     {
         SqlDataReader reader = null; // return object
-        string sReturn = "";
         SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query

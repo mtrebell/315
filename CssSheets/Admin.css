@@ -1,0 +1,168 @@
+/* Add to Database */
+.Button
+{
+    font-size: 120%;
+    color: white;
+    border-right: 5px outset #fff;
+    border-left: 5px outset #fff; 
+    border-top: 2px outset #fff;
+    border-bottom: 2px outset #fff;
+    background-color: #0e3b98;
+}
+.Button:hover
+{
+    background-color: #fff;
+    color: black;
+}
+/* Edit Entries */
+.column
+{
+    overflow: scroll;
+    background-image: url("../Background_Images/EditEntriesBG.jpg");
+    background-repeat:repeat;
+}
+
+.ui-accordion .ui-accordion-header {
+    cursor: pointer;
+    position: relative;
+    margin-top: 1px;
+    zoom: 1;
+}
+
+.ui-accordion .ui-accordion-li-fix {
+    display: inline;
+}
+
+.ui-accordion .ui-accordion-header-active {
+    border-bottom: 0 !important;
+}
+
+.ui-accordion .ui-accordion-header a {
+    display: block;
+    font-size: 1em;
+    padding: .5em .5em .5em .7em;
+}
+
+.ui-accordion a {
+    zoom: 1;
+}
+
+.ui-accordion-icons .ui-accordion-header a {
+    padding-left: 2.2em;
+}
+
+.ui-accordion .ui-accordion-header .ui-icon {
+    position: absolute;
+    left: .5em;
+    top: 50%;
+    margin-top: -8px;
+}
+
+.ui-accordion .ui-accordion-content {
+    padding: 1em 2.2em;
+    border-top: 0;
+    margin-top: -2px;
+    position: relative;
+    top: 1px;
+    margin-bottom: 2px;
+    overflow: auto;
+    display: none;
+    zoom: 1;
+}
+.ui-accordion .ui-accordion-content-active {
+    display: block;
+} 
+#AddEntryTemplate
+{
+    border: 3px solid #92AAB0;
+    padding: 5px 5px 5px 5px;
+    margin-top;
+}
+
+
+.dragandrophandler{
+    border:2px dotted #0B85A1;
+    width:200px;
+    height: 25px;
+    color:#92AAB0;
+    text-align: center;
+    vertical-align:middle;
+    padding:10px 10px 10px 10px;
+    margin-bottom:10px;
+    font-size: 80%;
+}
+
+.progressBar {
+    width: 120px;
+    height: 22px;
+    border: 1px solid #ddd;
+    border-radius: 5px; 
+    overflow: hidden;
+    display:inline-block;
+    margin:0px 10px 5px 5px;
+    vertical-align:top;
+    font-size: 70%;
+}
+
+.progressBar div {
+    height: 100%;
+    color: #fff;
+    text-align: right;
+    line-height: 22px; /* same as #progressBar height if we want text middle aligned */
+    width: 0;
+    background-color: #0ba1b5; border-radius: 3px; 
+}
+
+.statusbar {
+    border-top:1px solid #A9CCD1;
+    min-height:25px;
+    width:200px;
+    padding:10px 10px 0px 10px;
+    vertical-align:top;
+}
+
+.filesize
+{
+    display:inline-block;
+    vertical-align:top;
+    color:#EBEFF0;
+    width:70px;
+    margin-right:5px;
+    font-size: 14px;
+}
+
+/* ManageAccount */
+.UserTable
+{
+    border: 1px solid #fff;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.Header {
+    color: #fff;
+    background-color: #000;
+    border: 1px solid #fff;
+}
+.UserCell{
+    color: white;
+    border-bottom: 2px dashed #0b0a65;
+    border-right: 2px dashed #0b0a65;
+    padding: 2px 5px 2px 5px;
+}
+.DeleteButton
+{
+    font-size: 120%;
+    color: white;
+    border-right: 5px outset #fff;
+    border-left: 5px outset #fff; 
+    border-top: 2px outset #fff;
+    border-bottom: 2px outset #fff;
+
+    background-color: #0e3b98;
+}
+.DeleteButton:hover
+{
+    background-color: #fff;
+    color: black;
+}
