@@ -730,7 +730,7 @@
                         <tr >
                             <td style="vertical-align: top;"><b>Movie ID: <%#Eval("mov_id") %></b></td>
                             <td rowspan="2">
-                                <img id="<%# Eval("mov_id")%>iL" src='<%#Eval("mov_lgPoster").ToString().Replace("~","..")%>' 
+                                <img id="<%# Eval("mov_id")%>iL" src='<%#Eval("mov_lgPoster").ToString().Replace("~/","")%>' 
                                     style="width: 200px; height: 300px;" />
                             </td>
                         </tr>
@@ -744,7 +744,7 @@
                                 <label id="<%# Eval("mov_id")%>bg"><%#Eval("mov_genre") %></label></td>
                             <td rowspan="6">
                                 <center>
-                                    <img id="<%# Eval("mov_id")%>iS" src='<%#Eval("mov_smPoster").ToString().Replace("~","..")%>' 
+                                    <img id="<%# Eval("mov_id")%>iS" src='<%#Eval("mov_smPoster").ToString().Replace("~/","")%>' 
                                         style="width:100px; Height:150px" />
                                 </center>
                             </td>

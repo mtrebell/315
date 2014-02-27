@@ -22,7 +22,7 @@ public partial class _Default : System.Web.UI.Page
     {
         get
         {
-            string sPath = Server.MapPath("~/Image_Posters/").Replace("/", "\\");
+            string sPath = Server.MapPath("Image_Posters/").Replace("/", "\\");
             sPath = sPath.Replace('\\', '~');
             return sPath;
         }
@@ -34,7 +34,7 @@ public partial class _Default : System.Web.UI.Page
             createAccordianUsingRepeater();
 
         sUpload = Server.MapPath("~/Upload");
-        sImages = Server.MapPath("~/Image_Posters");
+        sImages = Server.MapPath("Image_Posters");
 
         using (SqlDataReader sdr = Middleware.MovieDisplayContent())
         {
