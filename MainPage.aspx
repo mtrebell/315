@@ -45,6 +45,18 @@
                 width:  40px;
                 height: 40px;
             }
+
+            #gridPopupBox{
+                display:none; 
+                position:absolute;   
+                height:300px;  
+                width:600px;  
+                background:#FFFFFF;  
+                left: 300px;
+                top: 150px;
+                z-index:10000;
+                margin-left: 15px;  
+            }
         </style>
     </head>
 
@@ -106,6 +118,67 @@
                         }  
                     });
             })
+        }
+
+        function GeneratePopupBox(e, data) {
+            var mouseX = e.pageX -300;
+            var mouseY = e.pageY - 325;
+            $('#gridPopupBox').empty().css({
+                'left': mouseX + 'px',
+                'top': mouseY + 'px'
+            }).append(data).fadeIn();
+        }
+
+        function DestroyPopupBox(e) {
+            $('#gridPopupBox').fadeOut();
+        }
+
+        function GenerateMovieGrid(srcData, dest, moviesPerRow) {
+
+            $(dest).css('display', 'table');
+            var i = 0, divObj;
+            $(srcData + ' .cover').each(function () {
+                var curRow = parseInt(i / moviesPerRow);
+
+                //create new row if necessary
+                if (i % moviesPerRow == 0) {
+                    divObj = document.createElement('div');
+                    $(divObj).addClass('gridRow' + curRow).css('display', 'table-row').appendTo($(dest));
+                }
+
+                var movie = $(this).clone();
+                var movieInfo = $(movie).find('#info');
+
+                //if movie cover isn't loaded, construct image data
+                if ($(movie).hasClass("cover-not-loaded")) {
+                    var newMovie = document.createElement('img');
+                    $(newMovie).attr('id', $(movie).attr('id')).attr('src', $(movie).attr('dataUrl'));
+                    movie = $(newMovie);
+                } else {
+                    //otherwise just grab the image data
+                    movie = $(movie).find('img');
+                }
+
+                var dispData = '<h1>' + $(movie).attr('id') + '</h1><div></div>';
+               
+                $(movie).removeAttr('style').attr('height', '300px').attr('width', '200px').show()
+                //add some mouse over features
+                .click(function (e) {
+                    GeneratePopupBox(e, dispData);
+                }).mousemove(function(e) {
+                    DestroyPopupBox(e);
+                });
+
+                var container = document.createElement('div');
+                $(container).css({
+                    'display': 'table-cell',
+                    'padding': '5px'
+                }).addClass('gridCover');
+                
+                $(container).append(movie, movieInfo);
+                $(container).appendTo(dest + ' .gridRow' + curRow);
+                i++;
+            });
         }
 
         // DOCUMENT READY!
@@ -245,10 +318,28 @@
                     coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
                 })
 
-            $("#MenuGridView").click(function(e) {
+            $("#MenuGridView").click(function (e) {
                 e.preventDefault();
-                $("#GridDialog").dialog({dialogClass: "ui-ontop"});
+                $("#GridDialog").dialog({
+                    dialogClass: "ui-ontop",
+                    width: '900',
+                    height: '900',
+                    resizeable: true,
+                    //Todo: improve calculation for number of movies per row.
+                    resizeStop: function (e, ui) {
+
+                        $('.gridContainer').empty();
+                        var _numperRow = parseInt($(this).outerWidth() / 200);
+                        console.log("movies per row: " + _numperRow);
+
+                        GenerateMovieGrid('#CoverFlow', '.gridContainer', _numperRow);
+                    }
+
+                }).position({ at: 'center' });
+
+                GenerateMovieGrid('#CoverFlow', '.gridContainer', 4);
             });
+
             $("#MenuRecomendations").click(function(e) {
                 e.preventDefault();
                 $("#RecomendationsDialog").dialog({dialogClass: "ui-ontop"});
@@ -546,10 +637,11 @@
         </ul>
       </nav>
     </div>
+    <div id="gridPopupBox"></div>
     <div id="dialogContainer"></div>
     <div id="RecomendationsDialog"></div>
     <div id="EnterRequestDialog"></div>
-    <div id="GridDialog"></div>
+    <div id="GridDialog"><div class="gridContainer"></div></div>
     <div id="LoginDialog"> </div>
     <asp:LoginView ID="LoginView4" runat="server" >
         <RoleGroups>
