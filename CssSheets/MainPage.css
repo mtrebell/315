@@ -6,6 +6,12 @@
 .hex-background {
     background-image:   url(../Background_Images/hex-Bkgrd.jpg) !important;
 }
+.ui-header-fixed{
+    position: fixed;
+    top: 0;
+    left: 45px;
+}
+
 .login-bar {
     position: absolute;
     top: 0px;
@@ -21,8 +27,17 @@
 }
 .logedin-bar{
     position: absolute;
-    top: 15px;
+    top: 5px;
     left: 55px;     
+    width: 100%;
+}
+.logedin-bar .user-name{
+    left: 40%;
+    position: relative;
+}
+.logedin-bar .btn-group-right{
+    float: right;
+    padding-right: 6em;
 }
 .logedin-bar a{
     position: relitive;

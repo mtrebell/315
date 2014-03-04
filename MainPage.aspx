@@ -329,11 +329,11 @@
                 $( '#menu' ).multilevelpushmenu( 'redraw' );
             });
 
-            //$("#LoginDialog").load("Login.aspx");
-            $("#LoginButton").click(function(e) {
-                e.preventDefault();
-                $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
-            });
+            // //$("#LoginDialog").load("Login.aspx");
+            // $("#LoginButton").click(function(e) {
+            //     e.preventDefault();
+            //     $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
+            // });
 
             $("#LogOutButton").click(function (e) {
                 e.preventDefault();
@@ -355,6 +355,7 @@
                     dialogClass: "ui-ontop",
                     width: '900',
                     height: '900',
+                    modal: true,
                     resizeable: true,
                     //Todo: improve calculation for number of movies per row.
                     resizeStop: function (e, ui) {
@@ -364,7 +365,13 @@
                         console.log("movies per row: " + _numperRow);
 
                         GenerateMovieGrid('#CoverFlow', '.gridContainer', _numperRow);
-                    }
+                    },
+                    open: function() {
+                        $(".cover-div").addClass("cover-disabled");
+                    },
+                    close: function() {
+                        $(".cover-div").removeClass("cover-disabled");
+                    },
 
                 }).position({ at: 'center' });
 
@@ -383,14 +390,13 @@
         }); // End Doc Ready.
     </script>
 
-    <body>
-        <div>
-    <asp:LoginView ID="LoginView1" runat="server" >
+<body>
+    <asp:LoginView ID="LoginView1" runat="server">
         <RoleGroups>
             <asp:RoleGroup Roles="Administrator">
                 <ContentTemplate>
                     <link href="CssSheets/Admin.css" rel="stylesheet" type="text/css" />
-                    <link href="CssSheets/AddToDataBase.css" rel="stylesheet" type="text/css" /> 
+                    <link href="CssSheets/AddToDataBase.css" rel="stylesheet" type="text/css" />
 
                     <script type="text/javascript">
                         $(function () {
@@ -416,9 +422,9 @@
                                     $("#AddContentDialog").dialog('open');
 
                                 });
-                                
+                                    
                             });
-    
+        
                             $("#EditEntriesDialog").hide();
                             $("#EditEntriesDialog").load("Admin/EditEntries.aspx", function(){
                                 $("#EditEntriesDialog").dialog({
@@ -476,233 +482,239 @@
             </asp:RoleGroup>
         </RoleGroups>
     </asp:LoginView>
-    <div>
+    <div class="ui-header-fixed ui-ontop">
+        <img src="Background_Images/Std_Header.png" style="width: 100%" />
         <form runat="server">
-            <asp:login id="Login1" runat="server" backcolor="Black" bordercolor="#DAA520" forecolor="#DAA520"
-                borderstyle="None" borderwidth="0px" font-names="Verdana" font-size="8pt"
-                onloggedin="Login1_LoggedIn" destinationpageurl="~/MainPage.aspx">
+            <asp:Login ID="Login1" runat="server" BackColor="Black" BorderColor="#DAA520" ForeColor="#DAA520"
+                BorderStyle="None" BorderWidth="0px" Font-Names="Verdana" Font-Size="8pt"
+                OnLoggedIn="Login1_LoggedIn" DestinationPageUrl="~/MainPage.aspx">
                 <LayoutTemplate>
                     <div id="loggedin_bar" class="logedin-bar theme ui-ontop">
-                        <asp:LoginName id="LoginName" runat="Server" FormatString="Welcome {0}"></asp:LoginName>
-                        <a id="LogOutButton" href="#">Logout?</a>
-                        <a id="SettingsButton" href="#"> Settings </a>
+                        <asp:LoginName ID="LoginName" runat="Server" FormatString="Welcome {0}" class="user-name"></asp:LoginName>
+                        <span class="btn-group-right">
+                            <a id="LogOutButton" href="#">Logout?</a>
+                            <a id="SettingsButton" href="#">Settings </a>
+                        </span>
                     </div>
                     <div id="login_bar" class="login-bar ui-ontop">
-                        <span>
-                            User: <asp:TextBox ID="UserName" runat="server" ></asp:TextBox>
+                        <span>User:
+                            <asp:TextBox ID="UserName" runat="server"></asp:TextBox>
                             <asp:RequiredFieldValidator ID="UserNameRequired" class="ui-validator fa fa-exclamation-circle" runat="server" ControlToValidate="UserName" ErrorMessage="User Name is required." ToolTip="User Name is required." ValidationGroup="Login1">*</asp:RequiredFieldValidator>
                         </span>
-                        Password: <asp:TextBox ID="Password" runat="server" TextMode="Password" ></asp:TextBox>
+                        Password:
+                        <asp:TextBox ID="Password" runat="server" TextMode="Password"></asp:TextBox>
                         <asp:RequiredFieldValidator ID="PasswordRequired" class="ui-validator fa fa-exclamation-circle" runat="server" ControlToValidate="Password" ErrorMessage="Password is required." ToolTip="Password is required." ValidationGroup="Login1">*</asp:RequiredFieldValidator>
                         <asp:CheckBox ID="RememberMe" runat="server" Text="Remember." />
                         <asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal>
-                        <asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Log In" ValidationGroup="Login1" class="tiny-btn"/>
+                        <asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Log In" ValidationGroup="Login1" class="tiny-btn" />
                     </div>
-               </LayoutTemplate>
-            </asp:login>
-       </form>
+                </LayoutTemplate>
+            </asp:Login>
+        </form>
     </div>
-    <div id="mainBody" class="tableContainer MainBodyOffset Border">
-        <div class="tableRow">
-            <section class="tableCell">
-                <img src="Background_Images/Std_Header.png" style="width:100%"/>
-                <div id="CoverFlow" class="cover-div"> </div>
-            </section>
-        </div>
 
-        <div class="tableRow">
-            <section class="tableCell">
-                <span class="inline-display">
-                    <img id="ClearAllFilters" class="icon-button" src="Background_Images/close_icon.png">
-                    <div id="FilterBar" class="theme">
+    <div>
+
+        <div id="mainBody" class="tableContainer MainBodyOffset Border">
+            <div class="tableRow">
+                <section class="tableCell">
+                    <div id="CoverFlow" class="cover-div"></div>
+                </section>
+            </div>
+
+            <div class="tableRow">
+                <section class="tableCell">
+                    <span class="inline-display">
+                        <img id="ClearAllFilters" class="icon-button" src="Background_Images/close_icon.png">
+                        <div id="FilterBar" class="theme">
+                        </div>
+                    </span>
+                    <img src="Background_Images/Std_Seperator.png" style="width: 100%" />
+                </section>
+            </div>
+            <div class="tableRow">
+                <section class="tableCell">
+                    <div id="MovieFilterBox" class="theme">
+                        <div id="MovieFilter" class="cover-div theme">
+                            <div id="FilterAlpha" class="cover theme">
+                                <p>Select movies starting with:</p>
+                                <div class="filterGrooup">
+                                    <span id="Alpha_A" class="AlphaFilterButton">A</span>
+                                    <span id="Alpha_B" class="AlphaFilterButton">B</span>
+                                    <span id="Alpha_C" class="AlphaFilterButton">C</span>
+                                    <span id="Alpha_D" class="AlphaFilterButton">D</span>
+                                    <span id="Alpha_E" class="AlphaFilterButton">E</span>
+                                    <span id="Alpha_F" class="AlphaFilterButton">F</span>
+                                    <span id="Alpha_G" class="AlphaFilterButton">G</span>
+                                    <span id="Alpha_H" class="AlphaFilterButton">H</span>
+                                    <span id="Alpha_I" class="AlphaFilterButton">I</span>
+                                    <span id="Alpha_J" class="AlphaFilterButton">J</span>
+                                    <span id="Alpha_K" class="AlphaFilterButton">K</span>
+                                    <span id="Alpha_L" class="AlphaFilterButton">L</span>
+                                    <span id="Alpha_M" class="AlphaFilterButton">M</span>
+                                    <span id="Alpha_N" class="AlphaFilterButton">N</span>
+                                    <span id="Alpha_O" class="AlphaFilterButton">O</span>
+                                    <span id="Alpha_P" class="AlphaFilterButton">P</span>
+                                    <span id="Alpha_Q" class="AlphaFilterButton">Q</span>
+                                </div>
+                                <div class="filterGrooup">
+                                    <span id="Alpha_R" class="AlphaFilterButton">R</span>
+                                    <span id="Alpha_S" class="AlphaFilterButton">S</span>
+                                    <span id="Alpha_T" class="AlphaFilterButton">T</span>
+                                    <span id="Alpha_U" class="AlphaFilterButton">U</span>
+                                    <span id="Alpha_V" class="AlphaFilterButton">V</span>
+                                    <span id="Alpha_W" class="AlphaFilterButton">W</span>
+                                    <span id="Alpha_X" class="AlphaFilterButton">X</span>
+                                    <span id="Alpha_Y" class="AlphaFilterButton">Y</span>
+                                    <span id="Alpha_Z" class="AlphaFilterButton">Z</span>
+                                    <span id="Alpha_0" class="AlphaFilterButton">0</span>
+                                    <span id="Alpha_1" class="AlphaFilterButton">1</span>
+                                    <span id="Alpha_2" class="AlphaFilterButton">2</span>
+                                    <span id="Alpha_3" class="AlphaFilterButton">3</span>
+                                    <span id="Alpha_4" class="AlphaFilterButton">4</span>
+                                    <span id="Alpha_5" class="AlphaFilterButton">5</span>
+                                    <span id="Alpha_6" class="AlphaFilterButton">6</span>
+                                    <span id="Alpha_7" class="AlphaFilterButton">7</span>
+                                    <span id="Alpha_8" class="AlphaFilterButton">8</span>
+
+                                </div>
+                            </div>
+                            <div id="FilterGenrePage" class="cover">
+                                <p>Filter by Genre:</p>
+                                <div id="FilterGenreList" class="filter-list-genre">
+                                </div>
+                            </div>
+                            <div id="FilterTag" class="cover">
+                                <p>Enter a tag to filter movies by:</p>
+
+                                <input id="TagFilterInput" />
+                                <button class="TagFilterButton">Add Tag</button>
+                            </div>
+                            <div id="FilterRating" class="cover">
+                                <p>Enter rating filter:</p>
+                            </div>
+                        </div>
                     </div>
-                </span>
-                <img src="Background_Images/Std_Seperator.png" style="width:100%"/>
-            </section>
+                </section>
+            </div>
+
         </div>
-        <div class="tableRow">
-            <section class="tableCell">
-                <div id="MovieFilterBox" class="theme">
-                    <div id="MovieFilter" class="cover-div theme">
-                        <div id="FilterAlpha" class="cover theme" > 
-                            <p>Select movies starting with:</p>
-                            <div class="filterGrooup">
-                                <span id="Alpha_A" class="AlphaFilterButton">A</span> 
-                                <span id="Alpha_B" class="AlphaFilterButton">B</span> 
-                                <span id="Alpha_C" class="AlphaFilterButton">C</span> 
-                                <span id="Alpha_D" class="AlphaFilterButton">D</span> 
-                                <span id="Alpha_E" class="AlphaFilterButton">E</span> 
-                                <span id="Alpha_F" class="AlphaFilterButton">F</span> 
-                                <span id="Alpha_G" class="AlphaFilterButton">G</span> 
-                                <span id="Alpha_H" class="AlphaFilterButton">H</span> 
-                                <span id="Alpha_I" class="AlphaFilterButton">I</span> 
-                                <span id="Alpha_J" class="AlphaFilterButton">J</span> 
-                                <span id="Alpha_K" class="AlphaFilterButton">K</span> 
-                                <span id="Alpha_L" class="AlphaFilterButton">L</span> 
-                                <span id="Alpha_M" class="AlphaFilterButton">M</span>
-                                <span id="Alpha_N" class="AlphaFilterButton">N</span> 
-                                <span id="Alpha_O" class="AlphaFilterButton">O</span> 
-                                <span id="Alpha_P" class="AlphaFilterButton">P</span> 
-                                <span id="Alpha_Q" class="AlphaFilterButton">Q</span> 
-                            </div>
-                            <div class="filterGrooup">
-                                <span id="Alpha_R" class="AlphaFilterButton">R</span> 
-                                <span id="Alpha_S" class="AlphaFilterButton">S</span> 
-                                <span id="Alpha_T" class="AlphaFilterButton">T</span> 
-                                <span id="Alpha_U" class="AlphaFilterButton">U</span> 
-                                <span id="Alpha_V" class="AlphaFilterButton">V</span> 
-                                <span id="Alpha_W" class="AlphaFilterButton">W</span> 
-                                <span id="Alpha_X" class="AlphaFilterButton">X</span> 
-                                <span id="Alpha_Y" class="AlphaFilterButton">Y</span> 
-                                <span id="Alpha_Z" class="AlphaFilterButton">Z</span> 
-                                <span id="Alpha_0" class="AlphaFilterButton">0</span> 
-                                <span id="Alpha_1" class="AlphaFilterButton">1</span> 
-                                <span id="Alpha_2" class="AlphaFilterButton">2</span> 
-                                <span id="Alpha_3" class="AlphaFilterButton">3</span> 
-                                <span id="Alpha_4" class="AlphaFilterButton">4</span> 
-                                <span id="Alpha_5" class="AlphaFilterButton">5</span> 
-                                <span id="Alpha_6" class="AlphaFilterButton">6</span> 
-                                <span id="Alpha_7" class="AlphaFilterButton">7</span> 
-                                <span id="Alpha_8" class="AlphaFilterButton">8</span> 
+        <div class="MainBodyOffset">
+            <img src="Background_Images/Std_Seperator.png" style="width: 100%" />
+        </div>
+        <div id="Content" class="MainBodyOffset">
 
-                            </div>
-                        </div>
-                        <div id="FilterGenrePage" class="cover" >
-                            <p>Filter by Genre:</p>
-                            <div id="FilterGenreList" class="filter-list-genre">
-                            </div>
-                        </div>
-                        <div id="FilterTag" class="cover" >
-                            <p>Enter a tag to filter movies by:</p>
+            <ul>
+                <li><a href="#tabs_info">Details</a></li>
+                <li><a href="#tabs_imdb">IMDB</a></li>
+                <li><a href="#tabs_rotten_tomatoes">Rotten Toimato</a></li>
+            </ul>
 
-                            <input id="TagFilterInput"/> 
-                            <button class="TagFilterButton">Add Tag</button> 
-                        </div>
-                        <div id="FilterRating" class="cover" > 
-                            <p>Enter rating filter:</p>
-                        </div>
+            <div id="tabs_info" class="hex-background no-tab-padding">
+                <div class="tableContainer">
+                    <div class="tableRow">
+                        <section id="cover-details" class="tableCell table-thirds">
+                            <span class="cover-details-infoline">
+                                <p class="cover-details-element-label theme">Title:</p>
+                                <p id="mov_title" class="cover-details-element-detail theme details-info"></p>
+                            </span>
+                            <br />
+                            <span class="cover-details-infoline multi-line">
+                                <p class="cover-details-element-label theme multi-line">
+                                    Plot<br>
+                                    Summary:
+                                </p>
+                                <p id="mov_plot" class="cover-details-element-detail theme details-info multi-line"></p>
+                            </span>
+                            <br />
+                            <span class="cover-details-infoline">
+                                <p class="cover-details-element-label theme">Rating:</p>
+                                <p id="mov_rating" class="cover-details-element-detail theme details-info"></p>
+                            </span>
+                            <span class="cover-details-infoline">
+                                <p class="cover-details-element-label theme">Run Time:</p>
+                                <p id="mov_runTime" class="cover-details-element-detail theme details-info">
+                                </p>
+                            </span>
+                            <br />
+                            <span class="cover-details-infoline">
+                                <p class="cover-details-element-label theme">Genre:</p>
+                                <div id="mov_genre" class="cover-details-element-detail theme details-info"></div>
+                            </span>
+                        </section>
+                        <section id="cover-details" class="tableCell table-thirds">
+                            <span class="cover-details-infoline">
+                                <img src="" id="mov_lgPoster" class="details-info theme" />
+                            </span>
+                        </section>
+                        <section id="cover-details" class="tableCell table-thirds">
+                            <span class="cover-details-infoline">
+                                <p class="cover-details-element-label theme">Run Time:</p>
+                                <p id="mov_trailer" class="cover-details-element-detail theme details-info"></p>
+                            </span>
+                        </section>
                     </div>
-                </div>
-            </section>
-        </div>
-
-    </div>
-    <div class="MainBodyOffset">
-        <img src="Background_Images/Std_Seperator.png" style="width:100%"/>
-    </div>
-    <div id="Content" class="MainBodyOffset">
-
-        <ul>
-            <li><a href="#tabs_info">Details</a></li>
-            <li><a href="#tabs_imdb">IMDB</a></li>
-            <li><a href="#tabs_rotten_tomatoes">Rotten Toimato</a></li>
-        </ul>
-
-        <div id="tabs_info" class="hex-background no-tab-padding">
-            <div class="tableContainer">
-                <div class="tableRow">
-                    <section id="cover-details" class="tableCell table-thirds">
-                        <span class="cover-details-infoline"> 
-                            <p class="cover-details-element-label theme">Title:</p> 
-                            <p id="mov_title" class="cover-details-element-detail theme details-info"></p>
-                        </span>
-                        <br/>
-                        <span class="cover-details-infoline multi-line"> 
-                            <p class="cover-details-element-label theme multi-line">Plot<br>Summary:</p> 
-                            <p id="mov_plot" class="cover-details-element-detail theme details-info multi-line"></p>
-                        </span>
-                        <br/>
-                        <span class="cover-details-infoline"> 
-                            <p class="cover-details-element-label theme">Rating:</p> 
-                            <p id="mov_rating" class="cover-details-element-detail theme details-info"></p>
-                        </span>
-                        <span class="cover-details-infoline"> 
-                            <p class="cover-details-element-label theme">Run Time:</p> 
-                            <p id="mov_runTime" class="cover-details-element-detail theme details-info">
-                            </p>
-                        </span>
-                        <br/>
-                        <span class="cover-details-infoline"> 
-                            <p class="cover-details-element-label theme">Genre:</p> 
-                            <div id="mov_genre" class="cover-details-element-detail theme details-info"></div>
-                        </span>
-                    </section>
-                    <section id="cover-details" class="tableCell table-thirds">
-                        <span class="cover-details-infoline"> 
-                            <img src="" id="mov_lgPoster" class="details-info theme"/>
-                        </span>        
-                    </section>
-                    <section id="cover-details" class="tableCell table-thirds">
-                        <span class="cover-details-infoline"> 
-                            <p class="cover-details-element-label theme">Run Time:</p> 
-                            <p id="mov_trailer" class="cover-details-element-detail theme details-info"></p>
-                        </span>
-                    </section>
                 </div>
             </div>
+            <div id="tabs_imdb" class="imdb-review hex-background no-tab-padding">
+            </div>
+            <div id="tabs_rotten_tomatoes" class="rotten-tomatoes-review hex-background no-tab-padding">
+            </div>
         </div>
-        <div id="tabs_imdb" class="imdb-review hex-background no-tab-padding">
-            
+
+        <div id="dialogContainer"></div>
+        <div id="RecomendationsDialog"></div>
+        <div id="EnterRequestDialog"></div>
+        <div id="GridDialog">
+            <div class="gridContainer"></div>
         </div>
-        <div id="tabs_rotten_tomatoes" class="rotten-tomatoes-review hex-background no-tab-padding">
-            
-        </div>
+        <asp:LoginView ID="LoginView4" runat="server">
+            <RoleGroups>
+                <asp:RoleGroup Roles="Administrator">
+                    <ContentTemplate>
+                        <div id="AddContentDialog"></div>
+                        <div id="EditEntriesDialog" style="height: 400px;"></div>
+                        <div id="EditUsersDialog"></div>
+                    </ContentTemplate>
+                </asp:RoleGroup>
+            </RoleGroups>
+        </asp:LoginView>
     </div>
 
-    <div id="dialogContainer"></div>
-    <div id="RecomendationsDialog"></div>
-    <div id="EnterRequestDialog"></div>
-    <div id="GridDialog"><div class="gridContainer"></div></div>
-    <div id="LoginDialog"> 
-
-    </div>
-    <asp:LoginView ID="LoginView4" runat="server" >
-        <RoleGroups>
-            <asp:RoleGroup Roles="Administrator">
-                <ContentTemplate>
-                    <div id="AddContentDialog"></div>
-                    <div id="EditEntriesDialog" style="height: 400px;"></div>
-                    <div id="EditUsersDialog"></div>
-                </ContentTemplate>
-            </asp:RoleGroup>
-        </RoleGroups>
-    </asp:LoginView>
-</div>
     <div id="menu" class="ui-ontop theme">
-      <nav>
-        <h2><i class="fa fa-reorder"></i>Menu</h2>
-        <ul>
-            <li><a id="" href="#">Favorites</a></li>
-            <li><a id="MenuGridView" href="#">Grid View</a></li>
-            <asp:LoginView ID="LoginView3" runat="server" >
-                <RoleGroups>
-                    <asp:RoleGroup Roles="Administrator">
-                        <ContentTemplate>
-                            <li><a id="MenuRecomendations" href="#">Recommendations</a></li>
-                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
-                            <li> <a href="#">Admin</a>
-                                <h2>Admin</h2>
-                                <ul>
-                                    <li><a id="AddContentButton" href="#">Add Content</a></li>
-                                    <li><a id="EditEntriesButton" href="#">Edit Movies</a></li>
-                                    <li><a id="EditUsersButton" href="#">Edit Users</a></li>
-                                </ul>
-                            </li>
-                        </ContentTemplate>
-                    </asp:RoleGroup>
-                </RoleGroups>
-                <RoleGroups>
-                    <asp:RoleGroup Roles="Members">
-                        <ContentTemplate>
-                            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
-                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
-                        </ContentTemplate>
-                    </asp:RoleGroup>
-                </RoleGroups>
-            </asp:LoginView>
-        </ul>
-      </nav>
+        <nav>
+            <h2><i class="fa fa-reorder"></i>Menu</h2>
+            <ul>
+                <li><a id="" href="#">Favorites</a></li>
+                <li><a id="MenuGridView" href="#">Grid View</a></li>
+                <asp:LoginView ID="LoginView3" runat="server">
+                    <RoleGroups>
+                        <asp:RoleGroup Roles="Administrator">
+                            <ContentTemplate>
+                                <li><a id="MenuRecomendations" href="#">Recommendations</a></li>
+                                <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+                                <li><a href="#">Admin</a>
+                                    <h2>Admin</h2>
+                                    <ul>
+                                        <li><a id="AddContentButton" href="#">Add Content</a></li>
+                                        <li><a id="EditEntriesButton" href="#">Edit Movies</a></li>
+                                        <li><a id="EditUsersButton" href="#">Edit Users</a></li>
+                                    </ul>
+                                </li>
+                            </ContentTemplate>
+                        </asp:RoleGroup>
+                    </RoleGroups>
+                    <RoleGroups>
+                        <asp:RoleGroup Roles="Members">
+                            <ContentTemplate>
+                                <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
+                                <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+                            </ContentTemplate>
+                        </asp:RoleGroup>
+                    </RoleGroups>
+                </asp:LoginView>
+            </ul>
+        </nav>
     </div>
-    <div id="gridPopupBox"></div>
 </body>
 </asp:Content>
