@@ -4,9 +4,12 @@
 
 }
 .hex-background {
-    background-image:   url(../Background_Images/hex-Bkgrd.jpg);
+    background-image:   url(../Background_Images/hex-Bkgrd.jpg) !important;
 }
 
+.no-content{
+    height: 100em   ;
+}
 .table-thirds{
     width: 30%;
 }

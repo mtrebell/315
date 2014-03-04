@@ -20,7 +20,7 @@ function AlphaFilterButtonClick(e)
 // when the alpha filter is clicked then this is called
 {
     e.preventDefault();
-    if ( filterFlowCtrl.coverflow('index') !== FILTER_COVER_ALPHA)
+    if ( filterFlowCtrl.coverflow('index') !== FILTER_COVER_ALPHA || $('.ui-dialog-content').dialog('isOpen').length > 0)
     {
         return;
     }
