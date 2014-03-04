@@ -1,9 +1,9 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="MainPage.aspx.cs" Inherits="_Default" %>
 <asp:Content ContentPlaceHolderID="body" Runat="Server">
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
-    <head runat="server">
+    <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Media Server Db</title>
 
@@ -190,6 +190,24 @@
         // DOCUMENT READY!
         $(function() 
         {
+            $(".ui-validator").html("");
+            $("#LogOutButton").button();
+            $("#SettingsButton").button({ icons: { primary: "ui-icon-gear"}});
+            <asp:LoginView ID="LoginView5" runat="server" >
+                <LoggedInTemplate>
+                console.log("loggedin template");
+                $("#loggedin_bar").show();
+                $("#login_bar").hide();
+                $("#body_Login1_LoginButton").button();
+                </LoggedInTemplate>
+                <AnonymousTemplate> 
+                console.log("anon template");
+                $("#loggedin_bar").hide();
+                $("#login_bar").show();
+                $("#body_Login1_LoginButton").button();
+                </AnonymousTemplate> 
+            </asp:LoginView>
+
             $("#CoverFlow").load("GetMovieList.aspx", function() 
             {
                 $('#CoverFlow .hidden').hide();
@@ -283,6 +301,7 @@
                         }
                         else if (tab_id === "tabs_rotten_tomatoes")
                         {
+                            // TODO: REplace with actuall page url and arguments.
                             ui.newPanel.load("Admin/EditEntries.aspx");
                         }
                     }
@@ -310,7 +329,7 @@
                 $( '#menu' ).multilevelpushmenu( 'redraw' );
             });
 
-            $("#LoginDialog").load("Login.aspx");
+            //$("#LoginDialog").load("Login.aspx");
             $("#LoginButton").click(function(e) {
                 e.preventDefault();
                 $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
@@ -364,6 +383,8 @@
         }); // End Doc Ready.
     </script>
 
+    <body>
+        <div>
     <asp:LoginView ID="LoginView1" runat="server" >
         <RoleGroups>
             <asp:RoleGroup Roles="Administrator">
@@ -455,7 +476,32 @@
             </asp:RoleGroup>
         </RoleGroups>
     </asp:LoginView>
-
+    <div>
+        <form runat="server">
+            <asp:login id="Login1" runat="server" backcolor="Black" bordercolor="#DAA520" forecolor="#DAA520"
+                borderstyle="None" borderwidth="0px" font-names="Verdana" font-size="8pt"
+                onloggedin="Login1_LoggedIn" destinationpageurl="~/MainPage.aspx">
+                <LayoutTemplate>
+                    <div id="loggedin_bar" class="logedin-bar theme ui-ontop">
+                        <asp:LoginName id="LoginName" runat="Server" FormatString="Welcome {0}"></asp:LoginName>
+                        <a id="LogOutButton" href="#">Logout?</a>
+                        <a id="SettingsButton" href="#"> Settings </a>
+                    </div>
+                    <div id="login_bar" class="login-bar ui-ontop">
+                        <span>
+                            User: <asp:TextBox ID="UserName" runat="server" ></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="UserNameRequired" class="ui-validator fa fa-exclamation-circle" runat="server" ControlToValidate="UserName" ErrorMessage="User Name is required." ToolTip="User Name is required." ValidationGroup="Login1">*</asp:RequiredFieldValidator>
+                        </span>
+                        Password: <asp:TextBox ID="Password" runat="server" TextMode="Password" ></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="PasswordRequired" class="ui-validator fa fa-exclamation-circle" runat="server" ControlToValidate="Password" ErrorMessage="Password is required." ToolTip="Password is required." ValidationGroup="Login1">*</asp:RequiredFieldValidator>
+                        <asp:CheckBox ID="RememberMe" runat="server" Text="Remember." />
+                        <asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal>
+                        <asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Log In" ValidationGroup="Login1" class="tiny-btn"/>
+                    </div>
+               </LayoutTemplate>
+            </asp:login>
+       </form>
+    </div>
     <div id="mainBody" class="tableContainer MainBodyOffset Border">
         <div class="tableRow">
             <section class="tableCell">
@@ -468,7 +514,7 @@
             <section class="tableCell">
                 <span class="inline-display">
                     <img id="ClearAllFilters" class="icon-button" src="Background_Images/close_icon.png">
-                    <div id="FilterBar">
+                    <div id="FilterBar" class="theme">
                     </div>
                 </span>
                 <img src="Background_Images/Std_Seperator.png" style="width:100%"/>
@@ -476,9 +522,9 @@
         </div>
         <div class="tableRow">
             <section class="tableCell">
-                <div id="MovieFilterBox">
-                    <div id="MovieFilter" class="cover-div">
-                        <div id="FilterAlpha" class="cover" > 
+                <div id="MovieFilterBox" class="theme">
+                    <div id="MovieFilter" class="cover-div theme">
+                        <div id="FilterAlpha" class="cover theme" > 
                             <p>Select movies starting with:</p>
                             <div class="filterGrooup">
                                 <span id="Alpha_A" class="AlphaFilterButton">A</span> 
@@ -603,53 +649,13 @@
         </div>
     </div>
 
-    <div id="menu" class="ui-ontop">
-      <nav>
-        <h2><i class="fa fa-reorder"></i>Menu</h2>
-        <ul>
-            <li><a id="" href="#">Favorites</a></li>
-            <li><a id="MenuGridView" href="#">Grid View</a></li>
-            <li><a id="" href="#">My Settings</a></li>
-            <asp:LoginView ID="LoginView3" runat="server" >
-                <RoleGroups>
-                    <asp:RoleGroup Roles="Administrator">
-                        <ContentTemplate>
-                            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
-                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
-                            <li> <a href="#">Admin</a>
-                                <h2>Admin</h2>
-                                <ul>
-                                    <li><a id="AddContentButton" href="#">Add Content</a></li>
-                                    <li><a id="EditEntriesButton" href="#">Edit Movies</a></li>
-                                    <li><a id="EditUsersButton" href="#">Edit Users</a></li>
-                                </ul>
-                            </li>
-                            <li><a id="LogOutButton" href="#">Logout</a></li>
-                        </ContentTemplate>
-                    </asp:RoleGroup>
-                </RoleGroups>
-                <RoleGroups>
-                    <asp:RoleGroup Roles="Members">
-                        <ContentTemplate>
-                            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
-                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
-                            <li><a id="LogOutButton" href="#">Logout</a></li>
-                        </ContentTemplate>
-                    </asp:RoleGroup>
-                </RoleGroups>
-                <AnonymousTemplate> 
-                    <li><a id="LoginButton" href="#">Login</a></li>
-                </AnonymousTemplate> 
-            </asp:LoginView>
-        </ul>
-      </nav>
-    </div>
-    <div id="gridPopupBox"></div>
     <div id="dialogContainer"></div>
     <div id="RecomendationsDialog"></div>
     <div id="EnterRequestDialog"></div>
     <div id="GridDialog"><div class="gridContainer"></div></div>
-    <div id="LoginDialog"> </div>
+    <div id="LoginDialog"> 
+
+    </div>
     <asp:LoginView ID="LoginView4" runat="server" >
         <RoleGroups>
             <asp:RoleGroup Roles="Administrator">
@@ -661,4 +667,42 @@
             </asp:RoleGroup>
         </RoleGroups>
     </asp:LoginView>
+</div>
+    <div id="menu" class="ui-ontop theme">
+      <nav>
+        <h2><i class="fa fa-reorder"></i>Menu</h2>
+        <ul>
+            <li><a id="" href="#">Favorites</a></li>
+            <li><a id="MenuGridView" href="#">Grid View</a></li>
+            <asp:LoginView ID="LoginView3" runat="server" >
+                <RoleGroups>
+                    <asp:RoleGroup Roles="Administrator">
+                        <ContentTemplate>
+                            <li><a id="MenuRecomendations" href="#">Recommendations</a></li>
+                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+                            <li> <a href="#">Admin</a>
+                                <h2>Admin</h2>
+                                <ul>
+                                    <li><a id="AddContentButton" href="#">Add Content</a></li>
+                                    <li><a id="EditEntriesButton" href="#">Edit Movies</a></li>
+                                    <li><a id="EditUsersButton" href="#">Edit Users</a></li>
+                                </ul>
+                            </li>
+                        </ContentTemplate>
+                    </asp:RoleGroup>
+                </RoleGroups>
+                <RoleGroups>
+                    <asp:RoleGroup Roles="Members">
+                        <ContentTemplate>
+                            <li><a id="MenuRecomendations" href="#">My Recommended</a></li>
+                            <li><a id="MenuEnterRequest" href="#">Enter Request</a></li>
+                        </ContentTemplate>
+                    </asp:RoleGroup>
+                </RoleGroups>
+            </asp:LoginView>
+        </ul>
+      </nav>
+    </div>
+    <div id="gridPopupBox"></div>
+</body>
 </asp:Content>

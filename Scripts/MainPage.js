@@ -40,7 +40,7 @@ function AddAlphaFilter(filterID)
 {
     var filterBar = $("#FilterBar");
     filterBar.append(
-          '<span class = "filter filter_alpha" '
+          '<span class = "filter filter_alpha theme" '
         + 'id="Filter_' + filterID + '" '
         + 'data="' + filterID + '" '
         + 'filterKey="'+ $("#"+filterID).html() +'" '
@@ -103,7 +103,7 @@ function AddGenreFilter(filterID, key)
     var filterBar = $("#FilterBar");
     console.log("add genere %o", filterID);
     filterBar.append(
-          '<span class = "filter filter_genre" '
+          '<span class = "filter filter_genre theme" '
         + 'id="Filter_' + filterID + '" '
         + 'data="' + filterID + '" '
         + 'filterKey="'+ key +'" '

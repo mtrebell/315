@@ -6,6 +6,36 @@
 .hex-background {
     background-image:   url(../Background_Images/hex-Bkgrd.jpg) !important;
 }
+.login-bar {
+    position: absolute;
+    top: 0px;
+    left: 55px; 
+}
+.login-bar .ui-validator{
+    color: red;
+    font-size: 12pt;
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
+    left: -9em;
+}
+.logedin-bar{
+    position: absolute;
+    top: 15px;
+    left: 55px;     
+}
+.logedin-bar a{
+    position: relitive;
+    top: -3px;
+    font-size: 0.8em;
+}
+.logedin-bar.theme a{
+    color: goldenrod;
+}
+.login-bar input {
+    background-image:   url(../Background_Images/hex-Bkgrd.jpg) !important;
+    color: goldenrod;
+}
 
 .no-content{
     height: 100em   ;
@@ -63,7 +93,7 @@
     padding-right: 1em;
 }
 .filter-list-genre.theme{
-
+    color: goldenrod;
 }
 .GenreFilterButton {
     font-size: 0.8em !important;
@@ -76,7 +106,7 @@
 	color: #ffffff !important;
 }
 .GenreFilterButton.theme{
-    color: white;   
+    color: goldenrod;   
 }
 .genre-label {
     padding-left: 0.2em;
@@ -122,9 +152,14 @@
     height:     100em;
     width:      15em;
     z-index:    1000;
-    color:      white;
     z-index:    99;
     left:       0;
+}
+#menu.theme {
+    color:      goldenrod;
+}
+#menu.theme a{
+    color:      goldenrod;
 }
 #MovieFilterBox {
     background: black;
@@ -147,7 +182,9 @@
 #MovieFilter div p {
     text-align:         center;
     margin:             0.3em;
-    color:              white;
+}
+#MovieFilter.theme div p {
+    color:              goldenrod;
 }
 #FilterGeneral {
     background: blue;
@@ -189,8 +226,14 @@ section.tableCell {
     text-align: center;
     vertical-align: top;       
     margin: 1em 1.2em 1em 1.0em;
-    color: white;     
+    color: goldenrod;     
     cursor: crosshair;    
+}
+#FilterAlpha.theme span{
+    color: goldenrod;     
+}
+#FilterAlpha.theme p{
+    color: goldenrod;     
 }
 #FilterAlpha .filterGrooup {
     padding-top:   0.2em;
@@ -232,14 +275,19 @@ section.tableCell {
 }
 
 #FilterBar span{
-    color: white;
-
-    /*background: blue;*/
+}
+#FilterBar.theme span{
+    color: goldenrod;
 }
 .ui-ontop {
     z-index: 999 !important;
 }
 
+.tiny-btn{
+    font-size: 0.8em;
+    position: relative; 
+    top: -3px;
+}
 .ui-icon { 
     display: inline; 
     text-indent: -99999px; 
