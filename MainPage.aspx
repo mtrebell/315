@@ -298,11 +298,13 @@
                             // TODO: REplace with actuall page url and arguments.
                             ui.newPanel.load("Admin/AddToDataBase.aspx");
                             
+                            //GetIMDBReviews(mov_id);
                         }
                         else if (tab_id === "tabs_rotten_tomatoes")
                         {
                             // TODO: REplace with actuall page url and arguments.
                             ui.newPanel.load("Admin/EditEntries.aspx");
+                            //GEtRottenReviews(mov_id);
                         }
                     }
                 }
