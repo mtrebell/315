@@ -10,8 +10,13 @@ using System.Configuration;
 /// </summary>
 public static class Middleware
 {
-    private static string sConnectionString =
-    ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString;
+    public static string ConnectionString
+    {
+        get
+        {
+            return ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString;
+        }
+    }
 
     /// <summary>
     /// Used to find all movie database information based off first character in title
@@ -22,7 +27,7 @@ public static class Middleware
     public static SqlDataReader MovieDisplayContent()
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString);  // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())                      // create query
         {
@@ -43,7 +48,7 @@ public static class Middleware
     public static SqlDataReader MovieDisplaySearchContent(string sMovieFilter)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString);  // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())                  // create query
         {
@@ -70,7 +75,7 @@ public static class Middleware
     public static SqlDataReader FavoritesDisplayContent(Guid gUser)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString);
+        SqlConnection conn = new SqlConnection(ConnectionString);
         conn.Open();
         using (SqlCommand comm = new SqlCommand())
         {
@@ -96,7 +101,7 @@ public static class Middleware
     public static SqlDataReader MovieDisplayMoreInfo(int iMovieIndex)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString);  // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())          // create query
         {
@@ -125,7 +130,7 @@ public static class Middleware
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
-        SqlConnection conn = new SqlConnection(sConnectionString);  // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -164,7 +169,7 @@ public static class Middleware
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -196,7 +201,7 @@ public static class Middleware
     public static SqlDataReader GetAllGenreOptions()
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -211,7 +216,7 @@ public static class Middleware
     public static SqlDataReader GetNonAdminUsers()
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -232,7 +237,7 @@ public static class Middleware
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
-        SqlConnection conn = new SqlConnection(sConnectionString);      // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString);      // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -265,7 +270,7 @@ public static class Middleware
     public static void InsertRequest(Guid gUser, string sTitle)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString);  // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())  // create query
         {
@@ -297,7 +302,7 @@ public static class Middleware
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -325,7 +330,7 @@ public static class Middleware
     public static SqlDataReader GetMovieData(string sMovID)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -345,10 +350,10 @@ public static class Middleware
 
     public static string UpdateEntry(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size,
         string mov_fileType, string mov_dateAdded, string mov_rating, string mov_runTime, string mov_lgPoster,
-        string mov_smPoster, string mov_trailer, string mov_imdbUrl, string proc)
+        string mov_smPoster, string mov_trailer, string mov_imdbUrl, string mov_rottenID, float mov_rottenRating, string proc)
     {         
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -407,8 +412,16 @@ public static class Middleware
             pImdbUrl.Value = mov_imdbUrl;    // assign movie id filter
             pImdbUrl.Direction = System.Data.ParameterDirection.Input;
 
+            SqlParameter pRottenID = new SqlParameter("@mov_rottenID", System.Data.SqlDbType.NVarChar, 100);
+            pImdbUrl.Value = mov_imdbUrl;    // assign movie id filter
+            pImdbUrl.Direction = System.Data.ParameterDirection.Input;
+
+            SqlParameter pRottenRating = new SqlParameter("@mov_rottenRating", System.Data.SqlDbType.Float);
+            pImdbUrl.Value = mov_imdbUrl;    // assign movie id filter
+            pImdbUrl.Direction = System.Data.ParameterDirection.Input;
+
             comm.Parameters.AddRange(new SqlParameter[] { pMovieID, pTitle, pPlot, pGenre, pSize, pFileType,
-                pDateAdded, pRating, pRunTime, pLgPoster, pSmPoster, pTrailer, pImdbUrl});
+                pDateAdded, pRating, pRunTime, pLgPoster, pSmPoster, pTrailer, pImdbUrl, pRottenID, pRottenRating});
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
         return "Success";      // return filtered dataset
@@ -417,7 +430,7 @@ public static class Middleware
     public static SqlDataReader CheckChange(string sMovID)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -438,7 +451,7 @@ public static class Middleware
     public static SqlDataReader GetUserAverages()
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -455,7 +468,7 @@ public static class Middleware
     public static SqlDataReader GetMovieAverages()
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -471,7 +484,7 @@ public static class Middleware
     public static SqlDataReader GetMovieRatings()
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -487,7 +500,7 @@ public static class Middleware
     public static SqlDataReader GetSimilarMovie(Guid user, string movie)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -513,7 +526,7 @@ public static class Middleware
     public static SqlDataReader GetUnwatchedMovie(Guid user)
     {
         SqlDataReader reader = null; // return object
-        SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
@@ -536,7 +549,7 @@ public static class Middleware
    {
        SqlDataReader reader = null; 
        string sReturn;
-       SqlConnection conn = new SqlConnection(sConnectionString); // create database connection
+       SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
        conn.Open();
        using (SqlCommand comm = new SqlCommand())      // create query
        {
@@ -573,6 +586,26 @@ public static class Middleware
         }
         return sReturn;
     }
-          
+
+    public static SqlDataReader GetRottenID(string mov_id)
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "GetRottenID";           // indicate procedure name
+
+            //for each movie in movies
+            SqlParameter pMovieID = new SqlParameter("@user_id", System.Data.SqlDbType.NVarChar, 100);
+            pMovieID.Value = mov_id;    // assign movie id filter
+            pMovieID.Direction = System.Data.ParameterDirection.Input;
+
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+        }
+        return reader;      // return filtered dataset
+    }
 
 }

@@ -69,7 +69,6 @@
             margin-top;
         }
 
-
         .dragandrophandler{
             border:2px dotted #0B85A1;
             width:200px;
@@ -126,6 +125,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
     <form runat="server">
     <script type="text/javascript">
+        var bEditModeActive = false;
         $(function () {
             $('#EditTemplate').hide();
             $('#AddEntryTemplate').hide();
@@ -134,7 +134,8 @@
                 header: "h3",
                 heightStyle: "content",
                 active: false,
-                collapsible: true
+                collapsible: true,
+                beforeActivate: function (event, ui) {  if (bEditModeActive) event.preventDefault(); }
             });
 
             $("#clearAllMedia").click(function (e) {
@@ -224,7 +225,9 @@
                 'mov_trailer': document.getElementById('Add_mov_trailer').value,
                 'mov_imdbUrl': document.getElementById('Add_mov_imdbURL').value,
                 'updatedLg': InsertLg.updated,
-                'updatedSm': InsertSm.updated
+                'updatedSm': InsertSm.updated,
+                'mov_rottenID': document.getElementById('Add_mov_rottenID').value,
+                'mov_rottenRating': document.getElementById('Add_mov_rottenRating').value
             };
             console.log(objectData);
             $.ajax({
@@ -320,7 +323,9 @@
                         'mov_lgPoster': ret[9],
                         'mov_smPoster': ret[10],
                         'mov_trailer': ret[11],
-                        'mov_imdbUrl': ret[12]
+                        'mov_imdbUrl': ret[12],
+                        'mov_rottenID': ret[13],
+                        'mov_rottenRating': ret[14]
                     };
 
                     var divHTML = document.getElementById('Acc' + objD.mov_id).innerHTML;
@@ -341,9 +346,12 @@
                     $('#Edit_mov_smPoster').attr("src", objD.mov_smPoster);
                     document.getElementById('Edit_mov_trailer').value = objD.mov_trailer;
                     document.getElementById('Edit_mov_imdbURL').value = objD.mov_imdbUrl;
+                    document.getElementById('Edit_mov_rottenID').value = objD.mov_rottenID;
+                    document.getElementById('Edit_mov_rottenRating').value = objD.mov_rottenRating;
 
                     AddDropHandle();
                     DragRemove('EditTemplate');
+                    bEditModeActive = true;
                 },
                 cache: false
             });
@@ -369,7 +377,9 @@
                 'mov_trailer': document.getElementById('Edit_mov_trailer').value,
                 'mov_imdbUrl': document.getElementById('Edit_mov_imdbURL').value,
                 'updatedLg': EditLg.updated,
-                'updatedSm': EditSm.updated
+                'updatedSm': EditSm.updated,
+                'mov_rottenID': document.getElementById('Edit_mov_rottenID').value,
+                'mov_rottenRating': document.getElementById('Edit_mov_rottenRating').value
             };
 
             $.ajax({
@@ -394,6 +404,7 @@
                     $('#dvAccordian').accordion('destroy').accordion();
                     EditLg.updated = false;
                     EditSm.updated = false;
+                    bEditModeActive = false;
                 },
                 cache: false
             });
@@ -462,6 +473,7 @@
                 = document.getElementById('EditTemplate').innerHTML;
 
             document.getElementById('EditTemplate').innerHTML = div;
+            bEditModeActive = false;
         }
 
         function cancelInsert() {
@@ -483,6 +495,8 @@
             $('#Add_mov_smPoster').attr("src", "");
             document.getElementById('Add_mov_trailer').value = "";
             document.getElementById('Add_mov_imdbURL').value = "";
+            document.getElementById('Add_mov_rottenID').value = "";
+            document.getElementById('Add_mov_rottenRating').value = "";
         }
 
         function clearEditTemplate()
@@ -500,6 +514,8 @@
             $('#Edit_mov_smPoster').attr("src", "");
             document.getElementById('Edit_mov_trailer').value = "";
             document.getElementById('Edit_mov_imdbURL').value = "";
+            document.getElementById('Edit_mov_rottenID').value = "";
+            document.getElementById('Edit_mov_rottenRating').value = "";
         }
 
         // #region  sendFileToServer
@@ -606,7 +622,9 @@
                 'mov_lgPoster': ret[9],
                 'mov_smPoster': ret[10],
                 'mov_trailer': ret[11],
-                'mov_imdbUrl': ret[12]
+                'mov_imdbUrl': ret[12],
+                'mov_rottenID': ret[13],
+                'mov_rottenRating': ret[14]
             };
 
             var accord = '<div id="Acc' + objD.mov_id + '">' +
@@ -625,7 +643,9 @@
                 '<tr><td><label id="' + objD.mov_id + 'bd">Date Added: ' + objD.mov_dateAdded + '</label></td></tr>' +
                 '<tr><td><label id="' + objD.mov_id + 'br">Rating: ' + objD.mov_rating + '</label></td></tr>' +
                 '<tr><td><label id="' + objD.mov_id + 'be">Trailer Link:' + objD.mov_trailer + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'bi">IMDb URL: ' + objD.mov_imdbUrl + '</label></td></tr></table></div>';
+                '<tr><td><label id="' + objD.mov_id + 'bi">IMDb URL: ' + objD.mov_imdbUrl + '</label></td></tr></table></div>' + 
+                '<tr><td><label id="' + objD.mov_id + 'bo">Rotten ID: '+ objD.mov_rottenID + '</label></td>' + 
+                '<td><label id="' + objD.mov_id + 'bt">Rotten Rating: ' + objD.mov_rottenRating + '</label></td></tr>';
             return accord;
         }
     </script>
@@ -708,6 +728,8 @@
                     </table>
                 </td>
             </tr>
+            <tr><td>Rotten ID: </td><td><input type="text" id="Add_mov_rottenID" value="" style="width: 99%;" /></td></tr>
+            <tr><td>Rotten Rating: </td><td><input type="text" id="Add_mov_rottenRating" value="" style="width: 99%;" /></td></tr>
         </table>  
     </div>
 
@@ -756,6 +778,10 @@
                         <tr><td><label id="<%# Eval("mov_id")%>br">Rating: <%#Eval("mov_rating") %></label></td></tr>
                         <tr><td><label id="<%# Eval("mov_id")%>be">Trailer Link: <%#Eval("mov_trailer") %></label></td></tr>
                         <tr><td><label id="<%# Eval("mov_id")%>bi">IMDb URL: <%#Eval("mov_imdbUrl") %></label></td></tr>
+                        <tr>
+                            <td><label id="<%# Eval("mov_id")%>bo">Rotten ID: <%#Eval("mov_rottenID") %></label></td>
+                            <td><label id="<%# Eval("mov_id")%>bt">Rotten Rating: <%#Eval("mov_rottenRating") %></label></td>
+                        </tr>
                     </table>
                 </div>
             </ItemTemplate>
@@ -836,6 +862,10 @@
                         </tr>
                     </table>
                 </td>
+            </tr>
+            <tr>
+                <td>Rotten ID: </td><td><input type="text" id="Edit_mov_rottenID" value="" style="width: 99%;" /></td>
+                <td>Rotten Rating: </td><td><input type="text" id="Edit_mov_rottenRating" value="" style="width: 99%;" /></td>
             </tr>
         </table>  
     </div>
