@@ -34,7 +34,7 @@ public partial class _Default : System.Web.UI.Page
             createAccordianUsingRepeater();
 
         sUpload = Server.MapPath("~/Upload");
-        sImages = Server.MapPath("Image_Posters");
+        sImages = Server.MapPath("~/Image_Posters");
 
         using (SqlDataReader sdr = Middleware.MovieDisplayContent())
         {
@@ -107,9 +107,8 @@ public partial class _Default : System.Web.UI.Page
 
     [WebMethod()]
     public static string commitUpdateDB(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size, 
-			string mov_fileType, string mov_dateAdded, string mov_rating, string mov_runTime, string mov_lgPoster, 
-			string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm,
-            string mov_rottenID, float mov_rottenRating)
+			string mov_fileType, string mov_dateAdded, string mov_rating, string mov_rottenID, float mov_rottenRating, string mov_runTime, string mov_lgPoster, 
+			string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm)
     {
         string lgPoster = "",
                smPoster = "";
@@ -146,9 +145,8 @@ public partial class _Default : System.Web.UI.Page
 
     [WebMethod()]
     public static string AddEntryDB(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size,
-        string mov_fileType, string mov_rating, string mov_runTime, string mov_lgPoster,
-        string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm,
-        string mov_rottenID, float mov_rottenRating)
+        string mov_fileType, string mov_rating, string mov_rottenID, float mov_rottenRating, string mov_runTime, string mov_lgPoster,
+        string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm)
     {
         string lgPoster = "",
                smPoster = "";
