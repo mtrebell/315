@@ -98,6 +98,9 @@ CREATE TABLE [MovieSummary](
 	[mov_lgPoster] [nvarchar](255) NULL,
 	[mov_trailer] [nvarchar](1500) NULL,
 	[mov_imdbUrl] [nvarchar](255) NULL,
+	[mov_rottenID][nvarchar] (100) NULL,
+	[mov_rottenRating] [float] NULL
+
 PRIMARY KEY CLUSTERED 
 (
 	[mov_id] ASC

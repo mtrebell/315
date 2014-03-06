@@ -14,14 +14,40 @@ using System.Web.Services;
 using System.Security.Cryptography;
 using System.Net;
 using System.Text;
+using System.Web.Script.Serialization;
 
 public partial class _Default : System.Web.UI.Page
 {
     public static int Percentage { get; set; }
     private static Thread _tUpload = null;
 
-    // connection string to database
-    private static string sConnect = ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString;
+    public class Rating
+    {
+        private float rottenScore;
+        public string audience_score
+        {
+            get { return string.Format("{0:F1}", rottenScore); }
+
+            set
+            {
+                float temp = 0.0f;
+                float.TryParse(value, out temp);
+                rottenScore = temp / 10.0f;
+            }
+        }
+    }
+
+    public class MovieData
+    {     
+        public string id { get; set; }
+
+        public Rating ratings;
+    }
+
+    public class JsonMovie
+    {
+        public MovieData[] movies;
+    }
 
     public string ServerRootPath
     {
@@ -57,7 +83,7 @@ public partial class _Default : System.Web.UI.Page
             delegate()
             {
                 string sImageRoot = ((string)imageRootPath).Replace('~', '\\');
-                GetIMDBData(new string[] { sConnect, (string) hiddenListContent, sImageRoot });
+                GetIMDBData(new string[] { Middleware.ConnectionString, (string) hiddenListContent, sImageRoot });
             });
         _tUpload.IsBackground = true;
         _tUpload.Start();
@@ -188,6 +214,8 @@ public partial class _Default : System.Web.UI.Page
                     sbGenreCode.Append(s.ToLower().Trim()).Append(", ");
         }
         #endregion
+
+        string[] rottenIDRating = GetRottenIDRating(IMDbIn.Title).Split('|');
         
         try
         {
@@ -195,8 +223,9 @@ public partial class _Default : System.Web.UI.Page
             {
                 con.Open(); // create insert condition
                 using (SqlCommand ins = new SqlCommand(
-                        "INSERT INTO MovieSummary (mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, mov_runtime,mov_rating, mov_smPoster, mov_lgPoster, mov_imdbUrl)" +
-                                    "VALUES (@Mid, @Ti, @Pl, @Gr, @Si, @Fi, @Rt, @Ra, @Sm, @Lg, @Im )", con))
+                        "INSERT INTO MovieSummary (mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, mov_runtime,mov_rating, " +
+                        "mov_smPoster, mov_lgPoster, mov_imdbUrl, mov_rottenID, mov_rottenRating)" +
+                            "VALUES (@Mid, @Ti, @Pl, @Gr, @Si, @Fi, @Rt, @Ra, @Sm, @Lg, @Im, @Ri, @Rr)", con))
                 {
                     // add all imdb parameters to insert statement
                     ins.Parameters.AddWithValue("@Mid", IMDbIn.Id);
@@ -207,6 +236,8 @@ public partial class _Default : System.Web.UI.Page
                     ins.Parameters.AddWithValue("@Rt", IMDbIn.Runtime);
                     ins.Parameters.AddWithValue("@Ra", IMDbIn.Rating);
                     ins.Parameters.AddWithValue("@Im", IMDbIn.ImdbURL.ToString());
+                    ins.Parameters.AddWithValue("@Ri", rottenIDRating[0]);
+                    ins.Parameters.AddWithValue("@Rr", rottenIDRating[1]);
 
                     #region Determine IMDB Image Posters
                     string rootImagePath = imagePath;
@@ -337,6 +368,35 @@ public partial class _Default : System.Web.UI.Page
         { conn.Close(); }
 
         return bExists;
+    }
+    #endregion
+
+    #region RottenTomatoesSupportFunctions
+    public static string GetRottenIDRating(string mov_title)
+    {
+        string webAddr = string.Format("http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=" +
+                        "{0}&q={1}", "jhgh2h3rvwnbwpzbf9m385ds", HttpUtility.HtmlEncode(mov_title));
+
+        var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
+        httpWebRequest.ContentType = "application/json; charset=utf-8";
+        httpWebRequest.Method = "GET";
+
+        var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+        JsonMovie jmMovieBase;
+        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+        {
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            string s = streamReader.ReadToEnd().Replace("\n", string.Empty);
+             jmMovieBase = ser.Deserialize<JsonMovie>(s);
+        }
+        if (jmMovieBase != null && jmMovieBase.movies != null && jmMovieBase.movies.Length > 0)
+        {
+            MovieData md = jmMovieBase.movies[0];
+            return string.Format("{0}|{1}", md.id != null ? md.id : "NOTFOUND", 
+                md.ratings.audience_score != null ? md.ratings.audience_score : "0.0");
+        }
+        else
+            return "NOTFOUND|0.0";
     }
     #endregion
 }

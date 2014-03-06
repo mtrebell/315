@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 
 public partial class _Default : System.Web.UI.Page
 {
-    private static string sConnectionString = ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString;
+    private static string sConnectionString = Middleware.ConnectionString;
     private static string sUpload;
     private static string sImages;
 
@@ -98,8 +98,9 @@ public partial class _Default : System.Web.UI.Page
             sb.Append(sdr[0].ToString()).Append('|').Append(sdr[1].ToString()).Append('|').Append(sdr[2].ToString()).Append('|');
             sb.Append(sdr[3].ToString()).Append('|').Append(sdr[4].ToString()).Append('|').Append(sdr[5].ToString()).Append('|');
             sb.Append(sdr[6].ToString()).Append('|').Append(sdr[7].ToString()).Append('|').Append(sdr[8].ToString()).Append('|');
-            sb.Append(sdr[9].ToString().Replace("~", "..")).Append('|').Append(sdr[10].ToString().Replace("~", "..")).Append('|').Append(sdr[11].ToString()).Append('|');
-            sb.Append(sdr[12].ToString());
+            sb.Append(sdr[9].ToString().Replace("~", "..")).Append('|').Append(sdr[10].ToString().Replace("~", "..")).Append('|');
+            sb.Append(sdr[11].ToString()).Append('|').Append(sdr[12].ToString()).Append('|').Append(sdr[13].ToString()).Append('|');
+            sb.Append(sdr[14].ToString());
         }
         return sb.ToString();
     }
@@ -107,7 +108,8 @@ public partial class _Default : System.Web.UI.Page
     [WebMethod()]
     public static string commitUpdateDB(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size, 
 			string mov_fileType, string mov_dateAdded, string mov_rating, string mov_runTime, string mov_lgPoster, 
-			string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm)
+			string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm,
+            string mov_rottenID, float mov_rottenRating)
     {
         string lgPoster = "",
                smPoster = "";
@@ -126,7 +128,7 @@ public partial class _Default : System.Web.UI.Page
 
         Middleware.UpdateEntry(mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, mov_dateAdded,
             mov_rating, mov_runTime, lgPoster.Replace("..", "~"), smPoster.Replace("..", "~"), 
-            mov_trailer, mov_imdbUrl, "UpdateTitle");
+            mov_trailer, mov_imdbUrl, mov_rottenID, mov_rottenRating, "UpdateTitle");
 
         foreach (FileInfo f in new DirectoryInfo(sUpload).EnumerateFiles())
             File.Delete(f.FullName);
@@ -136,7 +138,8 @@ public partial class _Default : System.Web.UI.Page
         sb.Append(mov_genre).Append("|").Append(mov_size).Append("|").Append(mov_fileType).Append("|");
         sb.Append(mov_dateAdded).Append("|").Append(mov_rating).Append("|");
         sb.Append(mov_runTime).Append("|").Append(lgPoster).Append("|").Append(smPoster).Append("|");
-        sb.Append(mov_trailer).Append("|").Append(mov_imdbUrl);
+        sb.Append(mov_trailer).Append("|").Append(mov_imdbUrl).Append('|').Append(mov_rottenID);
+        sb.Append('|').Append(mov_rottenRating);
 
         return sb.ToString();
     }
@@ -144,7 +147,8 @@ public partial class _Default : System.Web.UI.Page
     [WebMethod()]
     public static string AddEntryDB(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size,
         string mov_fileType, string mov_rating, string mov_runTime, string mov_lgPoster,
-        string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm)
+        string mov_smPoster, string mov_trailer, string mov_imdbUrl, bool updatedLg, bool updatedSm,
+        string mov_rottenID, float mov_rottenRating)
     {
         string lgPoster = "",
                smPoster = "";
@@ -155,14 +159,16 @@ public partial class _Default : System.Web.UI.Page
             smPoster = TransferImageFromUpload(mov_smPoster, "sm");
 
         Middleware.UpdateEntry(mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, DateTime.Now.ToShortDateString(),
-        mov_rating, mov_runTime, lgPoster.Replace("..", "~"), smPoster.Replace("..", "~"),mov_trailer, mov_imdbUrl, "InsertTitle");
+        mov_rating, mov_runTime, lgPoster.Replace("..", "~"), smPoster.Replace("..", "~"),mov_trailer, mov_imdbUrl,
+        mov_rottenID, mov_rottenRating, "InsertTitle");
 
         StringBuilder sb = new StringBuilder();
         sb.Append(mov_id).Append("|").Append(mov_title).Append("|").Append(mov_plot).Append("|");
         sb.Append(mov_genre).Append("|").Append(mov_size).Append("|").Append(mov_fileType).Append("|");
         sb.Append(DateTime.Now.ToShortDateString()).Append("|").Append(mov_rating).Append("|");
         sb.Append(mov_runTime).Append("|").Append(lgPoster.Replace("~", "..")).Append("|").Append(smPoster.Replace("~", "..")).Append("|");
-        sb.Append(mov_trailer).Append("|").Append(mov_imdbUrl);
+        sb.Append(mov_trailer).Append("|").Append(mov_imdbUrl).Append('|').Append(mov_rottenID);
+        sb.Append('|').Append(mov_rottenRating);
 
         return sb.ToString();
     }
@@ -178,7 +184,7 @@ public partial class _Default : System.Web.UI.Page
     {
         System.Data.SqlClient.SqlConnection conn =
             new System.Data.SqlClient.SqlConnection(
-            ConfigurationManager.ConnectionStrings["InternalConnectionString"].ConnectionString);
+            Middleware.ConnectionString);
         DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand();
         SqlDataAdapter da = new SqlDataAdapter();

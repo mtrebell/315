@@ -60,231 +60,203 @@
         </style>
     </head>
 
-    <script type="text/javascript">
-        var filterTagID = 0;
-        var coverFlowCtrl = null;
-        var filterFlowCtrl = null;
-        var genreList = [];
 
-        function ShowMovieDetails(e, cover, index)
-        {
+    <body>
+        <script type="text/javascript">
+            var filterTagID = 0;
+            var coverFlowCtrl = null;
+            var filterFlowCtrl = null;
+            var genreList = [];
 
-            //$("#Content").tabs();
-            var info = $(cover).find("div#info");
-            var mov_id = info.find("#mov_id").html();
-            $("#Content").tabs("option", "active" , 0);
-            $("#tabs_imdb").empty().addClass("no-content").attr("dataUrl", mov_id);
-            $("#tabs_rotten_tomatoes").empty().addClass("no-content").attr("dataUrl", mov_id);
-            $(".details-info").each(function(idx, val){
-                var htmlData = info.find("#"+$(val).attr('id')).html();
-        //        console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
-                if ($(val).is("img"))
-                {
-                    //console.log("image");
-                    $(val).attr("src", htmlData);
-                }
+            function ShowMovieDetails(e, cover, index) {
 
-                else if ($(val).is("div"))
-                {
-                    //console.log("ul %s",htmlData);
-                    if (htmlData !== undefined)
-                    {
-                        $(val).empty();
-                        htmlData.split(",").forEach(function(value, idx){
-                            var v = value.trim();
-                            if (v !== undefined && v.length > 0)
-                            {
-                                var genreStr = value.replace(",","").trim();
-                                var selectedStr = ""
-                                if ($('#FilterGenreList#genre_'+genreStr).hasClass("genre-selected"))
-                                {
-                                    selectedStr = "genre-selected";
+                //$("#Content").tabs();
+                var info = $(cover).find("div#info");
+                var mov_id = info.find("#mov_id").html();
+                $("#Content").tabs("option", "active", 0);
+                $("#tabs_imdb").empty().addClass("no-content").attr("dataUrl", mov_id);
+                $("#tabs_rotten_tomatoes").empty().addClass("no-content").attr("dataUrl", mov_id);
+                $(".details-info").each(function (idx, val) {
+                    var htmlData = info.find("#" + $(val).attr('id')).html();
+                    //        console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
+                    if ($(val).is("img")) {
+                        //console.log("image");
+                        $(val).attr("src", htmlData);
+                    }
+
+                    else if ($(val).is("div")) {
+                        //console.log("ul %s",htmlData);
+                        if (htmlData !== undefined) {
+                            $(val).empty();
+                            htmlData.split(",").forEach(function (value, idx) {
+                                var v = value.trim();
+                                if (v !== undefined && v.length > 0) {
+                                    var genreStr = value.replace(",", "").trim();
+                                    var selectedStr = ""
+                                    if ($('#FilterGenreList#genre_' + genreStr).hasClass("genre-selected")) {
+                                        selectedStr = "genre-selected";
+                                    }
+                                    $(val).append('<span class="genre_' + genreStr + ' genre-label theme ' + selectedStr + '">' + genreStr + "</span>");
                                 }
-                                $(val).append('<span class="genre_'+genreStr+' genre-label theme ' + selectedStr + '">' + genreStr + "</span>");
+                            });
+                        }
+                        else {
+                            //todo: make all the fields get cleared.
+                        }
+                    }
+
+                    else {
+                        //console.log("default");
+                        $(val).html(htmlData);
+                    }
+
+                    $(".cover-details-infoline #mov_rating i").remove();
+                    $(".cover-details-infoline #mov_rating").remove('i')
+                        .each(function (idx, val) {
+                            for (var i = 0; i <= parseInt($(val).html()) / 2; i++) {
+                                $(val).append('<i class="fa fa-star star-theme"/>')
                             }
                         });
-                    }
-                    else
-                    {
-                        //todo: make all the fields get cleared.
-                    }
-                }
+                })
+            }
 
-                else
-                {
-                    //console.log("default");
-                    $(val).html(htmlData);
-                }
+            function GeneratePopupBox(e, data) {
+                var mouseX = e.pageX - 300;
+                var mouseY = e.pageY - 325;
+                $('#gridPopupBox').empty().css({
+                    'left': mouseX + 'px',
+                    'top': mouseY + 'px'
+                }).append(data).fadeIn();
+            }
 
-                $(".cover-details-infoline #mov_rating i").remove();
-                $(".cover-details-infoline #mov_rating").remove('i')
-                    .each (function(idx, val) {
-                        for (var i= 0; i <= parseInt($(val).html())/2; i++) {
-                            $(val).append('<i class="fa fa-star star-theme"/>')
-                        }  
+            function DestroyPopupBox(e) {
+                $('#gridPopupBox').fadeOut();
+            }
+
+            function GenerateMovieGrid(srcData, dest, moviesPerRow) {
+
+                $(dest).css('display', 'table');
+                var i = 0, divObj;
+                $(srcData + ' .cover').each(function () {
+                    var curRow = parseInt(i / moviesPerRow);
+
+                    //create new row if necessary
+                    if (i % moviesPerRow == 0) {
+                        divObj = document.createElement('div');
+                        $(divObj).addClass('gridRow' + curRow).css('display', 'table-row').appendTo($(dest));
+                    }
+
+                    var movie = $(this).clone();
+                    var movieInfo = $(movie).find('#info');
+
+                    //if movie cover isn't loaded, construct image data
+                    if ($(movie).hasClass("cover-not-loaded")) {
+                        var newMovie = document.createElement('img');
+                        $(newMovie).attr('id', $(movie).attr('id')).attr('src', $(movie).attr('dataUrl'));
+                        movie = $(newMovie);
+                    } else {
+                        //otherwise just grab the image data
+                        movie = $(movie).find('img');
+                    }
+
+                    var dispData = '<h1>' + $(movie).attr('id') + '</h1><div></div>';
+
+                    $(movie).removeAttr('style').attr('height', '300px').attr('width', '200px').show()
+                    //add some mouse over features
+                    .click(function (e) {
+                        GeneratePopupBox(e, dispData);
+                    }).mousemove(function (e) {
+                        DestroyPopupBox(e);
                     });
-            })
-        }
 
-        function GeneratePopupBox(e, data) {
-            var mouseX = e.pageX -300;
-            var mouseY = e.pageY - 325;
-            $('#gridPopupBox').empty().css({
-                'left': mouseX + 'px',
-                'top': mouseY + 'px'
-            }).append(data).fadeIn();
-        }
+                    var container = document.createElement('div');
+                    $(container).css({
+                        'display': 'table-cell',
+                        'padding': '5px'
+                    }).addClass('gridCover');
 
-        function DestroyPopupBox(e) {
-            $('#gridPopupBox').fadeOut();
-        }
-
-        function GenerateMovieGrid(srcData, dest, moviesPerRow) {
-
-            $(dest).css('display', 'table');
-            var i = 0, divObj;
-            $(srcData + ' .cover').each(function () {
-                var curRow = parseInt(i / moviesPerRow);
-
-                //create new row if necessary
-                if (i % moviesPerRow == 0) {
-                    divObj = document.createElement('div');
-                    $(divObj).addClass('gridRow' + curRow).css('display', 'table-row').appendTo($(dest));
-                }
-
-                var movie = $(this).clone();
-                var movieInfo = $(movie).find('#info');
-
-                //if movie cover isn't loaded, construct image data
-                if ($(movie).hasClass("cover-not-loaded")) {
-                    var newMovie = document.createElement('img');
-                    $(newMovie).attr('id', $(movie).attr('id')).attr('src', $(movie).attr('dataUrl'));
-                    movie = $(newMovie);
-                } else {
-                    //otherwise just grab the image data
-                    movie = $(movie).find('img');
-                }
-
-                var dispData = '<h1>' + $(movie).attr('id') + '</h1><div></div>';
-               
-                $(movie).removeAttr('style').attr('height', '300px').attr('width', '200px').show()
-                //add some mouse over features
-                .click(function (e) {
-                    GeneratePopupBox(e, dispData);
-                }).mousemove(function(e) {
-                    DestroyPopupBox(e);
+                    $(container).append(movie, movieInfo);
+                    $(container).appendTo(dest + ' .gridRow' + curRow);
+                    i++;
                 });
+            }
 
-                var container = document.createElement('div');
-                $(container).css({
-                    'display': 'table-cell',
-                    'padding': '5px'
-                }).addClass('gridCover');
-                
-                $(container).append(movie, movieInfo);
-                $(container).appendTo(dest + ' .gridRow' + curRow);
-                i++;
-            });
-        }
+            // DOCUMENT READY!
+            $(function () {
+                $(".ui-validator").html("");
+                $("#LogOutButton").button();
+                $("#SettingsButton").button({ icons: { primary: "ui-icon-gear" } });
 
-        // DOCUMENT READY!
-        $(function() 
-        {
-            $(".ui-validator").html("");
-            $("#LogOutButton").button();
-            $("#SettingsButton").button({ icons: { primary: "ui-icon-gear"}});
-            <asp:LoginView ID="LoginView5" runat="server" >
-                <LoggedInTemplate>
-                console.log("loggedin template");
-                $("#loggedin_bar").show();
-                $("#login_bar").hide();
-                $("#body_Login1_LoginButton").button();
-                </LoggedInTemplate>
-                <AnonymousTemplate> 
-                console.log("anon template");
-                $("#loggedin_bar").hide();
-                $("#login_bar").show();
-                $("#body_Login1_LoginButton").button();
-                </AnonymousTemplate> 
-            </asp:LoginView>
-
-            $("#CoverFlow").load("GetMovieList.aspx", function() 
-            {
-                $('#CoverFlow .hidden').hide();
-                if ($.fn.reflect) 
-                {
-                    // only possible in very specific situations
-                    $('#CoverFlow .cover img').attr("height", "300px").attr("width", "200px").reflect();   
-                }
-                var genre_list = {};
-                $('#CoverFlow .cover').each(function(idx, value) {
-                    if ($(value).find(".missing_poster").length !== 0) {
-                        $(value).append('<span class="movieTitle">' + $(value).find("#info #mov_title").html() + '</span>');
+                $("#CoverFlow").load("GetMovieList.aspx", function () {
+                    $('#CoverFlow .hidden').hide();
+                    if ($.fn.reflect) {
+                        // only possible in very specific situations
+                        $('#CoverFlow .cover img').attr("height", "300px").attr("width", "200px").reflect();
                     }
-                    // get the genre from the info and add them to the object, we are using the object
-                    // as a poor mans set. 
-                    var htmlData = $(value).find("#info #mov_genre").html();
-                    htmlData.split(",").forEach(function(data) {
-                        data = data.trim();
-                        if (data !== undefined && data.length > 0)
-                        {
-                            genre_list[data] = 1;
+                    var genre_list = {};
+                    $('#CoverFlow .cover').each(function (idx, value) {
+                        if ($(value).find(".missing_poster").length !== 0) {
+                            $(value).append('<span class="movieTitle">' + $(value).find("#info #mov_title").html() + '</span>');
                         }
-                    });
-                });
-                // turn the object into a list of strings. 
-                var filter_genre_list = $("#FilterGenreList").empty();
-                $.each(genre_list, function(name){
-                    genreList.push(name);
-                    $(filter_genre_list).append('<span id="genre_'+name+'" class="GenreFilterButton theme">'+name+'</span>');
-                });
-                $(".GenreFilterButton").button().click(GenreFilterButtonClick);
-
-                coverFlowCtrl = $('#CoverFlow').coverflow(
-                {
-                    index:          6,
-                    density:        2,
-                    innerOffset:    50,
-                    innerScale:     .7,
-                    duration:       10, 
-                    animateStep:    function(event, cover, offset, isVisible, isMiddle, sin, cos) {
-                        if (isVisible) 
-                        {
-                            if (isMiddle) 
-                            {
-                                $(cover).css(
-                                {
-                                    'filter':           'none',
-                                    '-webkit-filter':   'none'
-                                });
-                            } else 
-                            {
-                                var brightness  = 1 + Math.abs(sin),
-                                    contrast    = 1 - Math.abs(sin),
-                                    filter      = 'contrast('+contrast+') brightness('+brightness+')';
-                                $(cover).css(
-                                {
-                                    'filter':           filter,
-                                    '-webkit-filter':   filter
-                                });
+                        // get the genre from the info and add them to the object, we are using the object
+                        // as a poor mans set. 
+                        var htmlData = $(value).find("#info #mov_genre").html();
+                        htmlData.split(",").forEach(function (data) {
+                            data = data.trim();
+                            if (data !== undefined && data.length > 0) {
+                                genre_list[data] = 1;
                             }
-                        }
-                    },
-                    filterCover: CoverFilter,
-                    animateDone: ShowMovieDetails,
-                    loadCover: function(e, cover, id, dataUrl, dataClass){
-                        $(cover).prepend('<img id="' + $(cover).attr('id') + '" src="' + $(cover).attr('dataUrl') + '"/>"');
-                        var imgObj = $(cover).find("img");
-                        if (dataClass !== undefined && dataClass != "")
-                        {
-                            imgObj.addClass(dataClass);
-                        }
-                        imgObj.attr("height", "300px").attr("width", "200px").reflect();  
-                    },
-                });
-            });
+                        });
+                    });
+                    // turn the object into a list of strings. 
+                    var filter_genre_list = $("#FilterGenreList").empty();
+                    $.each(genre_list, function (name) {
+                        genreList.push(name);
+                        $(filter_genre_list).append('<span id="genre_' + name + '" class="GenreFilterButton theme">' + name + '</span>');
+                    });
+                    $(".GenreFilterButton").button().click(GenreFilterButtonClick);
 
-            filterFlowCtrl = $('#MovieFilter').coverflow();
+                    coverFlowCtrl = $('#CoverFlow').coverflow(
+                    {
+                        index: 6,
+                        density: 2,
+                        innerOffset: 50,
+                        innerScale: .7,
+                        duration: 10,
+                        animateStep: function (event, cover, offset, isVisible, isMiddle, sin, cos) {
+                            if (isVisible) {
+                                if (isMiddle) {
+                                    $(cover).css(
+                                    {
+                                        'filter': 'none',
+                                        '-webkit-filter': 'none'
+                                    });
+                                } else {
+                                    var brightness = 1 + Math.abs(sin),
+                                        contrast = 1 - Math.abs(sin),
+                                        filter = 'contrast(' + contrast + ') brightness(' + brightness + ')';
+                                    $(cover).css(
+                                    {
+                                        'filter': filter,
+                                        '-webkit-filter': filter
+                                    });
+                                }
+                            }
+                        },
+                        filterCover: CoverFilter,
+                        animateDone: ShowMovieDetails,
+                        loadCover: function (e, cover, id, dataUrl, dataClass) {
+                            $(cover).prepend('<img id="' + $(cover).attr('id') + '" src="' + $(cover).attr('dataUrl') + '"/>"');
+                            var imgObj = $(cover).find("img");
+                            if (dataClass !== undefined && dataClass != "") {
+                                imgObj.addClass(dataClass);
+                            }
+                            imgObj.attr("height", "300px").attr("width", "200px").reflect();
+                        },
+                    });
+                });
+
+                filterFlowCtrl = $('#MovieFilter').coverflow();
 
             $("#Content").tabs({
                 beforeActivate: function( event, ui ) 
@@ -307,92 +279,113 @@
                             //GEtRottenReviews(mov_id);
                         }
                     }
-                }
-            });
-            $("#dialogContainer").hide();
-            $("#LoginDialog").hide();   
-            $('#menu').multilevelpushmenu({
-                backItemIcon: 'fa fa-angle-left',
-                groupIcon: 'fa fa-angle-right',
-                collapsed: true,
-            });
+                });
+                $("#dialogContainer").hide();
+                $("#LoginDialog").hide();
+                $('#menu').multilevelpushmenu({
+                    backItemIcon: 'fa fa-angle-left',
+                    groupIcon: 'fa fa-angle-right',
+                    collapsed: true,
+                });
 
 
-            // Set up the click event for the alpha filters.
-            $('.AlphaFilterButton').click(AlphaFilterButtonClick);
+                // Set up the click event for the alpha filters.
+                $('.AlphaFilterButton').click(AlphaFilterButtonClick);
 
-            //$("#TagFilterInput").input();
-            $(".TagFilterButton").button().click(function (e){
-                e.preventDefault();
-                AddTagFilter($("#TagFilterInput").val());
-                $("#TagFilterInput").val("");
-            })
-            $( window ).resize(function() {
-                $( '#menu' ).multilevelpushmenu( 'redraw' );
-            });
-
-            // //$("#LoginDialog").load("Login.aspx");
-            // $("#LoginButton").click(function(e) {
-            //     e.preventDefault();
-            //     $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
-            // });
-
-            $("#LogOutButton").click(function (e) {
-                e.preventDefault();
-                window.location.replace("Logout.aspx");
-            });
-
-            $("#ClearAllFilters")
-                .button()//{icons: {secondary: "ui-icon-closethick"}})
-                .click(function(e){
-                    $("#FilterBar .filter").remove();
-                    $('#FilterAlpha .AlphaFilterActive').removeClass('AlphaFilterActive'); 
-
-                    coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+                //$("#TagFilterInput").input();
+                $(".TagFilterButton").button().click(function (e) {
+                    e.preventDefault();
+                    AddTagFilter($("#TagFilterInput").val());
+                    $("#TagFilterInput").val("");
                 })
+                $(window).resize(function () {
+                    $('#menu').multilevelpushmenu('redraw');
+                });
 
-            $("#MenuGridView").click(function (e) {
-                e.preventDefault();
-                $("#GridDialog").dialog({
-                    dialogClass: "ui-ontop",
-                    width: '900',
-                    height: '900',
-                    modal: true,
-                    resizeable: true,
-                    //Todo: improve calculation for number of movies per row.
-                    resizeStop: function (e, ui) {
+                // //$("#LoginDialog").load("Login.aspx");
+                // $("#LoginButton").click(function(e) {
+                //     e.preventDefault();
+                //     $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
+                // });
 
-                        $('.gridContainer').empty();
-                        var _numperRow = parseInt($(this).outerWidth() / 200);
-                        console.log("movies per row: " + _numperRow);
+                $("#LogOutButton").click(function (e) {
+                    e.preventDefault();
+                    window.location.replace("Logout.aspx");
+                });
 
-                        GenerateMovieGrid('#CoverFlow', '.gridContainer', _numperRow);
-                    },
-                    open: function() {
-                        $(".cover-div").addClass("cover-disabled");
-                    },
-                    close: function() {
-                        $(".cover-div").removeClass("cover-disabled");
-                    },
+                $("#ClearAllFilters")
+                    .button()//{icons: {secondary: "ui-icon-closethick"}})
+                    .click(function (e) {
+                        $("#FilterBar .filter").remove();
+                        $('#FilterAlpha .AlphaFilterActive').removeClass('AlphaFilterActive');
 
-                }).position({ at: 'center' });
+                        coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+                    })
 
-                GenerateMovieGrid('#CoverFlow', '.gridContainer', 4);
-            });
+                $("#MenuGridView").click(function (e) {
+                    e.preventDefault();
+                    $("#GridDialog").dialog({
+                        dialogClass: "ui-ontop",
+                        width: '900',
+                        height: '900',
+                        modal: true,
+                        resizeable: true,
+                        //Todo: improve calculation for number of movies per row.
+                        resizeStop: function (e, ui) {
 
-            $("#MenuRecomendations").click(function(e) {
-                e.preventDefault();
-                $("#RecomendationsDialog").dialog({dialogClass: "ui-ontop"});
-            });
-            $("#MenuEnterRequest").click(function(e) {
-                e.preventDefault();
-                $("#EnterRequestDialog").dialog({dialogClass: "ui-ontop"});
-            });
+                            $('.gridContainer').empty();
+                            var _numperRow = parseInt($(this).outerWidth() / 200);
+                            console.log("movies per row: " + _numperRow);
 
-        }); // End Doc Ready.
+                            GenerateMovieGrid('#CoverFlow', '.gridContainer', _numperRow);
+                        },
+                        open: function () {
+                            $(".cover-div").addClass("cover-disabled");
+                        },
+                        close: function () {
+                            $(".cover-div").removeClass("cover-disabled");
+                        },
+
+                    }).position({ at: 'center' });
+
+                    GenerateMovieGrid('#CoverFlow', '.gridContainer', 4);
+                });
+
+                $("#MenuRecomendations").click(function (e) {
+                    e.preventDefault();
+                    $("#RecomendationsDialog").dialog({ dialogClass: "ui-ontop" });
+                });
+                $("#MenuEnterRequest").click(function (e) {
+                    e.preventDefault();
+                    $("#EnterRequestDialog").dialog({ dialogClass: "ui-ontop" });
+                });
+
+            }); // End Doc Ready.
     </script>
 
-<body>
+    <asp:LoginView ID="LoginView5" runat="server">
+        <LoggedInTemplate>
+            <script>
+                $(function () {
+                    console.log("loggedin template");
+                    $("#loggedin_bar").show();
+                    $("#login_bar").hide();
+                    $("#body_Login1_LoginButton").button();
+                });
+            </script>
+        </LoggedInTemplate>
+        <AnonymousTemplate> 
+            <script>
+                $(function () {
+                    console.log("anon template");
+                    $("#loggedin_bar").hide();
+                    $("#login_bar").show();
+                    $("#body_Login1_LoginButton").button();
+                });
+            </script>
+        </AnonymousTemplate> 
+    </asp:LoginView>
+
     <asp:LoginView ID="LoginView1" runat="server">
         <RoleGroups>
             <asp:RoleGroup Roles="Administrator">

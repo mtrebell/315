@@ -443,7 +443,9 @@ CREATE PROCEDURE InsertTitle
 	 @mov_smPoster [nvarchar](255),
 	 @mov_lgPoster [nvarchar](255),
 	 @mov_trailer [nvarchar](1500),
-	 @mov_imdbUrl [nvarchar](255)
+	 @mov_imdbUrl [nvarchar](255),
+	 @mov_rottenID nvarchar(100),
+	 @mov_rottenRating float
 AS
 	INSERT INTO [MovieSummary] ([mov_id],
 								[mov_title], 
@@ -457,9 +459,11 @@ AS
 								[mov_lgPoster], 
 								[mov_smPoster],
 								[mov_trailer],
-								[mov_imdbUrl]) 
-		VALUES (@mov_id, @mov_title, @mov_plot, @mov_genre, @mov_size, @mov_fileType, @mov_dateAdded, 
-			@mov_rating, @mov_runTime, @mov_lgPoster, @mov_smPoster, @mov_trailer, @mov_imdbUrl)
+								[mov_imdbUrl],
+								[mov_rottenID],
+								[mov_rottenRating]) 
+		VALUES (@mov_id, @mov_title, @mov_plot, @mov_genre, @mov_size, @mov_fileType, @mov_dateAdded, @mov_rating, @mov_runTime,
+		 @mov_lgPoster, @mov_smPoster, @mov_trailer, @mov_imdbUrl, @mov_rottenID, @mov_rottenRating)
 GO
 
 /*************************************************************/
@@ -487,7 +491,9 @@ AS
 			[mov_lgPoster], 
 			[mov_smPoster],
 			[mov_trailer],
-			[mov_imdbUrl]
+			[mov_imdbUrl],
+			[mov_rottenID],
+			[mov_rottenRating]
 		FROM [MovieSummary] 
 		ORDER BY [mov_title]
 GO
@@ -518,7 +524,9 @@ AS
 			[mov_lgPoster], 
 			[mov_smPoster],
 			[mov_trailer],
-			[mov_imdbUrl]
+			[mov_imdbUrl],
+			[mov_rottenID],
+			[mov_rottenRating]
 	FROM [MovieSummary] 
 	WHERE @mov_id = [mov_id]	
 GO
@@ -547,7 +555,9 @@ CREATE PROCEDURE UpdateTitle
 	 @mov_smPoster [nvarchar](255),
 	 @mov_lgPoster [nvarchar](255),
 	 @mov_trailer [nvarchar](1500),
-	 @mov_imdbUrl [nvarchar](255)
+	 @mov_imdbUrl [nvarchar](255),
+	 @mov_rottenID [nvarchar](100),
+	 @mov_rottenRating float
 AS
 	UPDATE [MovieSummary] SET [mov_title] = @mov_title, 
 							  [mov_plot] = @mov_plot, 
@@ -560,7 +570,9 @@ AS
 							  [mov_lgPoster] = @mov_lgPoster, 
 							  [mov_smPoster] = @mov_smPoster,
 							  [mov_trailer] = @mov_trailer,
-							  [mov_imdbUrl] = @mov_imdbUrl
+							  [mov_imdbUrl] = @mov_imdbUrl,
+							  [mov_rottenID] =  @mov_rottenID,
+							  [mov_rottenRating] = @mov_rottenRating
 		WHERE [mov_id] = @mov_id
 GO
 
@@ -605,7 +617,7 @@ if exists(
 	select[name]
 	from sysobjects
 
-	where [name] = 'GetMoiveRatings'
+	where [name] = 'GetMovieRatings'
 	)
 drop procedure GetMovieRatings
 go
@@ -624,7 +636,7 @@ if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'GetSimilarMoive'
+	where [name] = 'GetSimilarMovie'
 )
 drop procedure GetSimilarMovie
 go
@@ -667,8 +679,6 @@ if exists
 	where [name] = 'AddSimilar'
 )
 drop procedure AddSimilar
-go
-
 GO
 
 GO
@@ -679,9 +689,10 @@ CREATE PROCEDURE AddSimilar
 @rating nvarchar(100)
 AS
 BEGIN
- INSERT INTO dbo.similar (mov_id, match,similar,rating) 
- VALUES (@mov_id, @match,@similar,@rating)
+ INSERT INTO dbo.similar (mov_id, match_id, similarity, mov_rating) 
+ VALUES (@mov_id, @match, @similar, @rating)
 END
+GO
 
 if exists
 (
@@ -690,8 +701,6 @@ if exists
 	where [name] = 'AddRating'
 )
 drop procedure AddRating
-go
-
 GO
 
 GO
@@ -701,9 +710,10 @@ CREATE PROCEDURE AddRating
 @rating nvarchar(100)
 AS
 BEGIN
- INSERT INTO dbo.ratings(users_id,moive_id,rating) 
- VALUES (@user_id, @movie_id, @rating)
+ INSERT INTO dbo.ratings(users_id,mov_id,rating) 
+ VALUES (@user_id, @mov_id, @rating)
  END
+ GO
 
  /*-------------------------------------------------------------------*/
 if exists
@@ -723,4 +733,24 @@ AS
 	FROM [MovieSummary] 
 	WHERE @mov_id = [mov_id]	
 GO
+
+ /*-------------------------------------------------------------------*/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] ='GetRottenID'
+)
+drop procedure GetRottenID
+GO
+
+CREATE PROCEDURE GetRottenID
+@mov_id nvarchar(100)
+AS
+	SELECT	[mov_rottenID]
+	FROM [MovieSummary] 
+	WHERE @mov_id = [mov_id]	
+GO
+
+
 

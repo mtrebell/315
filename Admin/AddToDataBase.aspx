@@ -6,6 +6,7 @@
         $(document).ready(function () {
             console.log("set progress bar");
             $("#pBar").progressbar({ value: 0 });
+            $(".Button").button();
         });
 
         $(document).on('drop', function (e) {
@@ -39,7 +40,6 @@
             });
         }
     </script>
-
 
     <script type="text/javascript">
         function StartProcess() {
