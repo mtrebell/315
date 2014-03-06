@@ -643,9 +643,9 @@
                 '<tr><td><label id="' + objD.mov_id + 'bd">Date Added: ' + objD.mov_dateAdded + '</label></td></tr>' +
                 '<tr><td><label id="' + objD.mov_id + 'br">Rating: ' + objD.mov_rating + '</label></td></tr>' +
                 '<tr><td><label id="' + objD.mov_id + 'be">Trailer Link:' + objD.mov_trailer + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'bi">IMDb URL: ' + objD.mov_imdbUrl + '</label></td></tr></table></div>' + 
+                '<tr><td><label id="' + objD.mov_id + 'bi">IMDb URL: ' + objD.mov_imdbUrl + '</label></td></tr>' + 
                 '<tr><td><label id="' + objD.mov_id + 'bo">Rotten ID: '+ objD.mov_rottenID + '</label></td>' + 
-                '<td><label id="' + objD.mov_id + 'bt">Rotten Rating: ' + objD.mov_rottenRating + '</label></td></tr>';
+                '<td><label id="' + objD.mov_id + 'bt">Rotten Rating: ' + objD.mov_rottenRating + '</label></td></tr></table></div>';
             return accord;
         }
     </script>
@@ -780,7 +780,7 @@
                         <tr><td><label id="<%# Eval("mov_id")%>bi">IMDb URL: <%#Eval("mov_imdbUrl") %></label></td></tr>
                         <tr>
                             <td><label id="<%# Eval("mov_id")%>bo">Rotten ID: <%#Eval("mov_rottenID") %></label></td>
-                            <td><label id="<%# Eval("mov_id")%>bt">Rotten Rating: <%#Eval("mov_rottenRating") %></label></td>
+                            <td><label id="<%# Eval("mov_id")%>bt">Rotten Rating: <%#string.Format("{0:F1}", Eval("mov_rottenRating")) %></label></td>
                         </tr>
                     </table>
                 </div>

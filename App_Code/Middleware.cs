@@ -357,7 +357,9 @@ public static class Middleware
         conn.Open();
         using (SqlCommand comm = new SqlCommand())      // create query
         {
+            comm.Connection = conn;
             comm.CommandText = proc;           // indicate procedure name
+            comm.CommandType = System.Data.CommandType.StoredProcedure;
 
             SqlParameter pMovieID = new SqlParameter("@mov_id", System.Data.SqlDbType.NVarChar, 100);
             pMovieID.Value = mov_id;    // assign movie id filter
@@ -413,12 +415,12 @@ public static class Middleware
             pImdbUrl.Direction = System.Data.ParameterDirection.Input;
 
             SqlParameter pRottenID = new SqlParameter("@mov_rottenID", System.Data.SqlDbType.NVarChar, 100);
-            pImdbUrl.Value = mov_imdbUrl;    // assign movie id filter
-            pImdbUrl.Direction = System.Data.ParameterDirection.Input;
+            pRottenID.Value = mov_rottenID.ToString();    // assign movie id filter
+            pRottenID.Direction = System.Data.ParameterDirection.Input;
 
             SqlParameter pRottenRating = new SqlParameter("@mov_rottenRating", System.Data.SqlDbType.Float);
-            pImdbUrl.Value = mov_imdbUrl;    // assign movie id filter
-            pImdbUrl.Direction = System.Data.ParameterDirection.Input;
+            pRottenRating.Value = mov_rottenRating;    // assign movie id filter
+            pRottenRating.Direction = System.Data.ParameterDirection.Input;
 
             comm.Parameters.AddRange(new SqlParameter[] { pMovieID, pTitle, pPlot, pGenre, pSize, pFileType,
                 pDateAdded, pRating, pRunTime, pLgPoster, pSmPoster, pTrailer, pImdbUrl, pRottenID, pRottenRating});
