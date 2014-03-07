@@ -163,7 +163,7 @@
                             $(img).attr('src', $(img).attr('data-src')).click(function(e){
                                 //when image is clicked, exit grid view and set main page
                                 //to clicked image.
-                                $('#GridDialog').dialog('destroy');
+                                $('#GridDialog').dialog('close');
 
                                 var cfIndex = $(img).attr('cfIndex');
                                 coverFlowCtrl.coverflow('index', cfIndex);
@@ -334,6 +334,7 @@
                         },
                         close: function () {
                             $(".cover-div").removeClass("cover-disabled");
+                            $('.gridContainer').empty();
                         },
 
                     }).position({ at: 'center' });
