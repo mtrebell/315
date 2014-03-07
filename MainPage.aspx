@@ -16,6 +16,7 @@
         <script src="Scripts/jquery.multilevelpushmenu.js"></script>
         <script src="Scripts/reflection.js"></script>
         <script src='Scripts/jquery.fileupload.js'></script>
+        <script src="Scripts/jquery.visible.min.js"></script>
 
         <link href="CssSheets/font-awesome.min.css" rel="stylesheet" type="text/css"/>
         <link href="Scripts/jquery-ui-1.10.4.css" rel="stylesheet" type="text/css" />
@@ -44,18 +45,6 @@
             .icon-button{
                 width:  40px;
                 height: 40px;
-            }
-
-            #gridPopupBox{
-                display:none; 
-                position:absolute;   
-                height:300px;  
-                width:600px;  
-                background:#FFFFFF;  
-                left: 300px;
-                top: 150px;
-                z-index:10000;
-                margin-left: 15px;  
             }
         </style>
     </head>
@@ -120,19 +109,6 @@
                 })
             }
 
-            function GeneratePopupBox(e, data) {
-                var mouseX = e.pageX - 300;
-                var mouseY = e.pageY - 325;
-                $('#gridPopupBox').empty().css({
-                    'left': mouseX + 'px',
-                    'top': mouseY + 'px'
-                }).append(data).fadeIn();
-            }
-
-            function DestroyPopupBox(e) {
-                $('#gridPopupBox').fadeOut();
-            }
-
             function GenerateMovieGrid(srcData, dest, moviesPerRow) {
 
                 $(dest).css('display', 'table');
@@ -152,22 +128,18 @@
                     //if movie cover isn't loaded, construct image data
                     if ($(movie).hasClass("cover-not-loaded")) {
                         var newMovie = document.createElement('img');
-                        $(newMovie).attr('id', $(movie).attr('id')).attr('src', $(movie).attr('dataUrl'));
+                        $(newMovie).attr('id', $(movie).attr('id')).attr('data-src', $(movie).attr('dataUrl'));
+                        $(newMovie).removeAttr('dataUrl').attr('cfIndex', i);
                         movie = $(newMovie);
                     } else {
                         //otherwise just grab the image data
                         movie = $(movie).find('img');
+                        var tempUrl = $(movie).attr('src');
+                        $(movie).removeAttr('src').attr('data-src', tempUrl).attr('cfIndex', i);
                     }
 
                     var dispData = '<h1>' + $(movie).attr('id') + '</h1><div></div>';
-
                     $(movie).removeAttr('style').attr('height', '300px').attr('width', '200px').show()
-                    //add some mouse over features
-                    .click(function (e) {
-                        GeneratePopupBox(e, dispData);
-                    }).mousemove(function (e) {
-                        DestroyPopupBox(e);
-                    });
 
                     var container = document.createElement('div');
                     $(container).css({
@@ -178,6 +150,27 @@
                     $(container).append(movie, movieInfo);
                     $(container).appendTo(dest + ' .gridRow' + curRow);
                     i++;
+                });
+            }
+
+            function MovieGridShowInView() {
+                $("#GridDialog").find($(".gridCover")).each(function(cover){
+                    var img = $(this).find('img');
+                    if ($(this).visible(true)) {
+                        //if image is visible
+                        if (!$(img).attr('src')){
+                            //set the img src attribute
+                            $(img).attr('src', $(img).attr('data-src')).click(function(e){
+                                //when image is clicked, exit grid view and set main page
+                                //to clicked image.
+                                $('#GridDialog').dialog('destroy');
+
+                                var cfIndex = $(img).attr('cfIndex');
+                                coverFlowCtrl.coverflow('index', cfIndex);
+                            });
+                        }
+                    }
+
                 });
             }
 
@@ -258,25 +251,22 @@
 
                 filterFlowCtrl = $('#MovieFilter').coverflow();
 
-            $("#Content").tabs({
-                beforeActivate: function( event, ui ) 
-                {
-                    var tab_id = ui.newPanel.attr("id");
-                    if (ui.newPanel.hasClass("no-content"))
-                    {
-                        ui.newPanel.removeClass("no-content");       
-                        if (tab_id === "tabs_imdb")
-                        {
-                            // TODO: REplace with actuall page url and arguments.
-                            ui.newPanel.load("Admin/AddToDataBase.aspx");
-                            
-                            //GetIMDBReviews(mov_id);
-                        }
-                        else if (tab_id === "tabs_rotten_tomatoes")
-                        {
-                            // TODO: REplace with actuall page url and arguments.
-                            ui.newPanel.load("Admin/EditEntries.aspx");
-                            //GEtRottenReviews(mov_id);
+                $("#Content").tabs({
+                    beforeActivate: function (event, ui) {
+                        var tab_id = ui.newPanel.attr("id");
+                        if (ui.newPanel.hasClass("no-content")) {
+                            ui.newPanel.removeClass("no-content");
+                            if (tab_id === "tabs_imdb") {
+                                // TODO: REplace with actuall page url and arguments.
+                                ui.newPanel.load("Admin/AddToDataBase.aspx");
+
+                                //GetIMDBReviews(mov_id);
+                            }
+                            else if (tab_id === "tabs_rotten_tomatoes") {
+                                // TODO: REplace with actuall page url and arguments.
+                                ui.newPanel.load("Admin/EditEntries.aspx");
+                                //GEtRottenReviews(mov_id);
+                            }
                         }
                     }
                 });
@@ -348,7 +338,14 @@
 
                     }).position({ at: 'center' });
 
+                    //set movies to load on scroll
+                    $("#GridDialog").scroll(function(e){
+                        MovieGridShowInView();
+                    });
+
+
                     GenerateMovieGrid('#CoverFlow', '.gridContainer', 4);
+                    MovieGridShowInView();
                 });
 
                 $("#MenuRecomendations").click(function (e) {
