@@ -258,25 +258,26 @@
 
                 filterFlowCtrl = $('#MovieFilter').coverflow();
 
-            $("#Content").tabs({
-                beforeActivate: function( event, ui ) 
-                {
-                    var tab_id = ui.newPanel.attr("id");
-                    if (ui.newPanel.hasClass("no-content"))
+                $("#Content").tabs({
+                    beforeActivate: function( event, ui ) 
                     {
-                        ui.newPanel.removeClass("no-content");       
-                        if (tab_id === "tabs_imdb")
+                        var tab_id = ui.newPanel.attr("id");
+                        if (ui.newPanel.hasClass("no-content"))
                         {
-                            // TODO: REplace with actuall page url and arguments.
-                            ui.newPanel.load("Admin/AddToDataBase.aspx");
-                            
-                            //GetIMDBReviews(mov_id);
-                        }
-                        else if (tab_id === "tabs_rotten_tomatoes")
-                        {
-                            // TODO: REplace with actuall page url and arguments.
-                            ui.newPanel.load("Admin/EditEntries.aspx");
-                            //GEtRottenReviews(mov_id);
+                            ui.newPanel.removeClass("no-content");       
+                            if (tab_id === "tabs_imdb")
+                            {
+                                // TODO: REplace with actuall page url and arguments.
+                                ui.newPanel.load("Admin/AddToDataBase.aspx");
+                                
+                                //GetIMDBReviews(mov_id);
+                            }
+                            else if (tab_id === "tabs_rotten_tomatoes")
+                            {
+                                // TODO: REplace with actuall page url and arguments.
+                                ui.newPanel.load("Admin/EditEntries.aspx");
+                                //GEtRottenReviews(mov_id);
+                            }
                         }
                     }
                 });
