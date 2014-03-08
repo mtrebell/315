@@ -174,6 +174,49 @@
                 });
             }
 
+            function MovieGetCurrentID()
+            {
+                var mov_id = $('.current').attr("id").toString().replace("movID_", "");
+                console.log(mov_id);
+                return mov_id;
+            }
+
+            function GetMovieReviewIMDB(ui) {
+                var objectData = { 'imdbID': MovieGetCurrentID() };
+                $.ajax({
+                    type: "POST",
+                    url: "MainPage.aspx/GetIMDbReviews",
+                    data: JSON.stringify(objectData),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (msg) {
+                        var div = msg.d;
+                        console.log(msg);
+                        ui.newPanel.html(div);
+                    },
+                    cache: false
+                });
+            }
+
+            function GetMovieReviewRotten(ui) {
+                var objectData = { 'imdbID': MovieGetCurrentID() };
+                $.ajax({
+                    type: "POST",
+                    url: "MainPage.aspx/GetRottenReviews",
+                    data: JSON.stringify(objectData),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (msg) {
+                        var div = msg.d;
+                        console.log(msg);
+                        ui.newPanel.html(div);
+                    },
+                    cache: false
+                }); 
+            }
+
             // DOCUMENT READY!
             $(function () {
                 $(".ui-validator").html("");
@@ -254,18 +297,17 @@
                 $("#Content").tabs({
                     beforeActivate: function (event, ui) {
                         var tab_id = ui.newPanel.attr("id");
+
                         if (ui.newPanel.hasClass("no-content")) {
                             ui.newPanel.removeClass("no-content");
                             if (tab_id === "tabs_imdb") {
                                 // TODO: REplace with actuall page url and arguments.
-                                ui.newPanel.load("Admin/AddToDataBase.aspx");
+                                GetMovieReviewIMDB(ui);
 
                                 //GetIMDBReviews(mov_id);
                             }
                             else if (tab_id === "tabs_rotten_tomatoes") {
-                                // TODO: REplace with actuall page url and arguments.
-                                ui.newPanel.load("Admin/EditEntries.aspx");
-                                //GEtRottenReviews(mov_id);
+                                GetMovieReviewRotten(ui);
                             }
                         }
                     }
@@ -600,7 +642,7 @@
             <ul>
                 <li><a href="#tabs_info">Details</a></li>
                 <li><a href="#tabs_imdb">IMDB</a></li>
-                <li><a href="#tabs_rotten_tomatoes">Rotten Toimato</a></li>
+                <li><a href="#tabs_rotten_tomatoes">Rotten Tomatoes</a></li>
             </ul>
 
             <div id="tabs_info" class="hex-background no-tab-padding">

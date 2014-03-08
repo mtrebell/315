@@ -96,9 +96,15 @@ public partial class _Default : System.Web.UI.Page
                 if (jrMovieBase != null && jrMovieBase.reviews != null && jrMovieBase.reviews.Length > 0)
                 {
                     StringBuilder sb = new StringBuilder();
+                    sb.Append("<div style=\"margin-left: 20px;\" >");
                     foreach (Reviews review in jrMovieBase.reviews)
-                        sb.Append(review.quote).Append("|").Append(review.links.review).Append("||");
-                    sb.Remove(sb.Length - 2, 2);
+                    {
+                        sb.Append(string.Format("<p class=\"RottenTab\"><b>{0}</b></p>{1}<hr />", 
+                            review.quote.Equals(string.Empty) ? "No quote available" : review.quote,
+                            review.links.review != null && !review.links.review.Equals(string.Empty) ?
+                                "<a href=\"" + review.links.review + "\" >See Full Review</a>" : "No review found"));
+                    }
+                    sb.Append("</div>");
                     return sb.ToString();
                 }
                 else
@@ -166,12 +172,18 @@ public partial class _Default : System.Web.UI.Page
                 }
             }
             while (hold != -1);
-            reviewList.RemoveAt(reviewList.Count - 1);
 
+            for(int i = reviewList.Count - 1; i > -1; i--)
+                if (reviewList[i].Contains("<a"))
+                    reviewList.RemoveAt(i);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<div style=\"margin-left: 20px;\" >");
             foreach (string s in reviewList)
-                sReturn.Append(s).Append("||");
-            sReturn.Remove(sReturn.Length - 2, 2);
+                sb.Append(string.Format("<p class=\"IMDbTab\">{0}</p><hr />", s));
+            sb.Append("</div>");
+            return sb.ToString();
         }
-        return sReturn.ToString();
+        return "An issue occured while getting reviews";
     }
 }
