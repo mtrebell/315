@@ -361,12 +361,55 @@ go
 GO
 CREATE PROCEDURE RequestInsert
     @Title nvarchar(150) = '',
-	@UserID uniqueidentifier 
+	@UserID uniqueidentifier, 
+	@Output nvarchar(100) output
 AS 
 
 IF (@Title != '')
     Insert Into dbo.Requests (requestTitle, users_id)
     Values (@Title, @UserID)
+
+	SELECT @Output = @@Identity
+GO
+
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] ='GetRequests'
+)
+drop procedure GetRequests
+GO
+/*-------------------------------------------------------------------*/
+
+CREATE PROCEDURE GetRequests
+AS
+	SELECT	Requests.request_id, 
+			aspnet_Users.UserName, 
+			Requests.requestDate, 
+			Requests.requestTitle 
+	FROM	Requests 
+				INNER JOIN aspnet_Users 
+					ON Requests.users_id = aspnet_Users.UserId 
+	ORDER BY Requests.requestTitle, Requests.requestDate 
+GO
+
+/*-------------------------------------------------------------------*/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] ='RequestDelete'
+)
+drop procedure RequestDelete
+GO
+
+CREATE PROCEDURE RequestDelete
+@request_id int
+AS
+	DELETE 
+	FROM [Requests] 
+	WHERE [request_id] = @request_id
 GO
 
 /*************************************************************/
@@ -751,6 +794,9 @@ AS
 	FROM [MovieSummary] 
 	WHERE @mov_id = [mov_id]	
 GO
+
+
+
 
 
 

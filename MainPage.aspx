@@ -386,7 +386,6 @@
                         MovieGridShowInView();
                     });
 
-
                     GenerateMovieGrid('#CoverFlow', '.gridContainer', 4);
                     MovieGridShowInView();
                 });
@@ -397,11 +396,12 @@
                 });
                 $("#MenuEnterRequest").click(function (e) {
                     e.preventDefault();
-                    $("#EnterRequestDialog").dialog({ dialogClass: "ui-ontop" });
+                    $("#EnterRequestDialog").dialog({ dialogClass: "ui-ontop", minWidth: "500" });
+                    $("#EnterRequestDialog").load("Members/Request.aspx");
                 });
-
+                
             }); // End Doc Ready.
-    </script>
+        </script>
 
     <asp:LoginView ID="LoginView5" runat="server">
         <LoggedInTemplate>

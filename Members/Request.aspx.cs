@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -10,20 +13,50 @@ public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        GridView_Request.DataBind();        // rebind current requests list
+        rptAccordian.DataSource = createDataTable();
+        rptAccordian.DataBind();
     }
-    protected void BTN_AddRequest_Click(object sender, EventArgs e)
+
+
+    public DataTable createDataTable()
     {
-        Guid gUserID = (Guid)Membership.GetUser().ProviderUserKey;      // if request made, get user id
-        Middleware.InsertRequest(gUserID, TB_Title.Text);               // launch insert query
-        GridView_Request.DataBind();        // reshow gridview
+        System.Data.SqlClient.SqlConnection conn =
+            new System.Data.SqlClient.SqlConnection(
+            Middleware.ConnectionString);
+        DataTable dt = new DataTable();
+        SqlCommand cmd = new SqlCommand();
+        SqlDataAdapter da = new SqlDataAdapter();
+
+        cmd = new SqlCommand("GetRequests", conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        da.SelectCommand = cmd;
+        da.Fill(dt);
+
+        return dt;
     }
-    protected void GridView_Request_Load(object sender, EventArgs e)
+
+    [WebMethod()]
+    public static int DeleteRequest(int request_id)
     {
-        // if user is part of administrator, show delete column in gridview
-        if (!User.IsInRole("Administrator"))                        
-            for (int i = 0; i < GridView_Request.Columns.Count; i++)
-                if(GridView_Request.Columns[i] is CommandField)
-                    GridView_Request.Columns[i].Visible = false;
+        Middleware.DeleteRequest(request_id);
+        return request_id;
+    }
+
+    [WebMethod()]
+    public static string InsertRequest(string sTitle)
+    {
+        string sOut = Middleware.InsertRequest((Guid) Membership.GetUser().ProviderUserKey, sTitle);
+        string sReturn = string.Format("<tr id=\"{0}tr\">{1}<td>{2}</td><td>{3}</td><td>{4}</td>{5}</tr>", 
+            sOut, 
+            Roles.GetRolesForUser(Membership.GetUser().UserName).Contains<string>("Administrator") ?
+                "<td>" + sOut + "</td>" : string.Empty,
+            Membership.GetUser().UserName,
+            DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString(),
+            sTitle,
+            Roles.GetRolesForUser(Membership.GetUser().UserName).Contains<string>("Administrator") ?
+                string.Format("<td><input type=\"button\" id=\"{0}\" class=\"Button\" value=\"Delete\"" +
+                "onclick=\"DeleteRequest({1}); return false;\" /></td>", sOut, sOut) : string.Empty
+        );
+        return sReturn;
     }
 }

@@ -267,7 +267,7 @@ public static class Middleware
     /// </summary>
     /// <param name="gUser">user id of requester</param>
     /// <param name="sTitle">title being rrequested</param>
-    public static void InsertRequest(Guid gUser, string sTitle)
+    public static string InsertRequest(Guid gUser, string sTitle)
     {
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
@@ -280,15 +280,46 @@ public static class Middleware
             // Make Parameter
             SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
             SqlParameter pMovieTitle = new SqlParameter("@Title", System.Data.SqlDbType.NVarChar, 150);
+            SqlParameter pOutputIdx = new SqlParameter("@Output", System.Data.SqlDbType.NVarChar, 50);
             pUserID.Value = gUser;          // user id filter
             pMovieTitle.Value = sTitle;     // title filter
+            
 
             pUserID.Direction = System.Data.ParameterDirection.Input;
             pMovieTitle.Direction = System.Data.ParameterDirection.Input;
+            pOutputIdx.Direction = System.Data.ParameterDirection.Output;
 
             // Add the parameter
             comm.Parameters.Add(pUserID);
             comm.Parameters.Add(pMovieTitle);
+            comm.Parameters.Add(pOutputIdx);
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+            return (string) comm.Parameters["@Output"].Value;
+        }
+    }
+
+    /// <summary>
+    /// Used to add request titles to the request table in database
+    /// </summary>
+    /// <param name="gUser">user id of requester</param>
+    /// <param name="sTitle">title being rrequested</param>
+    public static void DeleteRequest(int request_id)
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())  // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // query as procedure
+            comm.CommandText = "RequestDelete";         // indicate procedure name
+            // Make Parameter
+            SqlParameter pRequestID = new SqlParameter("@request_id", System.Data.SqlDbType.Int);
+            pRequestID.Value = request_id;          // user id filter
+            pRequestID.Direction = System.Data.ParameterDirection.Input;
+
+            // Add the parameter
+            comm.Parameters.Add(pRequestID);
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
     }
@@ -609,5 +640,7 @@ public static class Middleware
         }
         return reader;      // return filtered dataset
     }
+
+
 
 }
