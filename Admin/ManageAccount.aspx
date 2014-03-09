@@ -3,6 +3,10 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
 <form runat="server">
     <script language="javascript" type="text/javascript">
+        $(function () {
+            $(".Button").button();
+        });
+
         function RemoveRow(index, uID, uN)
         {
             var objectdata = { 'sUserID': uID, 'sUserName': uN };
