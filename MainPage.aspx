@@ -217,6 +217,7 @@
                 }); 
             }
 
+            //********************************************************************************
             // DOCUMENT READY!
             $(function () {
                 $(".ui-validator").html("");
@@ -399,6 +400,13 @@
                     $("#EnterRequestDialog").dialog({ dialogClass: "ui-ontop", minWidth: "500" });
                     $("#EnterRequestDialog").load("Members/Request.aspx");
                 });
+
+                $("#CreateUserDialog").hide();
+                $("#CreateUserButton").click(function (e) {
+                    e.preventDefault();
+                    $("#CreateUserDialog").dialog({ dialogClass: "ui-ontop", minWidth: "500" });
+                    $("#CreateUserDialog").load("Login.aspx");
+                });
                 
             }); // End Doc Ready.
         </script>
@@ -421,6 +429,7 @@
                     $("#loggedin_bar").hide();
                     $("#login_bar").show();
                     $("#body_Login1_LoginButton").button();
+                    $('#CreateUserButton').button();
                 });
             </script>
         </AnonymousTemplate> 
@@ -542,6 +551,7 @@
                         <asp:CheckBox ID="RememberMe" runat="server" Text="Remember." />
                         <asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal>
                         <asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Log In" ValidationGroup="Login1" class="tiny-btn" />
+                        <input type="button" id="CreateUserButton" value="Create User" class="tiny-btn" />
                     </div>
                 </LayoutTemplate>
             </asp:Login>
@@ -700,6 +710,9 @@
         <div id="dialogContainer"></div>
         <div id="RecomendationsDialog"></div>
         <div id="EnterRequestDialog"></div>
+
+        <div id="CreateUserDialog"></div>
+
         <div id="GridDialog">
             <div class="gridContainer"></div>
         </div>

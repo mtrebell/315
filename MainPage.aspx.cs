@@ -180,8 +180,12 @@ public partial class _Default : System.Web.UI.Page
             StringBuilder sb = new StringBuilder();
             sb.Append("<div style=\"margin-left: 20px;\" >");
             foreach (string s in reviewList)
+            {
+                s.Replace("<hr />", string.Empty);
                 sb.Append(string.Format("<p class=\"IMDbTab\">{0}</p><hr />", s));
+            }
             sb.Append("</div>");
+            
             return sb.ToString();
         }
         return "An issue occured while getting reviews";

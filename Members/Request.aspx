@@ -52,6 +52,7 @@
     <label>Request</label>
     <input type="text" id="TB_Request" style="margin-left: 10px; margin-right: 10px;" /><input type="button" class="Button" value="Add Request" 
         onclick="InsertRequest(); return false;" />
+    <hr />
     <table id="RequestTable" style="width: 100%; text-align: center;">
         <thead>
             <% if (this.User.IsInRole("Administrator")) { %>
