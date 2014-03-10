@@ -149,11 +149,28 @@
                 })
             }
 
+            /*
+                GenerateMovieGrid:
+                    Creates a table and displays all covers within
+                    the current filter.
+
+                    srcData:
+                        source data containing divs of class cover or cover-not-loaded
+
+                    dest:
+                        destination div to stuff the generated table into
+
+                    moviesPerRow:
+                        the number of movies to display per row
+            */
             function GenerateMovieGrid(srcData, dest, moviesPerRow) {
 
                 $(dest).css('display', 'table');
                 var i = 0, divObj;
                 $(srcData + ' .cover').each(function () {
+                    //If movie is not in the current filter, skip it
+                    if (!CoverFilter($(this))) return;
+
                     var curRow = parseInt(i / moviesPerRow);
 
                     //create new row if necessary
@@ -193,6 +210,14 @@
                 });
             }
 
+            /*
+            MoviesGridShowInView
+                Loads the images of movies in the grid view based on 
+                whether they are "in view" or not.
+
+                Also, while it loops each image, it adds a click
+                method to take the user to that movie on the coverflow
+            */
             function MovieGridShowInView() {
                 $("#GridDialog").find($(".gridCover")).each(function(cover){
                     var img = $(this).find('img');
@@ -219,7 +244,6 @@
                             });
                         }
                     }
-
                 });
             }
 
