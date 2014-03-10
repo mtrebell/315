@@ -205,8 +205,16 @@
                                 //to clicked image.
                                 $('#GridDialog').dialog('close');
 
+
+                                //if the movie is within 10 covers of the coverflows current index
+                                //then animate, otherwise, jump
+                                var curIndex = coverFlowCtrl.coverflow('index');
                                 var cfIndex = $(img).attr('cfIndex');
-                                coverFlowCtrl.coverflow('index', cfIndex);
+                                //coverflow shows 9 movies on both sides of the current one
+                                if (cfIndex >= curIndex - 9 && cfIndex <= curIndex + 9)
+                                    coverFlowCtrl.coverflow('index', cfIndex);
+                                else
+                                    coverFlowCtrl.coverflow('index', cfIndex, false);
                             });
                         }
                     }

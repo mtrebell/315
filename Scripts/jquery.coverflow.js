@@ -254,11 +254,15 @@
 			this._trigger(callback, null, this._getCovers().get(this.currentIndex), this.currentIndex);
 		},
 
-		index: function(index) {
+		index: function(index, animate) {
 			if (index === undefined) {
 				return this.options.index;
 			}
-			this._setIndex(index, true);
+			if (animate == undefined) {
+			    animate = true;
+			}
+
+			this._setIndex(index, animate);
 		},
 
 		refresh: function(duration, index) {
