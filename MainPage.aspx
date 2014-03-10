@@ -211,10 +211,11 @@
                                 var curIndex = coverFlowCtrl.coverflow('index');
                                 var cfIndex = $(img).attr('cfIndex');
                                 //coverflow shows 9 movies on both sides of the current one
-                                if (cfIndex >= curIndex - 9 && cfIndex <= curIndex + 9)
+                                if (cfIndex >= curIndex - 9 && cfIndex <= curIndex + 9) {
                                     coverFlowCtrl.coverflow('index', cfIndex);
-                                else
+                                } else {
                                     coverFlowCtrl.coverflow('index', cfIndex, false);
+                                }
                             });
                         }
                     }
@@ -276,9 +277,11 @@
                         //Add Label to new movies
                         var date = $(value).find("#mov_dateAdded")[0].innerText;
                         //Remove timestamp
-                        date = date.split(" ")[0]
-                        if (labelMovie(new Date(), date)) {
-                            $(value).prepend('<span class ="newLabel"><h1 class="newText">N</h1></span>')
+                        if (date) {
+                            date = date.split(" ")[0];
+                            if (labelMovie(new Date(), date)) {
+                                $(value).prepend('<span class ="newLabel"><h1 class="newText">N</h1></span>')
+                            }
                         }
 
 
