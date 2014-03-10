@@ -170,6 +170,9 @@ public partial class _Default : System.Web.UI.Page
 
             StringBuilder sb = new StringBuilder();
             sb.Append("<div>");
+            if (reviewList.Count <= 0)
+                return "Sorry no reviews were found for this movie";
+
             foreach (string s in reviewList)
             {
                 s.Replace("<hr />", string.Empty);
