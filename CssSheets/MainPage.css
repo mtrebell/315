@@ -6,6 +6,20 @@
 .hex-background {
     background-image:   url(../Background_Images/hex-Bkgrd.jpg) !important;
 }
+.MainBodyOffset {
+    /*padding-left: 32px !important; */
+/*    background: black !important;
+*/}
+.multilevelpushmenu_inactive{
+    background: transparent !important;
+    /*position: fixed !important;*/
+    top:    0px !important;
+    left: 0px !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-height: 5em !important;
+    height: 5em !important;
+}
 .ui-header-fixed{
     position: fixed;
     top: 0;
@@ -178,7 +192,8 @@
 }
 #MovieFilterBox {
     background: black;
-    width:      100%; 
+    width:      95%; 
+    max-width:  95%;
     height:     8em;
     background-image:  inherit;
 
@@ -207,10 +222,6 @@
 #FilterRating {
     background: yellow;
 }
-.MainBodyOffset {
-    padding-left: 32px !important; 
-/*    background: black !important;
-*/}
 
 div.tableContainer{
     display:    table;
@@ -318,3 +329,33 @@ section.tableCell {
     background-repeat: no-repeat;   
 }
 
+.ui-review {
+    padding-right: 3em;
+    padding-left: 3em;
+    text-align: justify;
+
+}
+.ui-review.theme {
+    color: goldenrod;
+}
+.ui-review b {
+    text-align: center;
+    padding-left: 30%;
+}
+
+/*This is the css for the new movie labels*/
+.newLabel{
+    vertical-align: top;
+    color: white;
+    width:0px; 
+    height:0px; 
+    border-style: solid; 
+    border-width: 50px 50px 0px 0; 
+    border-color: #007bff transparent transparent transparent; 
+    position: absolute; left:0px; top:0
+}
+.newText{
+    width:30px;
+    margin-top:-45px;
+    margin-left:5px;
+}

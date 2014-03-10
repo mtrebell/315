@@ -204,5 +204,33 @@ function CoverFilter(cover)
     return res;
 }
 
+//------------------------------------------------------------------------
+// Movie label code.
+//------------------------------------------------------------------------
+function MovieOlderThanDays(currentD, movieD, daysOlderThan)
+// Is a movie older than a given number of days
+{
+    var date = new Date();
 
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+    var dateArr = movieD.split("/");
+
+    //Movie is new if less than 11 days old
+    if (Math.abs(day - dateArr[1]) < daysOlderThan) {
+        //with in month
+        if (month == dateArr[0] && year == dateArr[2])
+            return true;
+        //Account for end of month
+        if (Math.abs(dateArr[0] - month) < 2 && year == dateArr[2])
+            return true;
+        //account for end of year
+        if (dateArr[2] - year < 2 && dateArr[0] == 12)
+            return true;
+    }
+
+    return false;
+
+}
 
