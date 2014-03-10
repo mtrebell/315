@@ -99,7 +99,7 @@ public partial class _Default : System.Web.UI.Page
                     sb.Append("<div style=\"margin-left: 20px;\" >");
                     foreach (Reviews review in jrMovieBase.reviews)
                     {
-                        sb.Append(string.Format("<p class=\"RottenTab\"><b>{0}</b></p>{1}<hr />", 
+                        sb.Append(string.Format("<p class=\"ui-review ui-rotten theme\"><b>{0}</b></p>{1}<hr />", 
                             review.quote.Equals(string.Empty) ? "No quote available" : review.quote,
                             review.links.review != null && !review.links.review.Equals(string.Empty) ?
                                 "<a href=\"" + review.links.review + "\" >See Full Review</a>" : "No review found"));
@@ -182,7 +182,7 @@ public partial class _Default : System.Web.UI.Page
             foreach (string s in reviewList)
             {
                 s.Replace("<hr />", string.Empty);
-                sb.Append(string.Format("<p class=\"IMDbTab\">{0}</p><hr />", s));
+                sb.Append(string.Format("<p class=\"ui-review ui-imdb theme\">{0}</p><hr />", s));
             }
             sb.Append("</div>");
             
