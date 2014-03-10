@@ -46,11 +46,52 @@
                 width:  40px;
                 height: 40px;
             }
+
+             .newLabel{
+                vertical-align: top;
+                color: white;
+                width:0px; 
+                height:0px; 
+                border-style: solid; 
+                border-width: 50px 50px 0px 0; 
+                border-color: #007bff transparent transparent transparent; 
+                position: absolute; left:0px; top:0
+            }
+            .newText{
+                    width:30px;
+                    margin-top:-45px;
+                    margin-left:5px;
+            }
         </style>
     </head>
 
     <body>
         <script type="text/javascript">
+            function labelMovie(currentD, movieD) {
+                var date = new Date();
+
+                var month = date.getMonth() + 1;
+                var day = date.getDate();
+                var year = date.getFullYear();
+                var dateArr = movieD.split("/");
+
+                //Movie is new if less than 11 days old
+                if (Math.abs(day - dateArr[1]) < 11) {
+                    //with in month
+                    if (month == dateArr[0] && year == dateArr[2])
+                        return true;
+                    //Account for end of month
+                    if (Math.abs(dateArr[0] - month) < 2 && year == dateArr[2])
+                        return true;
+                    //account for end of year
+                    if (dateArr[2] - year < 2 && dateArr[0] == 12)
+                        return true;
+                }
+
+                return false;
+
+            }
+
             var filterTagID = 0;
             var coverFlowCtrl = null;
             var filterFlowCtrl = null;
@@ -231,6 +272,15 @@
                     }
                     var genre_list = {};
                     $('#CoverFlow .cover').each(function (idx, value) {
+                        //Add Label to new movies
+                        var date = $(value).find("#mov_dateAdded")[0].innerText;
+                        //Remove timestamp
+                        date = date.split(" ")[0]
+                        if (labelMovie(new Date(), date)) {
+                            $(value).prepend('<span class ="newLabel"><h1 class="newText">N</h1></span>')
+                        }
+
+
                         if ($(value).find(".missing_poster").length !== 0) {
                             $(value).append('<span class="movieTitle">' + $(value).find("#info #mov_title").html() + '</span>');
                         }
