@@ -96,7 +96,7 @@ public partial class _Default : System.Web.UI.Page
                 if (jrMovieBase != null && jrMovieBase.reviews != null && jrMovieBase.reviews.Length > 0)
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("<div style=\"margin-left: 20px;\" >");
+                    sb.Append("<div>");
                     foreach (Reviews review in jrMovieBase.reviews)
                     {
                         sb.Append(string.Format("<p class=\"ui-review ui-rotten theme\"><b>{0}</b></p>{1}<hr />", 
@@ -178,7 +178,7 @@ public partial class _Default : System.Web.UI.Page
                     reviewList.RemoveAt(i);
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("<div style=\"margin-left: 20px;\" >");
+            sb.Append("<div>");
             foreach (string s in reviewList)
             {
                 s.Replace("<hr />", string.Empty);

@@ -694,9 +694,9 @@
                     </div>
                 </div>
             </div>
-            <div id="tabs_imdb" class="imdb-review hex-background no-tab-padding">
+            <div id="tabs_imdb" class="MainBodyOffset imdb-review hex-background ">
             </div>
-            <div id="tabs_rotten_tomatoes" class="rotten-tomatoes-review hex-background no-tab-padding">
+            <div id="tabs_rotten_tomatoes" class="MainBodyOffset rotten-tomatoes-review hex-background ">
             </div>
         </div>
 
