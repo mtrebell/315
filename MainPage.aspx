@@ -49,7 +49,6 @@
         </style>
     </head>
 
-
     <body>
         <script type="text/javascript">
             var filterTagID = 0;
@@ -174,6 +173,43 @@
                 });
             }
 
+
+            function GetMovieReviewIMDB(ui) {
+                console.log("IMDB: %o", ui.newPanel.attr("dataUrl"));
+                $.ajax({
+                    type: "POST",
+                    url: "MainPage.aspx/GetIMDbReviews",
+                    data: JSON.stringify({ 'imdbID': ui.newPanel.attr("dataUrl") }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (msg) {
+                        var div = msg.d;
+                        console.log(msg);
+                        ui.newPanel.html(div);
+                    },
+                    cache: false
+                });
+            }
+
+            function GetMovieReviewRotten(ui) {
+                $.ajax({
+                    type: "POST",
+                    url: "MainPage.aspx/GetRottenReviews",
+                    data: JSON.stringify({ 'imdbID': ui.newPanel.attr("dataUrl") }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (msg) {
+                        var div = msg.d;
+                        console.log(msg);
+                        ui.newPanel.html(div);
+                    },
+                    cache: false
+                }); 
+            }
+
+            //********************************************************************************
             // DOCUMENT READY!
             $(function () {
                 $(".ui-validator").html("");
@@ -255,21 +291,17 @@
                     beforeActivate: function( event, ui ) 
                     {
                         var tab_id = ui.newPanel.attr("id");
-                        if (ui.newPanel.hasClass("no-content"))
-                        {
-                            ui.newPanel.removeClass("no-content");       
-                            if (tab_id === "tabs_imdb")
-                            {
+
+                        if (ui.newPanel.hasClass("no-content")) {
+                            ui.newPanel.removeClass("no-content");
+                            if (tab_id === "tabs_imdb") {
                                 // TODO: REplace with actuall page url and arguments.
-                                ui.newPanel.load("Admin/AddToDataBase.aspx");
-                                
+                                GetMovieReviewIMDB(ui);
+
                                 //GetIMDBReviews(mov_id);
                             }
-                            else if (tab_id === "tabs_rotten_tomatoes")
-                            {
-                                // TODO: REplace with actuall page url and arguments.
-                                ui.newPanel.load("Admin/EditEntries.aspx");
-                                //GEtRottenReviews(mov_id);
+                            else if (tab_id === "tabs_rotten_tomatoes") {
+                                GetMovieReviewRotten(ui);
                             }
                         }
                     }
@@ -348,7 +380,6 @@
                         MovieGridShowInView();
                     });
 
-
                     GenerateMovieGrid('#CoverFlow', '.gridContainer', 4);
                     MovieGridShowInView();
                 });
@@ -359,11 +390,19 @@
                 });
                 $("#MenuEnterRequest").click(function (e) {
                     e.preventDefault();
-                    $("#EnterRequestDialog").dialog({ dialogClass: "ui-ontop" });
+                    $("#EnterRequestDialog").dialog({ dialogClass: "ui-ontop", minWidth: "500" });
+                    $("#EnterRequestDialog").load("Members/Request.aspx");
                 });
 
+                $("#CreateUserDialog").hide();
+                $("#CreateUserButton").click(function (e) {
+                    e.preventDefault();
+                    $("#CreateUserDialog").dialog({ dialogClass: "ui-ontop", minWidth: "500" });
+                    $("#CreateUserDialog").load("Login.aspx");
+                });
+                
             }); // End Doc Ready.
-    </script>
+        </script>
 
     <asp:LoginView ID="LoginView5" runat="server">
         <LoggedInTemplate>
@@ -383,6 +422,7 @@
                     $("#loggedin_bar").hide();
                     $("#login_bar").show();
                     $("#body_Login1_LoginButton").button();
+                    $('#CreateUserButton').button();
                 });
             </script>
         </AnonymousTemplate> 
@@ -504,6 +544,7 @@
                         <asp:CheckBox ID="RememberMe" runat="server" Text="Remember." />
                         <asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal>
                         <asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Log In" ValidationGroup="Login1" class="tiny-btn" />
+                        <input type="button" id="CreateUserButton" value="Create User" class="tiny-btn" />
                     </div>
                 </LayoutTemplate>
             </asp:Login>
@@ -604,7 +645,7 @@
             <ul>
                 <li><a href="#tabs_info">Details</a></li>
                 <li><a href="#tabs_imdb">IMDB</a></li>
-                <li><a href="#tabs_rotten_tomatoes">Rotten Toimato</a></li>
+                <li><a href="#tabs_rotten_tomatoes">Rotten Tomatoes</a></li>
             </ul>
 
             <div id="tabs_info" class="hex-background no-tab-padding">
@@ -662,6 +703,9 @@
         <div id="dialogContainer"></div>
         <div id="RecomendationsDialog"></div>
         <div id="EnterRequestDialog"></div>
+
+        <div id="CreateUserDialog"></div>
+
         <div id="GridDialog">
             <div class="gridContainer"></div>
         </div>

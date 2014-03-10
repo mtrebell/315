@@ -56,6 +56,7 @@
             display: none;
             zoom: 1;
         }
+
         .ui-accordion .ui-accordion-content-active {
             display: block;
         } 

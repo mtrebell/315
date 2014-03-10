@@ -56,7 +56,7 @@ public partial class _Default : System.Web.UI.Page
             using (HtmlButton hgcDelete = new HtmlButton())
             {
                 hgcDelete.InnerText = "Delete";
-                hgcDelete.Attributes.Add("class", "DeleteButton");
+                hgcDelete.Attributes.Add("class", "Button");
                 hgcDelete.Attributes.Add("onclick", "RemoveRow('" + sRowID + "','" + sUserID + "','" + sUserName + "'); return false;");
                 hgcCol4.Controls.Add(hgcDelete);
             }
