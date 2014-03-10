@@ -63,6 +63,7 @@
                 //$("#Content").tabs();
                 var info = $(cover).find("div#info");
                 var mov_id = info.find("#mov_id").html();
+                getTrailer(mov_id);
                 $("#Content").tabs("option", "active", 0);
                 $("#tabs_imdb").empty().addClass("no-content").attr("dataUrl", mov_id);
                 $("#tabs_rotten_tomatoes").empty().addClass("no-content").attr("dataUrl", mov_id);
@@ -314,6 +315,31 @@
                 });
                 
             }); // End Doc Ready.
+
+            function getTrailer(movieId) {
+
+                var obj = { 'mov_id': movieId }
+                console.log(obj);
+                $.ajax({
+                    type: "POST",
+                    url: "MainPage.aspx/getURL",
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (response) {
+                        console.log(response);
+                        if (response.d != "") {
+                            var id = response.d;
+                            //Add video	
+                            var frame = "<iframe  type='text/html' width='425' height='349' src=' http://www.youtube.com/embed/" + id + "' frameborder='0'></iframe>";
+                            $("#trailer").html(frame);
+                        }
+                        else
+                            $("#trailer").html("");
+                    }
+                });
+            }
         </script>
 
     <asp:LoginView ID="LoginView5" runat="server">
@@ -599,9 +625,9 @@
                         </section>
                         <section id="cover-details" class="tableCell table-thirds">
                             <span class="cover-details-infoline">
-                                <p class="cover-details-element-label theme">Run Time:</p>
-                                <p id="mov_trailer" class="cover-details-element-detail theme details-info"></p>
+                                <p class="cover-details-element-label theme">Run Time:</p>     
                             </span>
+                            <div id="trailer"></div>
                         </section>
                     </div>
                 </div>

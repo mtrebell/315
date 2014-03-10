@@ -32,15 +32,6 @@ public partial class _Default : System.Web.UI.Page
         //  so either can be used as a "key", Guid is the primary key so it is slightly faster..
         Guid userid = (Guid)o.ProviderUserKey;
     }
-//    protected void CreateUserWizard1_CreatedUser(object sender, EventArgs e)
-//    {
-        // If the user was ALLOWED to self-register, then want to add him to appropriate role,
-        //  otherwise the user merely has a login, but probably not authorized in any other way
-//        Roles.AddUserToRole(CreateUserWizard1.UserName, "Members");
-
-        // Same as above, considered logged in, so set his Session too..
-//        Session.Add("Members", Login1.UserName);
-//    }
 
     public class Links
     {
@@ -189,5 +180,27 @@ public partial class _Default : System.Web.UI.Page
             return sb.ToString();
         }
         return "An issue occured while getting reviews";
+    }
+
+    [WebMethod()]
+    public static string getURL(string mov_id)
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(Middleware.ConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.Text; // indicate query as procedure
+            comm.CommandText = string.Format("Select [mov_trailer] From [MovieSummary] Where [mov_id] = '{0}'", mov_id);
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection); // execute query
+
+            if (reader.HasRows)
+            {
+                reader.Read();
+                return reader[0].ToString();
+            }
+        }
+        return "";
     }
 }
