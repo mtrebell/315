@@ -6,10 +6,9 @@
 .hex-background {
     background-image:   url(../Background_Images/hex-Bkgrd.jpg) !important;
 }
+
 .MainBodyOffset {
-    /*padding-left: 32px !important; */
-/*    background: black !important;
-*/}
+}
 .multilevelpushmenu_inactive{
     background: transparent !important;
     /*position: fixed !important;*/
