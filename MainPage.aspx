@@ -214,19 +214,13 @@
                 });
             }
 
-            function MovieGetCurrentID()
-            {
-                var mov_id = $('.current').attr("id").toString().replace("movID_", "");
-                console.log(mov_id);
-                return mov_id;
-            }
 
             function GetMovieReviewIMDB(ui) {
-                var objectData = { 'imdbID': MovieGetCurrentID() };
+                console.log("IMDB: %o", ui.newPanel.attr("dataUrl"));
                 $.ajax({
                     type: "POST",
                     url: "MainPage.aspx/GetIMDbReviews",
-                    data: JSON.stringify(objectData),
+                    data: JSON.stringify({ 'imdbID': ui.newPanel.attr("dataUrl") }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: true,
@@ -240,11 +234,10 @@
             }
 
             function GetMovieReviewRotten(ui) {
-                var objectData = { 'imdbID': MovieGetCurrentID() };
                 $.ajax({
                     type: "POST",
                     url: "MainPage.aspx/GetRottenReviews",
-                    data: JSON.stringify(objectData),
+                    data: JSON.stringify({ 'imdbID': ui.newPanel.attr("dataUrl") }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: true,
@@ -345,7 +338,8 @@
                 filterFlowCtrl = $('#MovieFilter').coverflow();
 
                 $("#Content").tabs({
-                    beforeActivate: function (event, ui) {
+                    beforeActivate: function( event, ui ) 
+                    {
                         var tab_id = ui.newPanel.attr("id");
 
                         if (ui.newPanel.hasClass("no-content")) {
