@@ -1,0 +1,53 @@
+.logedin-bar.theme a{
+    color: goldenrod;
+}
+
+.cover-details-element-label.theme {
+    background: blue;
+    border-color: yellow;
+}
+
+.cover-details-element-detail.theme {
+    border-color: yellow;
+}
+
+.filter-list-genre.theme{
+    color: goldenrod;
+}
+
+.GenreFilterButton.theme{
+    color: goldenrod;   
+}
+
+.genre-label.theme {
+    
+}
+
+#menu.theme {
+    color:      goldenrod;
+}
+
+#menu.theme a{
+    color:      goldenrod;
+}
+
+#MovieFilter.theme div p {
+    color:              goldenrod;
+}
+
+#FilterAlpha.theme span{
+    color: goldenrod;     
+}
+
+#FilterAlpha.theme p {
+    color: goldenrod;     
+}
+
+#FilterBar.theme span{
+    color: goldenrod;
+}
+
+.ui-review.theme {
+    color: goldenrod;
+}
+

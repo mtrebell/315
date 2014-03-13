@@ -57,9 +57,6 @@
     top: -3px;
     font-size: 0.8em;
 }
-.logedin-bar.theme a{
-    color: goldenrod;
-}
 .login-bar input {
     background-image:   url(../Background_Images/hex-Bkgrd.jpg) !important;
     color: goldenrod;
@@ -94,11 +91,6 @@
     padding-top: 0.5em; 
     width:;
 }
-.cover-details-element-label.theme {
-    background: blue;
-    border-color: yellow;
-
-}
 .cover-details-element-detail {
     display: inline;
     border: 2px solid;
@@ -110,9 +102,6 @@
     padding-top: 0.2em;
     padding-bottom: 0.2em;
 }
-.cover-details-element-detail.theme {
-    border-color: yellow;
-}
 .cover-details-element-detail.multi-line {
     display: inline-flex;
 }
@@ -120,30 +109,29 @@
     padding-left: 1em;
     padding-right: 1em;
 }
-.filter-list-genre.theme{
-    color: goldenrod;
-}
+
 .GenreFilterButton {
     font-size: 0.8em !important;
-    padding: 0.1em  !important;
+    padding: 0.2em 0.3em  !important;
 }
+
+.GenreFilterButton .ui-button-text{
+    padding: 0 !important;
+}
+
 .genre-selected {
     border: 1px solid #ffaf0f !important;
 	background: #f58400 url(images/ui-bg_inset-soft_30_f58400_1x100.png) 50% 50% repeat-x !important;
 	font-weight: bold !important;
 	color: #ffffff !important;
 }
-.GenreFilterButton.theme{
-    color: goldenrod;   
-}
+
 .genre-label {
     padding-left: 0.2em;
     padding-right: 0.2em;
     margin-right: 1em;
 }
-.genre-label.theme {
-    
-}
+
 .cover-details-infoline img{
     float: right;
     top: inherit;
@@ -183,13 +171,8 @@
     z-index:    99;
     left:       0;
 }
-#menu.theme {
-    color:      goldenrod;
-}
-#menu.theme a{
-    color:      goldenrod;
-}
 #MovieFilterBox {
+
     background: black;
     width:      95%; 
     max-width:  95%;
@@ -212,9 +195,7 @@
     text-align:         center;
     margin:             0.3em;
 }
-#MovieFilter.theme div p {
-    color:              goldenrod;
-}
+
 #FilterGeneral {
     background: blue;
 }
@@ -233,6 +214,7 @@ div.tableRow{
     width: 100%;
     background-image:  inherit;
 }
+
 section.tableCell {
     display:    table-cell;
     background-image:  inherit;
@@ -240,13 +222,16 @@ section.tableCell {
     padding-right: 1em;
 
 }
+
 #Content{
     min-height: 30em;
 }
+
 #FilterAlpha {
     background: black;
     color: white;
 }
+
 #FilterAlpha span{
     text-align: center;
     vertical-align: top;       
@@ -254,12 +239,7 @@ section.tableCell {
     color: goldenrod;     
     cursor: crosshair;    
 }
-#FilterAlpha.theme span{
-    color: goldenrod;     
-}
-#FilterAlpha.theme p{
-    color: goldenrod;     
-}
+
 #FilterAlpha .filterGrooup {
     padding-top:   0.2em;
     padding-bottom: 1em; 
@@ -283,6 +263,7 @@ section.tableCell {
     -ms-transition: box-shadow .4s ease;
     transition: box-shadow .4s ease;
 }
+
 .star-theme {
     background: rgba(255,255,0,0.5);
     color: black;
@@ -290,6 +271,7 @@ section.tableCell {
     margin-left: 0.2em;
     margin-right: 0.2em;
 }
+
 #FilterTag
 {
     background: black;
@@ -301,9 +283,7 @@ section.tableCell {
 
 #FilterBar span{
 }
-#FilterBar.theme span{
-    color: goldenrod;
-}
+
 .ui-ontop {
     z-index: 999 !important;
 }
@@ -313,15 +293,18 @@ section.tableCell {
     position: relative; 
     top: -3px;
 }
+
 .ui-icon { 
     display: inline; 
     text-indent: -99999px; 
     overflow: hidden; 
     background-repeat: no-repeat; 
 }
+
 .no-tab-padding {
     padding: 0 !important;
 }
+
 .Border{
     background-image:url(../Background_Images/Std_Header.png);
     background-position: top;
@@ -334,9 +317,7 @@ section.tableCell {
     text-align: justify;
 
 }
-.ui-review.theme {
-    color: goldenrod;
-}
+
 .ui-review b {
     text-align: center;
     padding-left: 30%;
@@ -353,6 +334,7 @@ section.tableCell {
     border-color: #007bff transparent transparent transparent; 
     position: absolute; left:0px; top:0
 }
+
 .newText{
     width:30px;
     margin-top:-45px;

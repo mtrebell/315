@@ -25,6 +25,7 @@
         <link href="Scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
 
         <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
+        <link href="CssSheets/MainPage-default.css" rel="stylesheet" type="text/css" />
         <script src="scripts/MainPage.js"></script>
 
         <style>
