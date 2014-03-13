@@ -216,7 +216,12 @@ public partial class _Default : System.Web.UI.Page
         #endregion
 
         string[] rottenIDRating = GetRottenIDRating(IMDbIn.Title).Split('|');
-        
+
+        TrailerAPI.extracedVideo[] trailers =  TrailerAPI.search(sTitle);
+        string sMap = string.Empty;
+        if(trailers.Length > 0)
+            sMap = trailers[0].VideoId;
+
         try
         {
             using (SqlConnection con = new SqlConnection(connect)) //create database connection
@@ -224,8 +229,8 @@ public partial class _Default : System.Web.UI.Page
                 con.Open(); // create insert condition
                 using (SqlCommand ins = new SqlCommand(
                         "INSERT INTO MovieSummary (mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, mov_runtime,mov_rating, " +
-                        "mov_smPoster, mov_lgPoster, mov_imdbUrl, mov_rottenID, mov_rottenRating)" +
-                            "VALUES (@Mid, @Ti, @Pl, @Gr, @Si, @Fi, @Rt, @Ra, @Sm, @Lg, @Im, @Ri, @Rr)", con))
+                        "mov_smPoster, mov_lgPoster, mov_trailer, mov_imdbUrl, mov_rottenID, mov_rottenRating)" +
+                            "VALUES (@Mid, @Ti, @Pl, @Gr, @Si, @Fi, @Rt, @Ra, @Sm, @Lg, @Tr, @Im, @Ri, @Rr)", con))
                 {
                     // add all imdb parameters to insert statement
                     ins.Parameters.AddWithValue("@Mid", IMDbIn.Id);
@@ -238,6 +243,7 @@ public partial class _Default : System.Web.UI.Page
                     ins.Parameters.AddWithValue("@Im", IMDbIn.ImdbURL.ToString());
                     ins.Parameters.AddWithValue("@Ri", rottenIDRating[0]);
                     ins.Parameters.AddWithValue("@Rr", rottenIDRating[1]);
+                    ins.Parameters.AddWithValue("@Tr", sMap);
 
                     #region Determine IMDB Image Posters
                     string rootImagePath = imagePath;
