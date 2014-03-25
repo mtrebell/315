@@ -30,7 +30,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
     <form runat="server">
-        <table style="border: 1px solid #ffd800; width: 100%;">
+        <table style="border: 1px solid #DAA520; width: 100%;">
             <tr>
                 <td align="center" colspan="2" style="background-color: #6B696B; color: White; font-weight:bold;" >
                     Sign Up for Your New Account</td>

@@ -15,6 +15,7 @@ using System.Security.Cryptography;
 using System.Net;
 using System.Text;
 using System.Web.Script.Serialization;
+using System.Collections;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -227,23 +228,29 @@ public partial class _Default : System.Web.UI.Page
             using (SqlConnection con = new SqlConnection(connect)) //create database connection
             {
                 con.Open(); // create insert condition
-                using (SqlCommand ins = new SqlCommand(
-                        "INSERT INTO MovieSummary (mov_id, mov_title, mov_plot, mov_genre, mov_size, mov_fileType, mov_runtime,mov_rating, " +
-                        "mov_smPoster, mov_lgPoster, mov_trailer, mov_imdbUrl, mov_rottenID, mov_rottenRating)" +
-                            "VALUES (@Mid, @Ti, @Pl, @Gr, @Si, @Fi, @Rt, @Ra, @Sm, @Lg, @Tr, @Im, @Ri, @Rr)", con))
+                using (SqlCommand ins = new SqlCommand("InsertTitle", con))
                 {
+                    ins.CommandType = System.Data.CommandType.StoredProcedure;
                     // add all imdb parameters to insert statement
-                    ins.Parameters.AddWithValue("@Mid", IMDbIn.Id);
-                    ins.Parameters.AddWithValue("@Ti", sTitle);
-                    ins.Parameters.AddWithValue("@Pl", IMDbIn.Plot);
-                    ins.Parameters.AddWithValue("@Si", sSize);
-                    ins.Parameters.AddWithValue("@Fi", sFileExt);
-                    ins.Parameters.AddWithValue("@Rt", IMDbIn.Runtime);
-                    ins.Parameters.AddWithValue("@Ra", IMDbIn.Rating);
-                    ins.Parameters.AddWithValue("@Im", IMDbIn.ImdbURL.ToString());
-                    ins.Parameters.AddWithValue("@Ri", rottenIDRating[0]);
-                    ins.Parameters.AddWithValue("@Rr", rottenIDRating[1]);
-                    ins.Parameters.AddWithValue("@Tr", sMap);
+                    ins.Parameters.AddWithValue("@mov_id", IMDbIn.Id);
+                    ins.Parameters.AddWithValue("@mov_title ", sTitle);
+                    ins.Parameters.AddWithValue("@mov_plot", IMDbIn.Plot);
+                    ins.Parameters.AddWithValue("@mov_size", sSize);
+                    ins.Parameters.AddWithValue("@mov_fileType", sFileExt);
+                    ins.Parameters.AddWithValue("@mov_runTime", IMDbIn.Runtime);
+                    ins.Parameters.AddWithValue("@mov_dateAdded", DateTime.Now);
+                    ins.Parameters.AddWithValue("@mov_rating", IMDbIn.Rating);
+                    ins.Parameters.AddWithValue("@mov_directors", Stringify(IMDbIn.Directors, true));
+                    ins.Parameters.AddWithValue("@mov_writers", Stringify(IMDbIn.Writers, true));
+                    ins.Parameters.AddWithValue("@mov_cast", Stringify(IMDbIn.Cast, true));
+                    ins.Parameters.AddWithValue("@mov_producers", Stringify(IMDbIn.Producers, true));
+                    ins.Parameters.AddWithValue("@mov_oscars", IMDbIn.Oscars.Length > 0 ? IMDbIn.Oscars : "0");
+                    ins.Parameters.AddWithValue("@mov_nominations", IMDbIn.Nominations.Length > 0 ? IMDbIn.Nominations : "0");
+                    ins.Parameters.AddWithValue("@mov_plotkeywords", Stringify(IMDbIn.PlotKeywords, false));
+                    ins.Parameters.AddWithValue("@mov_imdbUrl", IMDbIn.ImdbURL.ToString());
+                    ins.Parameters.AddWithValue("@mov_rottenID", rottenIDRating[0]);
+                    ins.Parameters.AddWithValue("@mov_rottenRating", rottenIDRating[1]);
+                    ins.Parameters.AddWithValue("@mov_trailer", sMap);
 
                     #region Determine IMDB Image Posters
                     string rootImagePath = imagePath;
@@ -257,12 +264,12 @@ public partial class _Default : System.Web.UI.Page
                         using (FileStream fs = new FileStream(Path.Combine(rootImagePath, hashSm + ".jpg"), FileMode.OpenOrCreate, FileAccess.Write))
                         {
                             fs.Write(imgSavesm, 0, imgSavesm.Length);
-                            ins.Parameters.AddWithValue("@Sm", "~/Image_Posters/" + hashSm + ".jpg");
+                            ins.Parameters.AddWithValue("@mov_smPoster", "~/Image_Posters/" + hashSm + ".jpg");
                             fs.Close();
                         }
                     }
                     else
-                        ins.Parameters.AddWithValue("@Sm", "NOTFOUND");
+                        ins.Parameters.AddWithValue("@mov_smPoster", "NOTFOUND");
 
                     byte[] imgSaveLg = getImageFromURL(IMDbIn.PosterFull);
                     if (imgSavesm != null)
@@ -271,15 +278,15 @@ public partial class _Default : System.Web.UI.Page
                         using (FileStream fs = new FileStream(Path.Combine(rootImagePath, hashLg + ".jpg"), FileMode.OpenOrCreate, FileAccess.Write))
                         {
                             fs.Write(imgSavesm, 0, imgSavesm.Length);
-                            ins.Parameters.AddWithValue("@Lg", "~/Image_Posters/" + hashLg + ".jpg");
+                            ins.Parameters.AddWithValue("@mov_lgPoster", "~/Image_Posters/" + hashLg + ".jpg");
                             fs.Close();
                         }
                     }
                     else
-                        ins.Parameters.AddWithValue("@Lg", "NOTFOUND");
+                        ins.Parameters.AddWithValue("@mov_lgPoster", "NOTFOUND");
                     #endregion
 
-                    ins.Parameters.AddWithValue("@Gr", sbGenreCode.Length > 0 ?
+                    ins.Parameters.AddWithValue("@mov_genre", sbGenreCode.Length > 0 ?
                         sbGenreCode.ToString(): dicGenres["unassigned"]);
 
                     ins.ExecuteNonQuery();  // run insert
@@ -291,6 +298,20 @@ public partial class _Default : System.Web.UI.Page
         {
             Console.WriteLine(ex.Message);
         }
+    }
+
+    private static string Stringify(ArrayList items, bool bTopTenOnly)
+    {
+        StringBuilder sItems = new StringBuilder();
+        int i = 0;
+        foreach(string item in items)
+        {
+            sItems.Append(item).Append(",");
+            if (i++ > 10 && bTopTenOnly)
+                break;
+        }
+        sItems.Remove(sItems.Length - 1, 1);
+        return sItems.ToString();
     }
 
     public static byte[] getImageFromURL(String sURL)

@@ -380,8 +380,9 @@ public static class Middleware
     }
 
     public static string UpdateEntry(string mov_id, string mov_title, string mov_plot, string mov_genre, string mov_size,
-        string mov_fileType, string mov_dateAdded, string mov_rating, string mov_runTime, string mov_lgPoster,
-        string mov_smPoster, string mov_trailer, string mov_imdbUrl, string mov_rottenID, float mov_rottenRating, string proc)
+            string mov_fileType, string mov_dateAdded, string mov_rating, string mov_rottenID, float mov_rottenRating, string mov_runTime, string mov_lgPoster,
+            string mov_smPoster, string mov_directors, string mov_writers, string mov_cast, string mov_producers, string mov_oscars,
+            string mov_nominations, string mov_plotkeywords, string mov_trailer, string mov_imdbUrl, string proc)
     {         
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
@@ -437,6 +438,34 @@ public static class Middleware
             pSmPoster.Value = mov_smPoster;    // assign movie id filter
             pSmPoster.Direction = System.Data.ParameterDirection.Input;
 
+            SqlParameter pDirectors = new SqlParameter("@mov_directors", System.Data.SqlDbType.NVarChar, 255);
+            pDirectors.Value = mov_directors;   // assign movie id filter
+            pDirectors.Direction = System.Data.ParameterDirection.Input;
+
+            SqlParameter pWriters = new SqlParameter("@mov_writers", System.Data.SqlDbType.NVarChar, 255);
+            pWriters.Value = mov_writers;    // assign movie id filter
+            pWriters.Direction = System.Data.ParameterDirection.Input;
+
+            SqlParameter pCast = new SqlParameter("@mov_cast", System.Data.SqlDbType.NVarChar, 500);
+            pCast.Value = mov_cast;    // assign movie id filter
+            pCast.Direction = System.Data.ParameterDirection.Input;
+
+            SqlParameter pProducers = new SqlParameter("@mov_producers", System.Data.SqlDbType.NVarChar, 255);
+            pProducers.Value = mov_producers;   // assign movie id filter
+            pProducers.Direction = System.Data.ParameterDirection.Input;
+
+            SqlParameter pOscars = new SqlParameter("@mov_oscars", System.Data.SqlDbType.NVarChar, 5);
+            pOscars.Value = mov_oscars;    // assign movie id filter
+            pOscars.Direction = System.Data.ParameterDirection.Input;
+
+            SqlParameter pNominations = new SqlParameter("@mov_nominations", System.Data.SqlDbType.NVarChar, 5);
+            pNominations.Value = mov_nominations;   // assign movie id filter
+            pNominations.Direction = System.Data.ParameterDirection.Input;
+
+            SqlParameter pPlotKeywords = new SqlParameter("@mov_plotkeywords", System.Data.SqlDbType.NVarChar, 255);
+            pPlotKeywords.Value = mov_plotkeywords;   // assign movie id filter
+            pPlotKeywords.Direction = System.Data.ParameterDirection.Input;
+
             SqlParameter pTrailer = new SqlParameter("@mov_trailer", System.Data.SqlDbType.NVarChar, 1500);
             pTrailer.Value = mov_trailer;    // assign movie id filter
             pTrailer.Direction = System.Data.ParameterDirection.Input;
@@ -454,7 +483,8 @@ public static class Middleware
             pRottenRating.Direction = System.Data.ParameterDirection.Input;
 
             comm.Parameters.AddRange(new SqlParameter[] { pMovieID, pTitle, pPlot, pGenre, pSize, pFileType,
-                pDateAdded, pRating, pRunTime, pLgPoster, pSmPoster, pTrailer, pImdbUrl, pRottenID, pRottenRating});
+                pDateAdded, pRating, pRunTime, pLgPoster, pSmPoster, pDirectors, pWriters, pCast, pProducers, pOscars,
+                pNominations, pPlotKeywords, pTrailer, pImdbUrl, pRottenID, pRottenRating});
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
         return "Success";      // return filtered dataset

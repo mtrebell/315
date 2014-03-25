@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" Async="true" AutoEventWireup="true" CodeFile="EditEntries.aspx.cs" Inherits="_Default" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css" >
         .column
         {
@@ -127,6 +127,10 @@
     <form runat="server">
     <script type="text/javascript">
         var bEditModeActive = false;
+        var minval = 0,
+            maxval = 100,
+            initvalue = 0;
+
         $(function () {
             $('#EditTemplate').hide();
             $('#AddEntryTemplate').hide();
@@ -181,10 +185,10 @@
             $('#Add_mov_id').change(function () {
                 var indexes = $('#hf_usedindexes').val().split('|');
                 var txt = this.value;
-                console.log(indexes);
-                console.log(txt);
+                //console.log(indexes);
+                //console.log(txt);
                 var pattern = /[t][t][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/;
-                console.log(pattern.exec(txt));
+                //console.log(pattern.exec(txt));
 
                 if (pattern.exec(txt) != null && $.inArray(txt, indexes) < 0) {
                     $('#Add_mov_id').attr('style', 'color: #00ff00;');
@@ -223,6 +227,13 @@
                 'mov_runTime': document.getElementById('Add_mov_runtime').value,
                 'mov_lgPoster': $('#Add_mov_lgPoster').attr("src"),
                 'mov_smPoster': $('#Add_mov_smPoster').attr("src"),
+                'mov_directors': ListItemsToString('Add_mov_directors'),
+                'mov_writers': ListItemsToString('Add_mov_writers'),
+                'mov_cast': ListItemsToString('Add_mov_cast'),
+                'mov_producers': ListItemsToString('Add_mov_producers'),
+                'mov_oscars' : $('#Add_mov_oscars').val(),
+	            'mov_nominations' : $('#Add_mov_nominations').val(),
+	            'mov_plotkeywords' : document.getElementById('Add_mov_plotkeywords').value,
                 'mov_trailer': document.getElementById('Add_mov_trailer').value,
                 'mov_imdbUrl': document.getElementById('Add_mov_imdbURL').value,
                 'updatedLg': InsertLg.updated,
@@ -230,7 +241,7 @@
                 'mov_rottenID': document.getElementById('Add_mov_rottenID').value,
                 'mov_rottenRating': document.getElementById('Add_mov_rottenRating').value
             };
-            console.log(objectData);
+            //console.log(objectData);
             $.ajax({
                 type: "POST",
                 url: "Admin/EditEntries.aspx/AddEntryDB",
@@ -308,9 +319,8 @@
                 dataType: "json",
                 async: true,
                 success: function (msg) {
-
                     var ret = msg.d.split('|');
-                    console.log(ret);
+         
                     var objD = {
                         'mov_id': ret[0],
                         'mov_title': ret[1],
@@ -323,11 +333,20 @@
                         'mov_runTime': ret[8],
                         'mov_lgPoster': ret[9],
                         'mov_smPoster': ret[10],
-                        'mov_trailer': ret[11],
-                        'mov_imdbUrl': ret[12],
-                        'mov_rottenID': ret[13],
-                        'mov_rottenRating': ret[14]
+                        'mov_directors': ret[11],
+                        'mov_writers': ret[12],
+                        'mov_cast': ret[13],
+                        'mov_producers': ret[14],
+                        'mov_oscars': ret[15],
+                        'mov_nominations': ret[16],
+                        'mov_plotkeywords': ret[17],
+                        'mov_trailer': ret[18],
+                        'mov_imdbUrl': ret[19],
+                        'mov_rottenID': ret[20],
+                        'mov_rottenRating': ret[21]
                     };
+
+                    console.log(objD);
 
                     var divHTML = document.getElementById('Acc' + objD.mov_id).innerHTML;
                     document.getElementById('Acc' + objD.mov_id).innerHTML
@@ -345,6 +364,16 @@
                     document.getElementById('Edit_mov_runtime').value = objD.mov_runTime;
                     $('#Edit_mov_lgPoster').attr("src", objD.mov_lgPoster);
                     $('#Edit_mov_smPoster').attr("src", objD.mov_smPoster);
+
+                    $('#Edit_mov_directors').html(StringToListItems(objD.mov_directors, "EdDire"));
+                    $('#Edit_mov_writers').html(StringToListItems(objD.mov_writers, "EdWrit"));
+                    $('#Edit_mov_cast').html(StringToListItems(objD.mov_cast, "EdCast"));
+                    $('#Edit_mov_producers').html(StringToListItems(objD.mov_producers, "EdProd"));
+
+                    $('#Edit_mov_oscars').val(parseInt(objD.mov_oscars));
+                    $('#Edit_mov_nominations').val(parseInt(objD.mov_nominations));
+                    document.getElementById('Edit_mov_plotkeywords').value = objD.mov_plotkeywords;
+
                     document.getElementById('Edit_mov_trailer').value = objD.mov_trailer;
                     document.getElementById('Edit_mov_imdbURL').value = objD.mov_imdbUrl;
                     document.getElementById('Edit_mov_rottenID').value = objD.mov_rottenID;
@@ -375,6 +404,13 @@
                 'mov_runTime': document.getElementById('Edit_mov_runtime').value,
                 'mov_lgPoster': $('#Edit_mov_lgPoster').attr("src"),
                 'mov_smPoster': $('#Edit_mov_smPoster').attr("src"),
+                'mov_directors': ListItemsToString('Edit_mov_directors'),
+                'mov_writers': ListItemsToString('Edit_mov_writers'),
+                'mov_cast': ListItemsToString('Edit_mov_cast'),
+                'mov_producers': ListItemsToString('Edit_mov_producers'),
+                'mov_oscars': $('#Edit_mov_oscars').val(),
+                'mov_nominations': $('#Edit_mov_nominations').val(),
+                'mov_plotkeywords': document.getElementById('Edit_mov_plotkeywords').value,
                 'mov_trailer': document.getElementById('Edit_mov_trailer').value,
                 'mov_imdbUrl': document.getElementById('Edit_mov_imdbURL').value,
                 'updatedLg': EditLg.updated,
@@ -395,7 +431,6 @@
                     var ret = msg.d.split('|');
                     
                     var mov_id = ret[0];
-                    console.log(ret);
 
                     var div = new String(document.getElementById('Acc' + mov_id).innerHTML.toString());
                     document.getElementById('EditTemplate').innerHTML = div;
@@ -451,13 +486,11 @@
 
         function setCheckBoxes(items, chkBoxLst) {
             var values = items.toString().split(",");
-            console.log(values);
             $('#' + chkBoxLst.id).find('input[type=checkbox]').each(function () {
                 var comp = this.value.toString().toLowerCase().trim();
                 for (var i = 0; i < values.length; i++) {
                     var val = values[i].toString().toLowerCase().trim();
                     if (comp == val && val != "") {
-                        console.log("match");
                         $(this).prop('checked', true);
                     }
                 }
@@ -498,6 +531,13 @@
             document.getElementById('Add_mov_imdbURL').value = "";
             document.getElementById('Add_mov_rottenID').value = "";
             document.getElementById('Add_mov_rottenRating').value = "";
+            $('#Add_mov_directors').html("");
+            $('#Add_mov_writers').html("");
+            $('#Add_mov_cast').html("");
+            $('#Add_mov_producers').html("");
+            $('#Add_mov_oscars').val(0);
+            $('#Add_mov_nominations').val(0);
+            document.getElementById('Add_mov_plotkeywords').value = "";
         }
 
         function clearEditTemplate()
@@ -517,6 +557,13 @@
             document.getElementById('Edit_mov_imdbURL').value = "";
             document.getElementById('Edit_mov_rottenID').value = "";
             document.getElementById('Edit_mov_rottenRating').value = "";
+            $('#Edit_mov_directors').html("");
+            $('#Edit_mov_writers').html("");
+            $('#Edit_mov_cast').html("");
+            $('#Edit_mov_producers').html("");
+            $('#Edit_mov_oscars').val(0);
+            $('#Edit_mov_nominations').val(0);
+            document.getElementById('Edit_mov_plotkeywords').value = "";
         }
 
         // #region  sendFileToServer
@@ -622,32 +669,154 @@
                 'mov_runTime': ret[8],
                 'mov_lgPoster': ret[9],
                 'mov_smPoster': ret[10],
-                'mov_trailer': ret[11],
-                'mov_imdbUrl': ret[12],
-                'mov_rottenID': ret[13],
-                'mov_rottenRating': ret[14]
+                'mov_directors': ret[11],
+                'mov_writers': ret[12],
+                'mov_cast': ret[13],
+                'mov_producers': ret[14],
+                'mov_oscars': ret[15],
+                'mov_nominations': ret[16],
+                'mov_plotkeywords': ret[17],
+                'mov_trailer': ret[18],
+                'mov_imdbUrl': ret[19],
+                'mov_rottenID': ret[20],
+                'mov_rottenRating': ret[21]
             };
 
-            var accord = '<div id="Acc' + objD.mov_id + '">' +
-                '<table><tr><td><label id="' + objD.mov_id + 'bt" style="font-size: 140%;">' + objD.mov_title + '</label></td>' +
-                '<td style="margin-left: auto;"><input type="button" value="Edit"  id="' + objD.mov_id + 'Up" onclick="UpdateEntry(this.id)" class="Button" />' +
-                '<input type="button" value="Delete" id="' + objD.mov_id + '" class="Button"' +
-                    'onclick="DeleteEntry(this.id);  return false;" />' +
-                '</td></tr><tr><td style="vertical-align: top;"><b>Movie ID: ' + objD.mov_id + '</b></td><td rowspan="2">' +
-                '<img id="' + objD.mov_id + 'iL" src="' + objD.mov_lgPoster + '" style="width: 200px; height: 300px;" /></td></tr>' +
-                '<tr><td><b>Plot: </b><br /><label id="' + objD.mov_id + 'bp">' + objD.mov_plot + '</label></td></tr><tr><td colspan="2"><hr /></td></tr>' +
-                '<tr><td style="vertical-align: top;"><b>Genre: </b><label id="' + objD.mov_id + 'bg">' + objD.mov_genre + '</label></td><td rowspan="6">' +
-                '<center><img id="' + objD.mov_id + 'iS" src="' + objD.mov_smPoster + '" style="width:100px; Height:150px" />' +
-                '</center></td></tr><tr><td><label id="' + objD.mov_id + 'bs">Size: ' + objD.mov_size + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'bf">Format: ' + objD.mov_fileType + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'bm">Runtime: ' + objD.mov_runTime + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'bd">Date Added: ' + objD.mov_dateAdded + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'br">Rating: ' + objD.mov_rating + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'be">Trailer Link:' + objD.mov_trailer + '</label></td></tr>' +
-                '<tr><td><label id="' + objD.mov_id + 'bi">IMDb URL: ' + objD.mov_imdbUrl + '</label></td></tr>' + 
-                '<tr><td><label id="' + objD.mov_id + 'bo">Rotten ID: '+ objD.mov_rottenID + '</label></td>' + 
-                '<td><label id="' + objD.mov_id + 'bt">Rotten Rating: ' + objD.mov_rottenRating + '</label></td></tr></table></div>';
+            var accord = '<div id="Acc' + objD.mov_id + '">'
+                + '<table><tr>'
+                +     '<td><label id="' + objD.mov_id + 'bt" style="font-size: 140%;">' + objD.mov_title + '</label></td>'
+                +     '<td style="margin-left: auto;">' 
+                +         '<input type="button" value="Edit"  id="' + objD.mov_id + 'Up" onclick="UpdateEntry(this.id)" class="Button" />'
+                +         '<input type="button" value="Delete" id="' + objD.mov_id + '" class="Button" onclick="DeleteEntry(this.id);  return false;" />'
+                +     '</td>'
+                + '</tr><tr>'
+                +     '<td style="vertical-align: top;"><b>Movie ID: ' + objD.mov_id + '</b></td>'
+                +     '<td rowspan="3"><img id="' + objD.mov_id + 'iL" src="' + objD.mov_lgPoster + '" style="width: 200px; height: 300px;" /></td>' 
+                + '</tr><tr>' 
+                +     '<td><b>Plot: </b><br /><label id="' + objD.mov_id + 'bp">' + objD.mov_plot + '</label></td>'
+                + '</tr><tr>'
+                +      '<td>Plot Keywords: <label id="' + objD.mov_id + 'pk">' + objD.mov_plotkeywords + '</label></td>'
+                + '</tr><tr><td colspan="2"><hr /></td></tr>'
+                + '<tr>'
+                +     '<td style="vertical-align: top;"><b>Genre: </b><label id="' + objD.mov_id + 'bg">' + objD.mov_genre + '</label></td>'
+                +     '<td rowspan="6"><center><img id="' + objD.mov_id + 'iS" src="' + objD.mov_smPoster + '" style="width:100px; Height:150px" /></center></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'bs">Size: ' + objD.mov_size + '</label></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'bf">Format: ' + objD.mov_fileType + '</label></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'bm">Runtime: ' + objD.mov_runTime + '</label></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'bd">Date Added: ' + objD.mov_dateAdded + '</label></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'br">Rating: ' + objD.mov_rating + '</label></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'be">Trailer Link:' + objD.mov_trailer + '</label></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'bi">IMDb URL: ' + objD.mov_imdbUrl + '</label></td>'
+                + '</tr><tr>'
+                +     '<td><label id="' + objD.mov_id + 'bo">Rotten ID: '+ objD.mov_rottenID + '</label></td>'
+                +     '<td><label id="' + objD.mov_id + 'bt">Rotten Rating: ' + objD.mov_rottenRating + '</label></td>'
+                + '</tr><tr style="vertical-align: middle; padding-top: 10px;">'
+                +     '<td>'
+                +          '<img src="../Background_Images/Oscar_IMG.png" width="45" height="75" />'
+                +          '<label id="' + objD.mov_id + 'os">Oscars: '+ objD.mov_oscars + '</label>'
+                +     '</td><td>'
+                +          '<img src="../Background_Images/Nomination_IMG.png" width="45" height="75" />'
+                +          '<label id="' + objD.mov_id + 'nm">Nominations: '+ objD.mov_nominations + '</label></td>'
+                + '</tr><tr style="vertical-align: top; padding-top: 10px;">'
+                +     '<td><label id="' + objD.mov_id + 'dr">Directors: ' + objD.mov_directors + '</label></td>'
+                +     '<td><label id="' + objD.mov_id + 'ct">Cast: ' + objD.mov_cast + '</label></td>'
+                + '</tr><tr style="vertical-align: top; padding-top: 10px;">'
+                +     '<td><label id="' + objD.mov_id + 'wt">Writers: ' + objD.mov_writers + '</label></td>'
+                +     '<td><label id="' + objD.mov_id + 'pr">Producers: ' + objD.mov_producers + '</label></td>'
+                + '</tr></tr></table></div>';
             return accord;
+        }
+
+        function ListItemsToString(orderedListID) {
+            var out = "";
+            $('#' + orderedListID).children().each(function () {
+                out += $(this).attr("value") + ",";
+            });
+            out = out.substring(0, out.length - 1);
+            console.log(out);
+            return out;
+        }
+
+        function StringToListItems(strItems, uniqueid) {
+            var olHtml = "";
+            var items = strItems.split(',');
+            console.log(items);
+            for (var count in items)
+                olHtml += '<li id="' + uniqueid + count + '" value="' + items[count]
+                    + '" onclick="RemoveMe(this.id)">' + items[count] + '</li>';
+            return olHtml;
+        }
+
+        function RemoveMe(id)
+        {
+            $('#' + id).remove();
+        }
+
+        var idGen = 0;
+        function AddType(type, option)
+        {
+            var text;
+            var list;
+            switch (type)
+            {
+                case 'director':
+
+                    if (option == 'add') {
+                        text = document.getElementById('Add_director').value;
+                        list = '#Add_mov_directors';
+                    }
+                    else
+                    {
+                        text = document.getElementById('Edit_director').value;
+                        list = '#Edit_mov_directors';
+                    }
+                    break;
+
+                case 'cast':
+
+                    if (option == 'add') {
+                        text = document.getElementById('Add_cast').value;
+                        list = '#Add_mov_cast';
+                    }
+                    else {
+                        text = document.getElementById('Edit_cast').value;
+                        list = '#Edit_mov_cast';
+                    }
+                    break;
+
+                case 'writer':
+                    if (option == 'add') {
+                        text = document.getElementById('Add_writer').value;
+                        list = '#Add_mov_writers';
+                    }
+                    else {
+                        text = document.getElementById('Edit_writer').value;
+                        list = '#Edit_mov_writers';
+                    }
+                    break;
+
+                case 'producer':
+                    if (option == 'add') {
+                        text = document.getElementById('Add_producer').value;
+                        list = '#Add_mov_producers';
+                    }
+                    else {
+                        text = document.getElementById('Edit_producer').value;
+                        list = '#Edit_mov_producers';
+                    }
+                    break;
+            }
+
+            $(list).append('<li id="MyAdd' + idGen + '" value="'
+                + text + '"onclick="RemoveMe(this.id)">' + text + '</li>');
+            idGen++;
         }
     </script>
 
@@ -711,6 +880,9 @@
                 <td>IMDb URL: </td><td><input type="text" id="Add_mov_imdbURL" value="" style="width: 99%;" /></td>
             </tr>
             <tr>
+                <td>Plot Keywords: </td><td><input type="text" id="Add_mov_plotkeywords" value="" style="width: 99%;" /></td>
+            </tr>
+            <tr>
                 <td colspan="2">
                     <hr />
                     <table >
@@ -729,8 +901,42 @@
                     </table>
                 </td>
             </tr>
-            <tr><td>Rotten ID: </td><td><input type="text" id="Add_mov_rottenID" value="" style="width: 99%;" /></td></tr>
-            <tr><td>Rotten Rating: </td><td><input type="text" id="Add_mov_rottenRating" value="" style="width: 99%;" /></td></tr>
+            <tr>
+                <td><label>Rotten ID: </label></td>
+                <td><input type="text" id="Add_mov_rottenID" value="" style="width: 99%;" /></td>
+            </tr>
+            <tr>
+                <td><label>Rotten Rating: </label></td>
+                <td><input type="text" id="Add_mov_rottenRating" value="" style="width: 99%;" /></td>
+            </tr>
+            <tr>
+                <td><img src="../Background_Images/Oscar_IMG.png" width="30" height="75" /><label>Oscars: </label></td>
+                <td><input id="Add_mov_oscars"/></td>
+            </tr>
+            <tr>
+                <td><img src="../Background_Images/Nomination_IMG.png" width="30" height="75" /><label>Nominations: </label></td>
+                <td><input id="Add_mov_nominations"/></td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;">
+                    <label>Directors</label><ol id="Add_mov_directors"></ol>
+                    <input type="text" id="Add_director" /><input type="button" value="Add" class="Button"  onclick="AddType('director', 'add');" /> 
+                </td>
+                <td style="vertical-align: top;">
+                    <label>Cast</label><ol id="Add_mov_cast"></ol>
+                    <input type="text" id="Add_cast" /><input type="button" value="Add" class="Button"  onclick="AddType('cast', 'add');" /> 
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;">
+                    <label>Writers</label><ol id="Add_mov_writers"></ol>
+                    <input type="text" id="Add_writer" /><input type="button" value="Add" class="Button"  onclick="AddType('writer', 'add');" /> 
+                </td>
+                <td style="vertical-align: top;">
+                    <label>Producers</label><ol id="Add_mov_producers"></ol>
+                    <input type="text" id="Add_producer" /><input type="button" value="Add" class="Button"  onclick="AddType('producer', 'add');" /> 
+                </td>
+            </tr>
         </table>  
     </div>
 
@@ -752,7 +958,7 @@
                         </tr>
                         <tr >
                             <td style="vertical-align: top;"><b>Movie ID: <%#Eval("mov_id") %></b></td>
-                            <td rowspan="2">
+                            <td rowspan="3">
                                 <img id="<%# Eval("mov_id")%>iL" src='<%#Eval("mov_lgPoster").ToString().Replace("~/","")%>' 
                                     style="width: 200px; height: 300px;" />
                             </td>
@@ -760,6 +966,9 @@
                         <tr>
                             <td><b>Plot: </b><br />
                                 <label id="<%# Eval("mov_id")%>bp"><%#Eval("mov_plot") %></label></td>
+                        </tr>
+                        <tr>
+                            <td>Plot Keywords: <label id="<%# Eval("mov_id")%>pk"><%# Eval("mov_plotkeywords")%></label></td>
                         </tr>
                         <tr><td colspan="2"><hr /></td></tr>
                         <tr >
@@ -782,6 +991,18 @@
                         <tr>
                             <td><label id="<%# Eval("mov_id")%>bo">Rotten ID: <%#Eval("mov_rottenID") %></label></td>
                             <td><label id="<%# Eval("mov_id")%>bt">Rotten Rating: <%#string.Format("{0:F1}", Eval("mov_rottenRating")) %></label></td>
+                        </tr>
+                        <tr style="vertical-align: middle; padding-top: 10px;">
+                            <td><img src="../Background_Images/Oscar_IMG.png" width="45" height="75" /><label id="<%# Eval("mov_id")%>os">Oscars: <%#Eval("mov_oscars") %></label></td>
+                            <td><img src="../Background_Images/Nomination_IMG.png" width="45" height="75" /><label id="<%# Eval("mov_id")%>nm">Nominations: <%#Eval("mov_nominations") %></label></td>
+                        </tr>
+                        <tr style="vertical-align: top; padding-top: 10px;">
+                            <td><label id="<%# Eval("mov_id")%>dr">Directors: <%#Eval("mov_directors") %> </label></td>
+                            <td><label id="<%# Eval("mov_id")%>ct">Cast: <%#Eval("mov_cast") %> </label></td>
+                        </tr>
+                        <tr style="vertical-align: top; padding-top: 10px;">
+                            <td><label id="<%# Eval("mov_id")%>wt">Writers: <%#Eval("mov_writers") %> </label></td>
+                            <td><label id="<%# Eval("mov_id")%>pr">Producers: <%#Eval("mov_producers") %> </label></td>
                         </tr>
                     </table>
                 </div>
@@ -846,6 +1067,9 @@
                 <td>IMDb URL: </td><td><input type="text" id="Edit_mov_imdbURL" value="" style="width: 99%;" /></td>
             </tr>
             <tr>
+                <td>Plot Keywords: </td><td><input type="text" id="Edit_mov_plotkeywords" value="" style="width: 99%;" /></td>
+            </tr>
+            <tr>
                 <td colspan="2">
                     <hr />
                     <table >
@@ -865,8 +1089,38 @@
                 </td>
             </tr>
             <tr>
-                <td>Rotten ID: </td><td><input type="text" id="Edit_mov_rottenID" value="" style="width: 99%;" /></td>
-                <td>Rotten Rating: </td><td><input type="text" id="Edit_mov_rottenRating" value="" style="width: 99%;" /></td>
+                <td><label>Rotten ID: </label></td><td><input type="text" id="Edit_mov_rottenID" value="" style="width: 99%;" /></td>
+            </tr>
+            <tr>
+                <td><label>Rating: </label></td><td><input type="text" id="Edit_mov_rottenRating" value="" style="width: 99%;" /></td>
+            </tr>
+            <tr>
+                <td><img src="../Background_Images/Oscar_IMG.png" width="70" height="75" /><label>Oscars:</label></td>
+                <td><input id="Edit_mov_oscars" type="number" style="display: inline;"/></td>
+            </tr>
+            <tr>
+                <td><img src="../Background_Images/Nomination_IMG.png" width="70" height="75" /><label>Nominations:</label></td>
+                <td><input id="Edit_mov_nominations" type="number" style="display: inline;" /></td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;">
+                    <label>Directors</label><ol id="Edit_mov_directors"></ol>
+                    <input type="text" id="Edit_director" /><input type="button" value="Add" class="Button"  onclick="AddType('director', 'edit');" /> 
+                </td>
+                <td style="vertical-align: top;">
+                    <label>Cast</label><ol id="Edit_mov_cast"></ol>
+                    <input type="text" id="Edit_cast" /><input type="button" value="Add" class="Button"  onclick="AddType('cast', 'edit');" /> 
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top;">
+                    <label>Writers</label><ol id="Edit_mov_writers"></ol>
+                    <input type="text" id="Edit_writer" /><input type="button" value="Add" class="Button"  onclick="AddType('writer', 'edit');" /> 
+                </td>
+                <td style="vertical-align: top;">
+                    <label>Producers</label><ol id="Edit_mov_producers"></ol>
+                    <input type="text" id="Edit_producer" /><input type="button" value="Add" class="Button"  onclick="AddType('producer', 'edit');" /> 
+                </td>
             </tr>
         </table>  
     </div>

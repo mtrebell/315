@@ -176,6 +176,7 @@ public class Recomender
     }
 
 
+    // web method
     public List<string> allRecomendations(Guid user)
     {
         List<string> recomend = new List<string>();
