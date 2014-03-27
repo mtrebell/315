@@ -144,7 +144,7 @@
 .genre-label.theme {
     
 }
-.cover-details-infoline img{
+.cover-details-infoline #mov_lgPoster{
     float: right;
     top: inherit;
     position: relative;
@@ -284,9 +284,9 @@ section.tableCell {
     transition: box-shadow .4s ease;
 }
 .star-theme {
-    background: rgba(255,255,0,0.5);
-    color: black;
-    box-shadow: 0 0 1em 1px yellow;
+    background: rgba(255,255,0,0.0);
+    color: rgba(255,255,255,0.4);
+    /*box-shadow: 0 0 1em 1px yellow;*/
     margin-left: 0.2em;
     margin-right: 0.2em;
 }
@@ -357,4 +357,9 @@ section.tableCell {
     width:30px;
     margin-top:-45px;
     margin-left:5px;
+}
+
+.Star-Rating {
+    display: inline-block;
+    padding-left: 5px;
 }
