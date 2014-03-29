@@ -103,13 +103,13 @@ function AddGenreFilter(filterID, key)
     var filterBar = $("#FilterBar");
     console.log("add genere %o", filterID);
     filterBar.append(
-          '<span class = "filter filter_genre theme" '
-        + 'id="Filter_' + filterID + '" '
-        + 'data="' + filterID + '" '
-        + 'filterKey="'+ key +'" '
-        + '>'
-        + key
-        +'</span>'
+        '<span class = "filter filter_genre theme" ' +
+        'id="Filter_' + filterID + '" ' +
+        'data="' + filterID + '" ' +
+        'filterKey="'+ key +'" ' +
+        '>' +
+        key +
+        '</span>'
     );
     filterBar.find("#Filter_"+filterID)
         .button({icons: {
