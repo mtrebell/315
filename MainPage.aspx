@@ -141,7 +141,7 @@
                         if (date) {
                             date = date.split(" ")[0];
                             if (MovieOlderThanDays(new Date(), date, DAYS_OLD)) {
-                                $(value).prepend('<span class ="newLabel"><h1 class="newText">N</h1></span>')
+                                $(value).prepend('<span class ="newLabel"><h1 class="newText">N</h1></span>').addClass("new-movie")
                             }
                         }
 
@@ -240,12 +240,6 @@
                 // Set up the click event for the alpha filters.
                 $('.AlphaFilterButton').click(AlphaFilterButtonClick);
 
-                //$("#TagFilterInput").input();
-                $(".TagFilterButton").button().click(function (e) {
-                    e.preventDefault();
-                    AddTagFilter($("#TagFilterInput").val());
-                    $("#TagFilterInput").val("");
-                })
                 $(window).resize(function () {
                     $('#menu').multilevelpushmenu('redraw');
                 });
@@ -322,13 +316,28 @@
                     $("#CreateUserDialog").dialog({ dialogClass: "ui-ontop", minWidth: "500" });
                     $("#CreateUserDialog").load("Login.aspx");
                 });
-                
+
+                // the general filter Keywords                
+                $(".TagFilterButton").button().click(function (e) {
+                    e.preventDefault();
+                    if ($("#TagFilterInput").val().length > 0)
+                    {
+                        AddTagFilter($("#TagFilterInput").val());
+                        $("#TagFilterInput").val("");
+                    }
+                })
+                $("#movieFilterGroup").buttonset();
+                $("#NewMovieFilter").click(function (e) {
+                    AddNewMovieFilter();
+                })
+                $("#RecomendedMovieFilter").click(function (e) {
+                    AddRecomendedMovieFilter();
+                })
             }); // End Doc Ready.
 
             function getTrailer(movieId) {
 
                 var obj = { 'mov_id': movieId }
-                console.log(obj);
                 $.ajax({
                     type: "POST",
                     url: "MainPage.aspx/getURL",
@@ -337,7 +346,6 @@
                     dataType: "json",
                     async: true,
                     success: function (response) {
-                        console.log(response);
                         if (response.d != "") {
                             var id = response.d;
                             //Add video	
@@ -571,12 +579,13 @@
                             </div>
                             <div id="FilterTag" class="cover">
                                 <p>Enter a tag to filter movies by:</p>
-
-                                <input id="TagFilterInput" />
-                                <button class="TagFilterButton">Add Tag</button>
-                            </div>
-                            <div id="FilterRating" class="cover">
-                                <p>Enter rating filter:</p>
+                                <div id="movieFilterGroup">
+                                    <input type="checkbox" id="NewMovieFilter"/> <label for="NewMovieFilter"> New movies only</label>
+                                    <input type="checkbox" id="RecomendedMovieFilter"/> <label for="RecomendedMovieFilter"> Recommended movies only</label>
+                                </div>
+                                <label for="TagFilterInput"> Plot Keyword:</label>
+                                <input id="TagFilterInput" /> 
+                                <button class="TagFilterButton">Filter by Keyword</button>
                             </div>
                         </div>
                     </div>
@@ -628,14 +637,41 @@
                             </span>
                         </section>
                         <section id="cover-details" class="tableCell table-thirds">
-                            <span class="cover-details-infoline">
-                                <img src="" id="mov_lgPoster" class="details-info theme" />
+                            <span class="cover-details-infoline multi-line">
+                                <p class="cover-details-element-label theme multi-line">
+                                    Cast:
+                                </p>
+                                <p id="mov_cast" class="cover-details-element-detail theme details-info multi-line"></p>
                             </span>
+                            <span class="cover-details-infoline multi-line">
+                                <p class="cover-details-element-label theme multi-line">
+                                    Producer:
+                                </p>
+                                <p id="mov_directors" class="cover-details-element-detail theme details-info multi-line"></p>
+                            </span>
+                            <span class="cover-details-infoline multi-line">
+                                <p class="cover-details-element-label theme multi-line">
+                                    Writers:
+                                </p>
+                                <p id="mov_writers" class="cover-details-element-detail theme details-info multi-line"></p>
+                            </span>
+                            <br />
+                            <span class="cover-details-infoline ">
+                                <p class="cover-details-element-label theme ">
+                                    Oscars:
+                                </p>
+                                <p id="mov_oscars" class="cover-details-element-detail theme details-info "></p>
+                            </span>
+                            <span class="cover-details-infoline ">
+                                <p class="cover-details-element-label theme ">
+                                    Nominations:
+                                </p>
+                                <p id="mov_nominations" class="cover-details-element-detail theme details-info "></p>
+                            </span>
+
+
                         </section>
                         <section id="cover-details" class="tableCell table-thirds">
-                            <span class="cover-details-infoline">
-                                <p class="cover-details-element-label theme">Run Time:</p>     
-                            </span>
                             <div id="trailer"></div>
                         </section>
                     </div>

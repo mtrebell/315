@@ -33,20 +33,20 @@ function AlphaFilterButtonClick(e)
     {
         AddAlphaFilter($(this).attr('id'));
     }
-};
+}
 
 function AddAlphaFilter(filterID)
 // Add a Filter span to the filter bar.
 {
     var filterBar = $("#FilterBar");
     filterBar.append(
-          '<span class = "filter filter_alpha theme" '
-        + 'id="Filter_' + filterID + '" '
-        + 'data="' + filterID + '" '
-        + 'filterKey="'+ $("#"+filterID).html() +'" '
-        + '>'
-        + $("#"+filterID).html()
-        +'</span>'
+        '<span class = "filter filter_alpha theme" ' +
+        'id="Filter_' + filterID + '" ' +
+        'data="' + filterID + '" ' +
+        'filterKey="'+ $("#"+filterID).html() +'" ' +
+        '>' +
+        $("#"+filterID).html() +
+        '</span>'
     );
     filterBar.find("#Filter_"+filterID)
         .button({icons: {
@@ -59,7 +59,7 @@ function AddAlphaFilter(filterID)
     );
 
     coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
-};
+}
 
 
 function DelAlphaFilter(filterID)
@@ -122,7 +122,7 @@ function AddGenreFilter(filterID, key)
     );
 
     coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
-};
+}
 
 
 function DelGenreFilter(filterID)
@@ -131,7 +131,7 @@ function DelGenreFilter(filterID)
     RemoveFilterSpan($("#FilterBar #Filter_" + filterID));
     // do this as mutating events cause problems.
 
-};
+}
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
@@ -144,14 +144,14 @@ function AddTagFilter(filterTag)
     var filterID = filterTagID;
     filterTagID ++;
     filterBar.append(
-          '<span class = "filter filter_tag" '
-        + 'id="Filter_Tag_' + filterID + '" '
-        + ' data="'/* + filterID */ + '" '
-        + ' filterKind="TAG" '
-        + ' filterKey="'+ filterTag +'" '
-        +'>'
-        + "Tag: " + filterTag
-        +'</span>'
+        '<span class = "filter filter_tag" ' +
+        'id="Filter_Tag_' + filterID + '" ' +
+        ' data="'/* + filterID */ + '" ' +
+        ' filterKind="TAG" ' +
+        ' filterKey="'+ filterTag +'" ' +
+        '>' +
+        "Plot Keyword: " + filterTag +
+        '</span>'
     );
 
     filterBar.find("#Filter_Tag_"+filterID)
@@ -167,6 +167,75 @@ function AddTagFilter(filterTag)
 }
 //------------------------------------------------------------------------
 
+//------------------------------------------------------------------------
+// Cover flow support functions
+//------------------------------------------------------------------------
+function AddNewMovieFilter()
+{
+    var filterBar = $("#FilterBar");
+    if (filterBar.find("#Filter_New").length !== 0)
+    {
+        filterBar.find("#Filter_New").remove();
+    }
+    else
+    {
+        filterBar.append(
+            '<span class = "filter filter_new" ' +
+            ' id="Filter_New"' +
+            ' filterKind="NEW" ' +
+            ' filterKey="" ' +
+            '>New Movies</span>'
+        );
+
+        filterBar.find("#Filter_New")
+            .button({icons: {
+                secondary: "ui-icon-closethick"
+            }})
+            .click(function(e){
+                e.preventDefault();
+                RemoveFilterSpan($(this));
+                $("#NewMovieFilter").prop('checked', false).button('refresh');
+            });
+    }
+    coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+}
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+// Cover flow support functions
+//------------------------------------------------------------------------
+function AddRecomendedMovieFilter()
+{
+    var filterBar = $("#FilterBar");
+    if (filterBar.find("#Filter_Recommend").length !== 0)
+    {
+        filterBar.find("#Filter_Recommend").remove();
+    }
+    else
+    {
+
+        filterBar.append(
+            '<span class = "filter filter_recomend" ' +
+            ' id="Filter_Recommend"' +
+            ' filterKind="RECOMMEND" ' +
+            ' filterKey="" ' +
+            '>Recommended Movies</span>'
+        );
+
+        filterBar.find("#Filter_Recommend")
+            .button({icons: {
+                secondary: "ui-icon-closethick"
+            }})
+            .click(function(e){
+                e.preventDefault();
+                RemoveFilterSpan($(this));
+                $("#RecomendedMovieFilter").prop('checked', false).button('refresh');
+
+            });
+    }
+    coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+}
+//------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------
 // Cover flow support functions
@@ -176,9 +245,10 @@ function CoverFilter(cover)
 // hide the some covers based on these filtering criteria
 //
 {
-    var log=false;
+    var log=true;
     var title = $(cover).find("#info #mov_title").html();
     var genre = $(cover).find("#info #mov_genre").html().trim().toLowerCase();
+    var new_movie = $(cover).hasClass("new-movie");
     var filters = $("#FilterBar span");
     var res = filters.length === 0;
 
@@ -196,6 +266,13 @@ function CoverFilter(cover)
             if (log) console.log("Genre: %s %s res= %s, %s",genre, $(this).attr('filterKey'), res, genre.indexOf($(this).attr('filterKey')+','));
             res |= genre.indexOf($(this).attr('filterKey').trim().toLowerCase()+',') >= 0;
 
+        } else if ($(value).hasClass("filter_new")) {
+            if (log) console.log("New: %s res= %s", new_movie, res);
+            res |= new_movie;
+
+        } else if ($(value).hasClass("filter_recomend")) {
+            if (log) console.log("Recommend: res= %s", res);
+            res = true;
         }
     });
     if (res) res = true;
@@ -260,10 +337,10 @@ function GenerateMovieGrid(srcData, dest, moviesPerRow)
         //If movie is not in the current filter, skip it
         if (!CoverFilter($(this))) return;
 
-        var curRow = parseInt(i / moviesPerRow);
+        var curRow = parseInt(i / moviesPerRow , 10);
 
         //create new row if necessary
-        if (i % moviesPerRow == 0) {
+        if (i % moviesPerRow === 0) {
             divObj = document.createElement('div');
             $(divObj).addClass('gridRow' + curRow).css('display', 'table-row').appendTo($(dest));
         }
@@ -285,7 +362,7 @@ function GenerateMovieGrid(srcData, dest, moviesPerRow)
         }
 
         var dispData = '<h1>' + $(movie).attr('id') + '</h1><div></div>';
-        $(movie).removeAttr('style').attr('height', '300px').attr('width', '200px').show()
+        $(movie).removeAttr('style').attr('height', '300px').attr('width', '200px').show();
 
         var container = document.createElement('div');
         $(container).css({

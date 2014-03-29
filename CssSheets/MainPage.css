@@ -74,6 +74,8 @@
 }
 .cover-details-infoline.multi-line{
     display: inline-flex;
+    margin-top: 0.5em;
+    margin-bottom: 0em;
 }
 .cover-details-element-label {
     display: inline;
@@ -88,8 +90,9 @@
 .cover-details-element-label.multi-line {
     padding-right: 4em;
     text-align:  center;
-    padding-top: 0.5em; 
-    width:;
+    padding-top: 0.6em; 
+    margin-top: 0em;
+    margin-bottom: 0em;
 }
 .cover-details-element-detail {
     display: inline;
@@ -104,6 +107,11 @@
 }
 .cover-details-element-detail.multi-line {
     display: inline-flex;
+    padding-bottom: 0.5em;
+    padding-top: 0.1em;
+    padding-right: 2em;
+    margin-top: 0em;
+    margin-bottom: 0em;
 }
 .filter-list-genre{
     padding-left: 1em;
