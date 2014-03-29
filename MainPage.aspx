@@ -27,6 +27,7 @@
         <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
         <link href="CssSheets/MainPage-default.css" rel="stylesheet" type="text/css" />
         <script src="scripts/MainPage.js"></script>
+        <script src="scripts/jquery.raty.js"></script>
 
         <style>
             .movieTitle {
@@ -102,13 +103,20 @@
                         $(val).html(htmlData);
                     }
 
-                    $(".cover-details-infoline #mov_rating i").remove();
-                    $(".cover-details-infoline #mov_rating").remove('i')
-                        .each(function (idx, val) {
-                            for (var i = 0; i <= parseInt($(val).html()) / 2; i++) {
-                                $(val).append('<i class="fa fa-star star-theme"/>')
-                            }
-                        });
+                    //create movie rating object
+                    var ratingObj = document.createElement('div');
+                    $(ratingObj).addClass('Star-Rating');
+                    $(".cover-details-infoline #mov_rating .Star-Rating").remove();
+                    $('.cover-details-infoline #mov_rating').append(ratingObj);
+                    $('.Star-Rating').raty({
+                        score: $('.cover-details-infoline #mov_rating').text() / 2,
+                        click: function (score, evt) {
+                            //modify what happens here when a star rating is clicked
+                            //more details of raty here: http://wbotelhos.com/raty/
+                        }
+                    });
+
+
                 })
             }
 
