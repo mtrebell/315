@@ -24,7 +24,7 @@ public static class Middleware
     /// </summary>
     /// <param name="sMovieFilter">letter filter string</param>
     /// <returns>returned datasource of filtered info</returns>
-    public static SqlDataReader MovieDisplayContent()
+    public static SqlDataReader MovieDisplayContent(Guid gUser)
     {
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(ConnectionString);  // create database connection
@@ -34,6 +34,13 @@ public static class Middleware
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // call stored procedure
             comm.CommandText = "MovieCollectionGrab";                   // name of procedure
+
+            SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
+            pUserID.Value = gUser;  // apply user id filter
+            pUserID.Direction = System.Data.ParameterDirection.Input;
+            // Add the parameter
+            comm.Parameters.Add(pUserID);
+
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute procedure 
         }
         return reader;  // return result set

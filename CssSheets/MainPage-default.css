@@ -55,3 +55,19 @@
     color: black;
     background: gray;
 }
+.ui-new-movie-label.theme{
+    color: white;
+
+    border-top-color: rgba(0,41,255,0.5); 
+}
+.ui-new-movie-text.theme{
+}
+
+.ui-recommended-movie-label.theme{
+    color: white;
+    border-top-color: rgba(0,41,255,0.5); ; 
+}
+
+.ui-recommended-movie-text.theme{
+    color: gold ;
+}

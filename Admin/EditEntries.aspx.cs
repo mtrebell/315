@@ -36,7 +36,7 @@ public partial class _Default : System.Web.UI.Page
         sUpload = Server.MapPath("~/Upload");
         sImages = Server.MapPath("~/Image_Posters");
 
-        using (SqlDataReader sdr = Middleware.MovieDisplayContent())
+        using (SqlDataReader sdr = Middleware.MovieDisplayContent(new Guid() ))
         {
             StringBuilder sb = new StringBuilder();
             if (sdr.HasRows)

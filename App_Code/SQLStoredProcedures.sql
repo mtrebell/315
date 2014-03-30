@@ -31,9 +31,11 @@ go
 
 GO
 CREATE PROCEDURE MovieCollectionGrab
+    @UserID uniqueidentifier
 AS 
-    SELECT *
-    FROM dbo.MovieSummary
+	SELECT S.*, R.mov_rating as mov_recommended
+    FROM dbo.MovieSummary S
+      LEFT JOIN dbo.Recomended R ON R.mov_ID = S.mov_ID AND R.users_id = @UserID 
 	ORDER BY mov_title
 GO
 

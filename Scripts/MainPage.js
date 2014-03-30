@@ -256,6 +256,8 @@ function CoverFilter(cover)
     var title = $(cover).find("#info #mov_title").html();
     var genre = $(cover).find("#info #mov_genre").html().trim().toLowerCase();
     var new_movie = $(cover).hasClass("new-movie");
+    var recommended_movie = $(cover).hasClass("recommended-movie");
+
     var filters = $("#FilterBar span");
     var results = {
         alpha: true,
@@ -285,7 +287,7 @@ function CoverFilter(cover)
 
         } else if ($(value).hasClass("filter_recomend")) {
             if (log) console.log("Recommend: res= %s", results.recommend);
-            results.recommend &= true;
+            results.recommend &= recommended_movie;
         }
     });
     var res = (results.alpha && results.tag && results.genre && results.newMovie && results.recommend);

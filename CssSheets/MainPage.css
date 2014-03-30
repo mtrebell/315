@@ -335,6 +335,23 @@ section.tableCell {
     padding-left: 30%;
 }
 
+
+.Star-Rating {
+    display: inline-block;
+    padding-left: 5px;
+}
+
+.ui-filter-btn
+{
+    font-size: 0.8em;
+    color:goldenrod;
+}
+
+.ui-plot-keywords{
+    width:25em;
+
+} 
+
 /*This is the css for the new movie labels*/
 .newLabel{
     vertical-align: top;
@@ -353,17 +370,41 @@ section.tableCell {
     margin-left:5px;
 }
 
-.Star-Rating {
-    display: inline-block;
-    padding-left: 5px;
+.ui-new-movie-text{
+    width:30px;
+    margin-top:-51px;
+    margin-left:5px;
 }
 
-.ui-filter-btn
-{
-    font-size: 0.8em;
-    color:goldenrod;
+.ui-new-movie-label{
+    vertical-align: top;
+    color: white;
+    width: 0; 
+    height: 0; 
+    border-style: solid; 
+    border-width: 50px 50px 0 0; 
+    border-color: transparent transparent transparent transparent; 
+    position: absolute; 
+    left: 0; 
+    top:0
 }
-.ui-plot-keywords{
-    width:25em;
 
-} 
+.ui-recommended-movie-label{
+    vertical-align: top;
+    width: 0; 
+    height: 0; 
+    border-style: solid; 
+    border-width: 50px 0 0 50px; 
+    border-color: transparent transparent transparent transparent; 
+    position: absolute; 
+    right: 0; 
+    top:0
+}
+
+.ui-recommended-movie-text{
+    width:30px;
+    margin-top:-45px;
+    margin-left:-24px;
+}
+
+

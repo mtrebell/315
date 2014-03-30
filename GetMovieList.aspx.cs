@@ -14,7 +14,18 @@ public partial class GetMovieList : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        SqlDataReader sdr = Middleware.MovieDisplayContent();
+        Guid gUser;
+        MembershipUser user = Membership.GetUser();
+        if (user == null)
+        {
+            gUser = new Guid();
+        }
+        else
+        {
+            gUser = (Guid)user.ProviderUserKey;
+        }
+
+        SqlDataReader sdr = Middleware.MovieDisplayContent(gUser);
         GenerateMovieTable(sdr);
 
     }

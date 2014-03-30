@@ -136,8 +136,13 @@
                         if (date) {
                             date = date.split(" ")[0];
                             if (MovieOlderThanDays(new Date(), date, DAYS_OLD)) {
-                                $(value).prepend('<span class ="newLabel"><h1 class="newText">N</h1></span>').addClass("new-movie")
+                                $(value).prepend('<span class ="ui-new-movie-label theme"><h1 class="ui-new-movie-text theme">N</h1></span>').addClass("new-movie")
                             }
+                        }
+                        var recommended = $(value).find("#mov_recommended")[0].innerText;
+                        console.log(" recommended ",recommended);
+                        if (recommended.length !==  0) {
+                            $(value).prepend('<span class ="ui-recommended-movie-label theme"><h1 class="ui-recommended-movie-text theme fa fa-star"></h1></span>').addClass("recommended-movie")
                         }
 
 
