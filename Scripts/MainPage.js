@@ -330,7 +330,7 @@ function MovieOlderThanDays(currentD, movieD, daysOlderThan)
 // Grid View Code
 //------------------------------------------------------------------------
 
-function GenerateMovieGrid(srcData, dest, moviesPerRow)
+function GenerateMovieGrid(srcData, dest, moviesPerRow, cssClass)
 /*
     GenerateMovieGrid:
         Creates a table and displays all covers within
@@ -349,7 +349,7 @@ function GenerateMovieGrid(srcData, dest, moviesPerRow)
 
     $(dest).css('display', 'table');
     var i = 0, divObj;
-    $(srcData + ' .cover').each(function () {
+    $(srcData + ' ' + cssClass).each(function () {
         //If movie is not in the current filter, skip it
         if (!CoverFilter($(this))) return;
 
@@ -392,7 +392,7 @@ function GenerateMovieGrid(srcData, dest, moviesPerRow)
     });
 }
 
-function MovieGridShowInView()
+function MovieGridShowInView(dialogName)
 /*
 MoviesGridShowInView
     Loads the images of movies in the grid view based on
@@ -402,7 +402,7 @@ MoviesGridShowInView
     method to take the user to that movie on the coverflow
 */
 {
-    $("#GridDialog").find($(".gridCover")).each(function(cover){
+    $("#" + dialogName).find($(".gridCover")).each(function(cover){
         var img = $(this).find('img');
         if ($(this).visible(true)) {
             //if image is visible
@@ -411,7 +411,7 @@ MoviesGridShowInView
                 $(img).attr('src', $(img).attr('data-src')).click(function(e){
                     //when image is clicked, exit grid view and set main page
                     //to clicked image.
-                    $('#GridDialog').dialog('close');
+                    $('#' + dialogName).dialog('close');
 
 
                     //if the movie is within 10 covers of the coverflows current index

@@ -324,17 +324,49 @@
 
                     //set movies to load on scroll
                     $("#GridDialog").scroll(function(e){
-                        MovieGridShowInView();
+                        MovieGridShowInView('GridDialog');
                     });
 
-                    GenerateMovieGrid('#CoverFlow', '.gridContainer', 4);
-                    MovieGridShowInView();
+                    GenerateMovieGrid('#CoverFlow', '.gridContainer', 4, '.cover');
+                    MovieGridShowInView('GridDialog');
                 });
 
                 $("#MenuRecomendations").click(function (e) {
                     e.preventDefault();
-                    $("#RecomendationsDialog").dialog({ dialogClass: "ui-ontop" });
+                    $("#RecomendationsDialog").dialog({
+                        dialogClass: "ui-ontop",
+                        width: '900',
+                        height: '400',
+                        modal: true,
+                        resizeable: true,
+                        //Todo: improve calculation for number of movies per row.
+                        resizeStop: function (e, ui) {
+
+                            $('.recContainer').empty();
+                            var _numperRow = parseInt($(this).outerWidth() / 200);
+                            console.log("movies per row: " + _numperRow);
+
+                            GenerateMovieGrid('#CoverFlow', '.recContainer', _numperRow);
+                        },
+                        open: function () {
+                            $(".cover-div").addClass("cover-disabled");
+                        },
+                        close: function () {
+                            $(".cover-div").removeClass("cover-disabled");
+                            $('.recContainer').empty();
+                        },
+
+                    }).position({ at: 'center' });
+
+                    //set movies to load on scroll
+                    $("#RecomendationsDialog").scroll(function (e) {
+                        MovieGridShowInView('RecomendationsDialog');
+                    });
+
+                    GenerateMovieGrid('#CoverFlow', '.recContainer', 4, '.recommended-movie');
+                    MovieGridShowInView('RecomendationsDialog');
                 });
+
                 $("#MenuEnterRequest").click(function (e) {
                     e.preventDefault();
                     $("#EnterRequestDialog").dialog({ dialogClass: "ui-ontop", minWidth: "500" });
@@ -378,6 +410,30 @@
                 })
             }); // End Doc Ready.
 
+            function getTrailer(movieId) {
+
+                var obj = { 'mov_id': movieId }
+                console.log(obj);
+                $.ajax({
+                    type: "POST",
+                    url: "MainPage.aspx/getURL",
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: true,
+                    success: function (response) {
+                        console.log(response);
+                        if (response.d != "") {
+                            var id = response.d;
+                            //Add video	
+                            var frame = "<iframe  type='text/html' width='425' height='349' src=' http://www.youtube.com/embed/" + id + "' frameborder='0'></iframe>";
+                            $("#trailer").html(frame);
+                        }
+                        else
+                            $("#trailer").html("");
+                    }
+                });
+            }
         </script>
 
     <asp:LoginView ID="LoginView5" runat="server">
@@ -708,7 +764,9 @@
         </div>
 
         <div id="dialogContainer"></div>
-        <div id="RecomendationsDialog"></div>
+        <div id="RecomendationsDialog">
+            <div class="recContainer"></div>
+        </div>
         <div id="EnterRequestDialog"></div>
 
         <div id="CreateUserDialog"></div>
