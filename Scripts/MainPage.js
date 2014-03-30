@@ -3,6 +3,8 @@
 //------------------------------------------------------------------------
 var FILTER_COVER_ALPHA = 0;
 var FILTER_COVER_GENRE = 1;
+var dbg_log_cover_filter = false;
+var dbg = null;
 function RemoveFilterSpan(filter)
 // Remove the span, and clean up/ refresh...
 {
@@ -139,30 +141,35 @@ function DelGenreFilter(filterID)
 //------------------------------------------------------------------------
 function AddTagFilter(filterTag)
 {
-    console.log("add tag filter " + $("#TagFilterInput").val());
     var filterBar = $("#FilterBar");
-    var filterID = filterTagID;
-    filterTagID ++;
-    filterBar.append(
-        '<span class = "filter filter_tag" ' +
-        'id="Filter_Tag_' + filterID + '" ' +
-        ' data="'/* + filterID */ + '" ' +
-        ' filterKind="TAG" ' +
-        ' filterKey="'+ filterTag +'" ' +
-        '>' +
-        "Plot Keyword: " + filterTag +
-        '</span>'
-    );
+    console.log("add tag filter %s", $("#TagFilterInput").val());
+    if (filterBar.find(".filter_tag[filterKey='" + filterTag.toLowerCase() + "']").length === 0)
+    {
+        var filterID = filterTagID;
+        filterTagID ++;
+        filterBar.append(
+            '<span class = "filter filter_tag" ' +
+            'id="Filter_Tag_' + filterID + '" ' +
+            ' data="'/* + filterID */ + '" ' +
+            ' filterKind="TAG" ' +
+            ' filterKey="'+ filterTag +'" ' +
+            '>' +
+            "Plot Keyword: " + filterTag +
+            '</span>'
+        );
 
-    filterBar.find("#Filter_Tag_"+filterID)
-        .button({icons: {
-            secondary: "ui-icon-closethick"
-        }})
-        .click(function(e){
-        e.preventDefault();
-        RemoveFilterSpan($(this));
-    });
-    coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+        filterBar.find("#Filter_Tag_"+filterID)
+            .button({icons: {
+                secondary: "ui-icon-closethick"
+            }})
+            .click(function(e){
+            e.preventDefault();
+            RemoveFilterSpan($(this));
+        });
+        coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
+
+    }
+
 
 }
 //------------------------------------------------------------------------
@@ -194,7 +201,7 @@ function AddNewMovieFilter()
             .click(function(e){
                 e.preventDefault();
                 RemoveFilterSpan($(this));
-                $("#NewMovieFilter").prop('checked', false).button('refresh');
+                $(".NewMovieFilter").prop('checked', false).button('refresh');
             });
     }
     coverFlowCtrl.coverflow("invalidateCache").coverflow('refresh');
@@ -228,7 +235,7 @@ function AddRecomendedMovieFilter()
             .click(function(e){
                 e.preventDefault();
                 RemoveFilterSpan($(this));
-                $("#RecomendedMovieFilter").prop('checked', false).button('refresh');
+                $(".RecomendedMovieFilter").prop('checked', false).button('refresh');
 
             });
     }
@@ -245,38 +252,45 @@ function CoverFilter(cover)
 // hide the some covers based on these filtering criteria
 //
 {
-    var log=true;
+    var log=dbg_log_cover_filter;
     var title = $(cover).find("#info #mov_title").html();
     var genre = $(cover).find("#info #mov_genre").html().trim().toLowerCase();
     var new_movie = $(cover).hasClass("new-movie");
     var filters = $("#FilterBar span");
-    var res = filters.length === 0;
-
+    var results = {
+        alpha: true,
+        tag: true,
+        genre: true,
+        newMovie: true,
+        recommend: true
+    };
     if (log) console.groupCollapsed("filter: %s res= %s", title, res);
     filters.each(function(idx, value)
     {
         if ($(value).hasClass("filter_alpha")) {
-            res |= title.substr(0,1).toUpperCase() == $(this).attr('filterKey');
-            if (log) console.log("Alpha: %s res= %s", $(this).attr('filterKey'), res);
+            results.alpha |= title.substr(0,1).toUpperCase() == $(this).attr('filterKey');
+            if (log) console.log("Alpha: %s res= %s", $(this).attr('filterKey'), results.alpha);
 
         } else if ($(value).hasClass("filter_tag")) {
-            if (log) console.log("Tag: %s res= %s", $(this).attr('filterKey'), res);
+            if (log) console.log("Tag: %s res= %s", $(this).attr('filterKey'), results.tag);
+            results.tag &= $(cover).hasClass("plot-keyword-" + $(this).attr('filterKey').toLowerCase());
 
         } else if ($(value).hasClass("filter_genre")) {
-            if (log) console.log("Genre: %s %s res= %s, %s",genre, $(this).attr('filterKey'), res, genre.indexOf($(this).attr('filterKey')+','));
-            res |= genre.indexOf($(this).attr('filterKey').trim().toLowerCase()+',') >= 0;
+            results.genre |= genre.indexOf($(this).attr('filterKey').trim().toLowerCase()+',') >= 0;
+            if (log) console.log("Genre: %s %s res= %s, %s",genre, $(this).attr('filterKey'), results.genre, genre.indexOf($(this).attr('filterKey')+','));
 
         } else if ($(value).hasClass("filter_new")) {
-            if (log) console.log("New: %s res= %s", new_movie, res);
-            res |= new_movie;
+            results.newMovie &= new_movie;
+            if (log) console.log("New: %s res= %s", new_movie, results.newMovie);
 
         } else if ($(value).hasClass("filter_recomend")) {
-            if (log) console.log("Recommend: res= %s", res);
-            res = true;
+            if (log) console.log("Recommend: res= %s", results.recommend);
+            results.recommend &= true;
         }
     });
+    var res = (results.alpha && results.tag && results.genre && results.newMovie && results.recommend);
     if (res) res = true;
-    if (log) console.log("Result=" + res);
+    if (log) console.log("Result = %o (%o)", results, res);
     if (log) console.groupEnd();
     return res;
 }
@@ -457,4 +471,37 @@ function GetMovieReviewRotten(ui)
     });
 }
 
-
+//------------------------------------------------------------------------
+// Movie trailer Code
+//------------------------------------------------------------------------
+function getTrailer(movieId)
+{
+    if (movieId === undefined)
+    {
+        $("#trailer").html("");
+        return;
+    }
+    var obj = { 'mov_id': movieId };
+    console.log("getTrailer", obj);
+    $.ajax({
+        type: "POST",
+        url: "MainPage.aspx/getURL",
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: true,
+        success: function (response) {
+            if (response.d !== "")
+            {
+                var id = response.d;
+                //Add video
+                var frame = "<iframe  type='text/html' width='425' height='349' src=' http://www.youtube.com/embed/" + id + "' frameborder='0'></iframe>";
+                $("#trailer").html(frame);
+            }
+            else
+            {
+                $("#trailer").html("");
+            }
+        }
+    });
+}

@@ -71,14 +71,11 @@
                 $("#tabs_rotten_tomatoes").empty().addClass("no-content").attr("dataUrl", mov_id);
                 $(".details-info").each(function (idx, val) {
                     var htmlData = info.find("#" + $(val).attr('id')).html();
-                    //        console.log(" details %o %o ",$(val).attr("id"), info.find("#"+$(val).attr('id')).html());
                     if ($(val).is("img")) {
-                        //console.log("image");
                         $(val).attr("src", htmlData);
                     }
 
                     else if ($(val).is("div")) {
-                        //console.log("ul %s",htmlData);
                         if (htmlData !== undefined) {
                             $(val).empty();
                             htmlData.split(",").forEach(function (value, idx) {
@@ -92,9 +89,6 @@
                                     $(val).append('<span class="genre_' + genreStr + ' genre-label theme ' + selectedStr + '">' + genreStr + "</span>");
                                 }
                             });
-                        }
-                        else {
-                            //todo: make all the fields get cleared.
                         }
                     }
 
@@ -134,10 +128,11 @@
                         $('#CoverFlow .cover img').attr("height", "300px").attr("width", "200px").reflect();
                     }
                     var genre_list = {};
+                    var plot_keyword_list = {};
                     $('#CoverFlow .cover').each(function (idx, value) {
                         //Add Label to new movies
-                        var date = $(value).find("#mov_dateAdded")[0].innerText;
                         //Remove timestamp
+                        var date = $(value).find("#mov_dateAdded")[0].innerText;
                         if (date) {
                             date = date.split(" ")[0];
                             if (MovieOlderThanDays(new Date(), date, DAYS_OLD)) {
@@ -158,7 +153,18 @@
                                 genre_list[data] = 1;
                             }
                         });
-                    });
+
+
+                        var htmlData = $(value).find("#info #mov_plotkeywords").html();
+                        htmlData.split(",").forEach(function (data) {
+                            data = data.trim();
+                            if (data !== undefined && data.length > 0) {
+                                plot_keyword_list[data] = data.toLowerCase();
+                                $(value).addClass("plot-keyword-" + data.toLowerCase());
+                            }
+                        });
+                    }); // $('#CoverFlow .cover').each
+
                     // turn the object into a list of strings. 
                     var filter_genre_list = $("#FilterGenreList").empty();
                     $.each(genre_list, function (name) {
@@ -166,6 +172,14 @@
                         $(filter_genre_list).append('<span id="genre_' + name + '" class="GenreFilterButton theme">' + name + '</span>');
                     });
                     $(".GenreFilterButton").button().click(GenreFilterButtonClick);
+
+                    var l = [];
+                    $.each(plot_keyword_list, function(prop, obj){
+                        l.push(prop);
+                    });
+                    l.sort().forEach(function(prop, idx){
+                        $("#PlotKeywords").append('<option value="' + plot_keyword_list[prop] + '">' + prop + "</option>");
+                    });
 
                     coverFlowCtrl = $('#CoverFlow').coverflow(
                     {
@@ -320,43 +334,33 @@
                 // the general filter Keywords                
                 $(".TagFilterButton").button().click(function (e) {
                     e.preventDefault();
-                    if ($("#TagFilterInput").val().length > 0)
+                    if ($("#PlotKeywords").val().length > 0)
                     {
-                        AddTagFilter($("#TagFilterInput").val());
-                        $("#TagFilterInput").val("");
+                        AddTagFilter($("#PlotKeywords").val());
                     }
-                })
-                $("#movieFilterGroup").buttonset();
-                $("#NewMovieFilter").click(function (e) {
+                }).keypress(function(event){
+                    // 
+                    if ( event.keyCode == 10 || event.keyCode == 13 ||event.keyCode == 32) {
+                        console.log(" TagFilterButton keypress ", event.keyCode);
+                        event.keyCode = null;
+                        event.preventDefault();
+                    }
+                });
+                $("#PlotKeywords").keypress(function(event){
+                    // 
+                    if ( event.keyCode == 10 || event.keyCode == 13 ||event.keyCode == 32) {
+                        console.log(" PlotKeywords keypress ", event.keyCode);
+                        event.preventDefault();
+                    }
+                });
+                $(".NewMovieFilter").button().click(function (e) {
                     AddNewMovieFilter();
                 })
-                $("#RecomendedMovieFilter").click(function (e) {
+                $(".RecomendedMovieFilter").button().click(function (e) {
                     AddRecomendedMovieFilter();
                 })
             }); // End Doc Ready.
 
-            function getTrailer(movieId) {
-
-                var obj = { 'mov_id': movieId }
-                $.ajax({
-                    type: "POST",
-                    url: "MainPage.aspx/getURL",
-                    data: JSON.stringify(obj),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    async: true,
-                    success: function (response) {
-                        if (response.d != "") {
-                            var id = response.d;
-                            //Add video	
-                            var frame = "<iframe  type='text/html' width='425' height='349' src=' http://www.youtube.com/embed/" + id + "' frameborder='0'></iframe>";
-                            $("#trailer").html(frame);
-                        }
-                        else
-                            $("#trailer").html("");
-                    }
-                });
-            }
         </script>
 
     <asp:LoginView ID="LoginView5" runat="server">
@@ -578,14 +582,14 @@
                                 </div>
                             </div>
                             <div id="FilterTag" class="cover">
-                                <p>Enter a tag to filter movies by:</p>
-                                <div id="movieFilterGroup">
-                                    <input type="checkbox" id="NewMovieFilter"/> <label for="NewMovieFilter"> New movies only</label>
-                                    <input type="checkbox" id="RecomendedMovieFilter"/> <label for="RecomendedMovieFilter"> Recommended movies only</label>
-                                </div>
-                                <label for="TagFilterInput"> Plot Keyword:</label>
-                                <input id="TagFilterInput" /> 
-                                <button class="TagFilterButton">Filter by Keyword</button>
+                                <p>Filter movies by:</p>
+                                <button class="ui-filter-btn TagFilterButton">Filter by Keyword <br>
+                                    <select id="PlotKeywords" class="ui-plot-keywords theme"></select>
+                                </button>
+                                <input type="checkbox" class="ui-filter-btn NewMovieFilter" id="NewMovieFilter"/> 
+                                <label for="NewMovieFilter" class="ui-filter-btn"> Show only <br>New Movies </label>
+                                <input type="checkbox" class="ui-filter-btn RecomendedMovieFilter" id="RecomendedMovieFilter"/> 
+                                <label for="RecomendedMovieFilter" class="ui-filter-btn">Show only <br>Recommended Movies</label>
                             </div>
                         </div>
                     </div>
@@ -634,7 +638,10 @@
                             <span class="cover-details-infoline">
                                 <p class="cover-details-element-label theme">Genre:</p>
                                 <div id="mov_genre" class="cover-details-element-detail theme details-info"></div>
-                            </span>
+                            </span> <br/>
+                            <span class="cover-details-infoline multi-line">
+                                <p class="cover-details-element-label theme multi-line">Keywords:</p>
+                                <div id="mov_plotkeywords" class="cover-details-element-detail theme details-info multi-line"></div>
                         </section>
                         <section id="cover-details" class="tableCell table-thirds">
                             <span class="cover-details-infoline multi-line">

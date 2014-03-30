@@ -90,7 +90,7 @@
 .cover-details-element-label.multi-line {
     padding-right: 4em;
     text-align:  center;
-    padding-top: 0.6em; 
+    padding-top: 0.2em; 
     margin-top: 0em;
     margin-bottom: 0em;
 }
@@ -203,6 +203,9 @@
 #MovieFilter div p {
     text-align:         center;
     margin:             0.3em;
+    margin-top:         -0.5em;
+    font-weight:        700;
+
 }
 
 #FilterGeneral {
@@ -354,3 +357,13 @@ section.tableCell {
     display: inline-block;
     padding-left: 5px;
 }
+
+.ui-filter-btn
+{
+    font-size: 0.8em;
+    color:goldenrod;
+}
+.ui-plot-keywords{
+    width:25em;
+
+} 
