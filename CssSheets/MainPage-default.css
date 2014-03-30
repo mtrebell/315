@@ -3,12 +3,13 @@
 }
 
 .cover-details-element-label.theme {
-    background: blue;
-    border-color: yellow;
+    background: rgba(200,200,255,0.15);
+    border-color: goldenrod;
+    color: goldenrod;
 }
 
 .cover-details-element-detail.theme {
-    border-color: yellow;
+    border-color: goldenrod;
 }
 
 .filter-list-genre.theme{

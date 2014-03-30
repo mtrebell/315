@@ -59,13 +59,26 @@
             var coverFlowCtrl = null;
             var filterFlowCtrl = null;
             var genreList = [];
+            var trailerLoadID = null;
 
             function ShowMovieDetails(e, cover, index) {
 
                 //$("#Content").tabs();
                 var info = $(cover).find("div#info");
                 var mov_id = info.find("#mov_id").html();
-                getTrailer(mov_id);
+                $("#trailer").fadeOut(0);
+                if (trailerLoadID !== null )
+                {
+                    window.clearTimeout(trailerLoadID);
+                    trailerLoadID = null;
+                }
+                trailerLoadID = window.setTimeout(function(){
+                    getTrailer(mov_id);
+                    $("#trailer").fadeIn(100);
+
+                    trailerLoadID = null;
+                }, 750);
+
                 $("#Content").tabs("option", "active", 0);
                 $("#tabs_imdb").empty().addClass("no-content").attr("dataUrl", mov_id);
                 $("#tabs_rotten_tomatoes").empty().addClass("no-content").attr("dataUrl", mov_id);
@@ -140,7 +153,6 @@
                             }
                         }
                         var recommended = $(value).find("#mov_recommended")[0].innerText;
-                        console.log(" recommended ",recommended);
                         if (recommended.length !==  0) {
                             $(value).prepend('<span class ="ui-recommended-movie-label theme"><h1 class="ui-recommended-movie-text theme fa fa-star"></h1></span>').addClass("recommended-movie")
                         }

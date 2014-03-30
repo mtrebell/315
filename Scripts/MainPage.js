@@ -484,7 +484,6 @@ function getTrailer(movieId)
         return;
     }
     var obj = { 'mov_id': movieId };
-    console.log("getTrailer", obj);
     $.ajax({
         type: "POST",
         url: "MainPage.aspx/getURL",
