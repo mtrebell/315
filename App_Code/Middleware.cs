@@ -172,7 +172,7 @@ public static class Middleware
     /// <param name="iMovID">movie id to add</param>
     /// <param name="gUser">user id to assign movie to</param>
     /// <returns>return progress message</returns>
-    public static string InsertIntoReviews(string iMovID, Guid gUser)
+    public static string InsertIntoReviews(string iMovID, Guid gUser, float rating, string review)
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";

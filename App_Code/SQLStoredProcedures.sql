@@ -151,7 +151,7 @@ AS
 	IF Exists
 	( 
 		SELECT review_id
-		FROM dbo.Favorites
+		FROM dbo.UserReviews
 		Where users_id = @UserID
 	)
 
@@ -201,6 +201,13 @@ AS
 	BEGIN
 		INSERT INTO dbo.UserReviews (mov_id, users_id, rating, review)
 		VALUES (@MovID, @UserID, @Rating, @Review)
+	END
+	ELSE
+	BEGIN
+		UPDATE dbo.UserReviews 
+			SET review = @Review,
+				rating = @Rating
+		Where users_id = @UserID AND mov_id = @MovID
 	END
 	
 	IF @@ROWCOUNT > 0
