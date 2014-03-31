@@ -79,7 +79,7 @@ public static class Middleware
     /// </summary>
     /// <param name="gUser">unique user id for filter</param>
     /// <returns>return data set</returns>
-    public static SqlDataReader FavoritesDisplayContent(Guid gUser)
+    public static SqlDataReader ReviewsDisplayContent(string mov_id)
     {
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(ConnectionString);
@@ -88,10 +88,10 @@ public static class Middleware
         {
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // query is stored procedure
-            comm.CommandText = "MovieFavoritesFilter";          // call procedure name
+            comm.CommandText = "MovieReviewsFilter";          // call procedure name
             // Make Parameter
-            SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
-            pUserID.Value = gUser;  // apply user id filter
+            SqlParameter pUserID = new SqlParameter("@MovID", System.Data.SqlDbType.NVarChar, 100);
+            pUserID.Value = mov_id;  // apply user id filter
             pUserID.Direction = System.Data.ParameterDirection.Input;
             // Add the parameter
             comm.Parameters.Add(pUserID);
@@ -133,7 +133,7 @@ public static class Middleware
     /// <param name="iMovID">movie to remove</param>
     /// <param name="gUser">the user to remove movie from</param>
     /// <returns>return progress message</returns>
-    public static string DeleteFromFavorites(int iMovID, Guid gUser)
+    public static string DeleteFromReviews(int iMovID, Guid gUser)
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
@@ -143,7 +143,7 @@ public static class Middleware
         {
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate as procedure
-            comm.CommandText = "DeleteFavorites";               // indicate procedure name
+            comm.CommandText = "DeleteReviews";               // indicate procedure name
             // Make Parameter
             SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
             SqlParameter pMovieID = new SqlParameter("@MovID", System.Data.SqlDbType.Int);
@@ -172,7 +172,7 @@ public static class Middleware
     /// <param name="iMovID">movie id to add</param>
     /// <param name="gUser">user id to assign movie to</param>
     /// <returns>return progress message</returns>
-    public static string InsertIntoFavorites(string iMovID, Guid gUser)
+    public static string InsertIntoReviews(string iMovID, Guid gUser)
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
@@ -182,7 +182,7 @@ public static class Middleware
         {
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
-            comm.CommandText = "InsertFavorites";           // indicate procedure name
+            comm.CommandText = "InsertReview";           // indicate procedure name
             // Make Parameter
             SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
             SqlParameter pMovieID = new SqlParameter("@MovID", System.Data.SqlDbType.NVarChar, 100);

@@ -94,26 +94,19 @@ if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'MovieFavoritesFilter'
+	where [name] = 'MovieReviewsFilter'
 )
-drop procedure MovieFavoritesFilter
+drop procedure MovieReviewsFilter
 go
 
 GO
-CREATE PROCEDURE MovieFavoritesFilter
-    @UserID uniqueidentifier
+CREATE PROCEDURE MovieReviewsFilter
+    @MovID uniqueidentifier
 AS 
-    SELECT mov_smPoster, mov_title, mov_rating, mov_runTime, MS.mov_id 
-    FROM dbo.MovieSummary as MS
-    inner join dbo.FavoriteDetails as FD
-    on FD.mov_id = MS.mov_id
-	WHERE favorite_id =  
-		( 
-			SELECT favorite_id
-			FROM dbo.Favorites
-			Where users_id = @UserID			
-		)
-	ORDER BY mov_title
+    SELECT rating, review
+    FROM dbo.UserReviews
+	Where mov_id = @MovID	
+	Order By dateModified		
 GO
 
 /*************************************************************/
@@ -144,38 +137,28 @@ if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'DeleteFavorites'
+	where [name] = 'DeleteReviews'
 )
-drop procedure DeleteFavorites
+drop procedure DeleteReviews
 go
 
 GO
-CREATE PROCEDURE DeleteFavorites
+CREATE PROCEDURE DeleteReviews
     @UserID uniqueidentifier,
 	@MovID int,
     @Output varchar(100) output
 AS 
 	IF Exists
 	( 
-		SELECT favorite_id
+		SELECT review_id
 		FROM dbo.Favorites
 		Where users_id = @UserID
 	)
 
 	BEGIN
 		DELETE
-		FROM dbo.FavoriteDetails
-		WHERE @MovID = mov_id AND favorite_id =  
-					( 
-						SELECT favorite_id
-						FROM dbo.Favorites
-						Where users_id = 
-					  					( 
-											SELECT UserID
-											FROM dbo.aspnet_Users
-											Where UserID = @UserID
-										)
-					)
+		FROM dbo.UserReviews
+		WHERE @MovID = mov_id AND users_id = @UserID
 	END
 
 	IF @@ROWCOUNT > 0
@@ -196,45 +179,28 @@ if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'InsertFavorites'
+	where [name] = 'InsertReview'
 )
-drop procedure InsertFavorites
+drop procedure InsertReview
 go
 
 GO
-CREATE PROCEDURE InsertFavorites
+CREATE PROCEDURE InsertReview
     @UserID uniqueidentifier,
 	@MovID int,
+	@Rating float,
+	@Review nvarchar(2000),
     @Output varchar(100) output
 AS 
 	IF NOT Exists
 	( 
-		SELECT favorite_id
-		FROM dbo.Favorites
-		Where users_id = @UserID
+		SELECT review_id
+		FROM dbo.UserReviews
+		Where users_id = @UserID AND mov_id = @MovID
 	)	
-		BEGIN
-			INSERT INTO dbo.Favorites (users_id)
-			VALUES (@UserID)
-		END
- 
-	IF NOT Exists
-	( 
-		SELECT mov_id
-		FROM dbo.FavoriteDetails
-		Where mov_id = @MovID AND favorite_id =
-									(
-									SELECT favorite_id
-									FROM dbo.Favorites
-									WHERE users_id = @UserID
-									)
-	)
 	BEGIN
-		INSERT INTO dbo.FavoriteDetails
-		VALUES ((SELECT favorite_id
-				 FROM dbo.Favorites
-				 WHERE users_id = @UserID),
-				 @MovID) 
+		INSERT INTO dbo.UserReviews (mov_id, users_id, rating, review)
+		VALUES (@MovID, @UserID, @Rating, @Review)
 	END
 	
 	IF @@ROWCOUNT > 0
@@ -298,45 +264,14 @@ AS
 
 	BEGIN
 		DELETE
-		FROM dbo.FavoriteDetails
-		WHERE favorite_id =  
-					( 
-						SELECT favorite_id
-						FROM dbo.Favorites
-						Where users_id = 
-					  					( 
-											SELECT UserID
-											FROM dbo.aspnet_Users
-											Where UserID = @UserID
-										)
-					)
-			
-		DELETE
-		FROM dbo.Favorites
-		Where users_id = 
-						( 
-							SELECT UserID
-							FROM dbo.aspnet_Users
-							Where UserID = @UserID
-						)
-	End
-
-	IF Exists
-	( 
-	SELECT users_id
-	FROM dbo.Requests
-	WHERE users_id = @UserID
-	)
-	BEGIN
+		FROM dbo.UserReviews
+		WHERE users_id = @UserID 
+	
 		DELETE
 		FROM dbo.Requests
-		Where users_id = 
-					( 
-						SELECT UserID
-						FROM dbo.aspnet_Users
-						Where UserID = @UserID
-					)
+		Where users_id =  @UserID
 	END
+
 	IF @@ROWCOUNT > 0
 		BEGIN
 			select @Output = 'Record Deleted'
