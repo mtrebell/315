@@ -384,7 +384,7 @@ function GenerateMovieGrid(srcData, dest, moviesPerRow, cssClass)
         $(container).css({
             'display': 'table-cell',
             'padding': '5px'
-        }).addClass('gridCover');
+        }).addClass('gridCover-unloaded');
 
         $(container).append(movie, movieInfo);
         $(container).appendTo(dest + ' .gridRow' + curRow);
@@ -402,7 +402,8 @@ MoviesGridShowInView
     method to take the user to that movie on the coverflow
 */
 {
-    $("#" + dialogName).find($(".gridCover")).each(function(cover){
+    $("#" + dialogName).find($(".gridCover-unloaded")).each(function (cover) {
+        var imgContainer = this;
         var img = $(this).find('img');
         if ($(this).visible(true)) {
             //if image is visible
@@ -425,6 +426,9 @@ MoviesGridShowInView
                         coverFlowCtrl.coverflow('index', cfIndex, false);
                     }
                 });
+                //remove this cover object from the queue of unloaded covers
+                $(imgContainer).removeClass('.gridCover-unloaded');
+                $(imgContainer).addClass('.gridCover');
             }
         }
     });
