@@ -153,7 +153,7 @@
                             }
                         }
                         var recommended = $(value).find("#mov_recommended")[0].innerText;
-                        if (recommended.length !==  0) {
+                        if (recommended && recommended.length !==  0) {
                             $(value).prepend('<span class ="ui-recommended-movie-label theme"><h1 class="ui-recommended-movie-text theme fa fa-star"></h1></span>').addClass("recommended-movie")
                         }
 
