@@ -5,7 +5,7 @@
         .column
         {
             overflow: scroll;
-            background-image: url("../Background_Images/EditEntriesBG.jpg");
+            background-image: url("Background_Images/EditEntriesBG.jpg");
             background-repeat:repeat;
         }
     
@@ -719,10 +719,10 @@
                 +     '<td><label id="' + objD.mov_id + 'bt">Rotten Rating: ' + objD.mov_rottenRating + '</label></td>'
                 + '</tr><tr style="vertical-align: middle; padding-top: 10px;">'
                 +     '<td>'
-                +          '<img src="../Background_Images/Oscar_IMG.png" width="45" height="75" />'
+                +          '<img src="Background_Images/Oscar_IMG.png" width="45" height="75" />'
                 +          '<label id="' + objD.mov_id + 'os">Oscars: '+ objD.mov_oscars + '</label>'
                 +     '</td><td>'
-                +          '<img src="../Background_Images/Nomination_IMG.png" width="45" height="75" />'
+                +          '<img src="Background_Images/Nomination_IMG.png" width="45" height="75" />'
                 +          '<label id="' + objD.mov_id + 'nm">Nominations: '+ objD.mov_nominations + '</label></td>'
                 + '</tr><tr style="vertical-align: top; padding-top: 10px;">'
                 +     '<td><label id="' + objD.mov_id + 'dr">Directors: ' + objD.mov_directors + '</label></td>'
@@ -910,11 +910,11 @@
                 <td><input type="text" id="Add_mov_rottenRating" value="" style="width: 99%;" /></td>
             </tr>
             <tr>
-                <td><img src="../Background_Images/Oscar_IMG.png" width="30" height="75" /><label>Oscars: </label></td>
+                <td><img src="Background_Images/Oscar_IMG.png" width="30" height="75" /><label>Oscars: </label></td>
                 <td><input id="Add_mov_oscars"/></td>
             </tr>
             <tr>
-                <td><img src="../Background_Images/Nomination_IMG.png" width="30" height="75" /><label>Nominations: </label></td>
+                <td><img src="Background_Images/Nomination_IMG.png" width="30" height="75" /><label>Nominations: </label></td>
                 <td><input id="Add_mov_nominations"/></td>
             </tr>
             <tr>
@@ -993,8 +993,8 @@
                             <td><label id="<%# Eval("mov_id")%>bt">Rotten Rating: <%#string.Format("{0:F1}", Eval("mov_rottenRating")) %></label></td>
                         </tr>
                         <tr style="vertical-align: middle; padding-top: 10px;">
-                            <td><img src="../Background_Images/Oscar_IMG.png" width="45" height="75" /><label id="<%# Eval("mov_id")%>os">Oscars: <%#Eval("mov_oscars") %></label></td>
-                            <td><img src="../Background_Images/Nomination_IMG.png" width="45" height="75" /><label id="<%# Eval("mov_id")%>nm">Nominations: <%#Eval("mov_nominations") %></label></td>
+                            <td><img src="Background_Images/Oscar_IMG.png" width="45" height="75" /><label id="<%# Eval("mov_id")%>os">Oscars: <%#Eval("mov_oscars") %></label></td>
+                            <td><img src="Background_Images/Nomination_IMG.png" width="45" height="75" /><label id="<%# Eval("mov_id")%>nm">Nominations: <%#Eval("mov_nominations") %></label></td>
                         </tr>
                         <tr style="vertical-align: top; padding-top: 10px;">
                             <td><label id="<%# Eval("mov_id")%>dr">Directors: <%#Eval("mov_directors") %> </label></td>
@@ -1095,11 +1095,11 @@
                 <td><label>Rating: </label></td><td><input type="text" id="Edit_mov_rottenRating" value="" style="width: 99%;" /></td>
             </tr>
             <tr>
-                <td><img src="../Background_Images/Oscar_IMG.png" width="70" height="75" /><label>Oscars:</label></td>
+                <td><img src="Background_Images/Oscar_IMG.png" width="70" height="75" /><label>Oscars:</label></td>
                 <td><input id="Edit_mov_oscars" type="number" style="display: inline;"/></td>
             </tr>
             <tr>
-                <td><img src="../Background_Images/Nomination_IMG.png" width="70" height="75" /><label>Nominations:</label></td>
+                <td><img src="Background_Images/Nomination_IMG.png" width="70" height="75" /><label>Nominations:</label></td>
                 <td><input id="Edit_mov_nominations" type="number" style="display: inline;" /></td>
             </tr>
             <tr>

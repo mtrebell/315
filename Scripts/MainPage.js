@@ -142,7 +142,6 @@ function DelGenreFilter(filterID)
 function AddTagFilter(filterTag)
 {
     var filterBar = $("#FilterBar");
-    console.log("add tag filter %s", $("#TagFilterInput").val());
     if (filterBar.find(".filter_tag[filterKey='" + filterTag.toLowerCase() + "']").length === 0)
     {
         var filterID = filterTagID;
@@ -260,9 +259,9 @@ function CoverFilter(cover)
 
     var filters = $("#FilterBar span");
     var results = {
-        alpha: true,
+        alpha: $("#FilterBar span.filter_alpha").length === 0,
         tag: true,
-        genre: true,
+        genre: $("#FilterBar span.filter_genre").length === 0,
         newMovie: true,
         recommend: true
     };
@@ -271,7 +270,7 @@ function CoverFilter(cover)
     {
         if ($(value).hasClass("filter_alpha")) {
             results.alpha |= title.substr(0,1).toUpperCase() == $(this).attr('filterKey');
-            if (log) console.log("Alpha: %s res= %s", $(this).attr('filterKey'), results.alpha);
+            if (log) console.log("Alpha: %s %s res= %s", $(this).attr('filterKey'), title.substr(0,1).toUpperCase() == $(this).attr('filterKey'), results.alpha);
 
         } else if ($(value).hasClass("filter_tag")) {
             if (log) console.log("Tag: %s res= %s", $(this).attr('filterKey'), results.tag);

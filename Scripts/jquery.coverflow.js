@@ -174,12 +174,10 @@
 		},
 
         invalidateCache: function (){
-			console.log("invalidated cache " + this.element.attr('id'));
 
 			this.options.coversCache = $('');
 			var covers = this._getCovers();
 			var halfWidth = this.options.width / 2;
-			console.log("half width %s %s", halfWidth, this.options.width);
 			// Make this figure out how many to display.
 			this._setIndex(Math.min(Math.max(0, this.options.index), covers.length ));
 		},
