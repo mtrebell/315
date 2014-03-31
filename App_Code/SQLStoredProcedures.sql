@@ -775,7 +775,21 @@ AS
 	WHERE @mov_id = [mov_id]	
 GO
 
+ /*-------------------------------------------------------------------*/
+ if exists
+(
+	select[name]
+	from sysobjects
+	where [name] ='IMDBRottenRating'
+)
+drop procedure IMDBRottenRating
+GO
 
+CREATE PROCEDURE IMDBRottenRating
+AS
+	SELECT	mov_id,mov_rating,mov_rottenID
+	FROM MovieSummary 
+GO
 
 
 

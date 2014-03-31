@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
+using System.Web.Services;
 
 
 /// <summary>
@@ -11,7 +12,8 @@ using System.Data.SqlClient;
 public class Recomender
 {
     double cap = 0.65;
-
+    
+    [WebMethod]
     public void buildModel(){
 
         Dictionary<string, double[]> normRatings = getNormalizedRatings();
@@ -176,11 +178,11 @@ public class Recomender
     }
 
 
-    // web method
+    [WebMethod]
     public List<string> allRecomendations(Guid user)
     {
         List<string> recomend = new List<string>();
-
+        List<string> extra = new List<string>();
         SqlDataReader rdr = Middleware.GetMovieAverages();
         while (rdr.Read())
         {
@@ -189,8 +191,14 @@ public class Recomender
             double prob = getProb(user, movie);
             if (prob > cap)
                 recomend.Add(movie);
+            else if (prob > 0.45)
+                extra.Add(movie);
         }
 
+        for (int i = 0; recomend.Count < 20 && i < extra.Count;i++ )
+        {
+            recomend.Add(extra.ElementAt(i));
+        }
        return recomend;
     }
 
