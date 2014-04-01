@@ -509,3 +509,30 @@ function getTrailer(movieId)
         }
     });
 }
+//------------------------------------------------------------------------
+// Movie Rating Code
+//------------------------------------------------------------------------
+function setMovieRating(score, mov_id, starObj) {
+
+    //multiply 5 scale value to 10 scale
+    var finalScore = score * 2;
+    //more details of raty here: http://wbotelhos.com/raty/
+    var obj = { 'mov_id': mov_id, 'rating': finalScore };
+    $.ajax({
+        type: "POST",
+        url: "MainPage.aspx/getURL",
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: true,
+        success: function (response) {
+            console.log(response);
+            if (response.d != "") {
+                //response should be the new average rating of the movie
+                //startObj.score = response or something
+            }
+            else
+                console.log("No rating response!");
+        }
+    });
+}
