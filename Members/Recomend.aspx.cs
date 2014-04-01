@@ -51,8 +51,7 @@ public partial class _Default : System.Web.UI.Page
 
         if (recomend.Count < 20)
         {
-            //Get top rated
-            //while top rated if(recomend.count >19) break
+            //just reccomend unwatched
         }
 
         return recomend;
