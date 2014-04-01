@@ -620,7 +620,7 @@ GO
 CREATE PROCEDURE GetUserAverages
 
 AS 
-    SELECT users_id, AVG(rating)
+    SELECT users_id, AVG(rating) as rating
     FROM dbo.UserReviews
 	GROUP BY users_id
 GO
@@ -673,12 +673,12 @@ go
 
 GO
 CREATE PROCEDURE GetSimilarMovie
-@mov_id nvarchar(100)
-
+@mov_id nvarchar(100),
+@user nvarchar(100)
 AS 
     SELECT mov_id,match,similarity,rating
-    FROM dbo.MovieRatings
-	WHERE [mov_id] = @mov_id OR [match] = @mov_id;
+    FROM dbo.UserReviews
+	WHERE [mov_id] = @mov_id OR [match] = @mov_id AND [users_id]=user;
 GO
 
 /*************************************************************/
@@ -686,19 +686,19 @@ if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'GetUnwatchedMovie'
+	where [name] = 'GetWatchedMovie'
 )
-drop procedure GetUnwatchedMovie
+drop procedure GetWatchedMovie
 go
 
 GO
-CREATE PROCEDURE GetUnwatchedMovie
+CREATE PROCEDURE GetWatchedMovie
 @user_id nvarchar(100)
 
 AS 
     SELECT mov_id
     FROM dbo.UserReviews AS t1
-	WHERE t1.mov_id NOT IN (SELECT mov_id FROM dbo.MovieRatings AS t2 WHERE [users_id] = @user_id)
+	WHERE t1.mov_id NOT IN (SELECT mov_id FROM dbo.UserReviews AS t2 WHERE [users_id] = @user_id)
 GO
 
 /*************************************************************/
@@ -796,6 +796,7 @@ CREATE PROCEDURE IMDBRottenRating
 AS
 	SELECT	mov_id,mov_rating,mov_rottenID
 	FROM MovieSummary 
+	Order By mov_id
 GO
 
 

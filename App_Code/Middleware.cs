@@ -567,7 +567,7 @@ public static class Middleware
         return reader;      // return filtered dataset
     }
 
-    public static SqlDataReader GetSimilarMovie(Guid user, string movie)
+    public static SqlDataReader GetSimilarMovie(Guid user,string movie)
     {
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
@@ -580,10 +580,10 @@ public static class Middleware
 
             //for each movie in movies???
             SqlParameter pMovieID = new SqlParameter("@mov_id", System.Data.SqlDbType.NVarChar, 100);
-            SqlParameter pUserID = new SqlParameter("@user_id", System.Data.SqlDbType.NVarChar, 100);
+            SqlParameter pUserID = new SqlParameter("@user", System.Data.SqlDbType.NVarChar, 100);
 
             pMovieID.Value = movie;    // assign movie id filter
-            pUserID.Value = user;
+            pUserID.Value = movie;
 
             pMovieID.Direction = System.Data.ParameterDirection.Input;
             pUserID.Direction = System.Data.ParameterDirection.Input;
@@ -605,16 +605,15 @@ public static class Middleware
             comm.CommandText = "GetUnwatchedMovie";           // indicate procedure name
 
             //for each movie in movies
-            SqlParameter pMovieID = new SqlParameter("@user_id", System.Data.SqlDbType.NVarChar, 100);
-            pMovieID.Value = user;    // assign movie id filter
-            pMovieID.Direction = System.Data.ParameterDirection.Input;
+            SqlParameter pUserID = new SqlParameter("@user_id", System.Data.SqlDbType.NVarChar, 100);
+            pUserID.Value = user;    // assign movie id filter
+            pUserID.Direction = System.Data.ParameterDirection.Input;
 
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
         return reader;      // return filtered dataset
     }
-
-
+    
     public static string AddSimilar(List<Recomender.Model> movies)
    {
        SqlDataReader reader = null; 
@@ -678,6 +677,20 @@ public static class Middleware
         return reader;      // return filtered dataset
     }
 
-
+     public static SqlDataReader GetSystemRatings()
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "IMDBRottenRating";           // indicate procedure name
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+        }
+        return reader;      // return filtered dataset
+    }
+    
 
 }
