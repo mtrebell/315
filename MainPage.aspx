@@ -7,6 +7,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Media Server Db</title>
 
+        <link href="CssSheets/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <link href="Scripts/jquery-ui-1.10.4.css" rel="stylesheet" type="text/css" />
+        <link href="Scripts/jquery-ui-1.10.4.custom.css" rel="stylesheet" type="text/css" /> 
+        <link href="Scripts/jquery.multilevelpushmenu.css" rel="stylesheet" type="text/css" /> 
+        <link href="Scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
+
+        <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
+        <link href="CssSheets/MainPage-default.css" rel="stylesheet" type="text/css" />
+
         <script src="Scripts/jquery-1.10.2.js"></script>
         <script src="Scripts/jquery-ui-1.10.4.custom.js"></script> 
         <script src="Scripts/jquery.coverflow.js"></script>
@@ -18,14 +27,6 @@
         <script src='Scripts/jquery.fileupload.js'></script>
         <script src="Scripts/jquery.visible.min.js"></script>
 
-        <link href="CssSheets/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-        <link href="Scripts/jquery-ui-1.10.4.css" rel="stylesheet" type="text/css" />
-        <link href="Scripts/jquery-ui-1.10.4.custom.css" rel="stylesheet" type="text/css" /> 
-        <link href="Scripts/jquery.multilevelpushmenu.css" rel="stylesheet" type="text/css" /> 
-        <link href="Scripts/jquery.tagit.css" rel="stylesheet" type="text/css" /> 
-
-        <link href="CssSheets/MainPage.css" rel="stylesheet" type="text/css" />
-        <link href="CssSheets/MainPage-default.css" rel="stylesheet" type="text/css" />
         <script src="scripts/MainPage.js"></script>
         <script src="scripts/jquery.raty.js"></script>
 
@@ -81,6 +82,8 @@
 
                 $("#Content").tabs("option", "active", 0);
                 $("#tabs_imdb").empty().addClass("no-content").attr("dataUrl", mov_id);
+                $("#tabs_reviews").addClass("no-content").attr("dataUrl", mov_id);
+                $("#tabs_reviews #UserReviewDisplay").empty();
                 $("#tabs_rotten_tomatoes").empty().addClass("no-content").attr("dataUrl", mov_id);
                 $(".details-info").each(function (idx, val) {
                     var htmlData = info.find("#" + $(val).attr('id')).html();
@@ -238,7 +241,7 @@
                     });
                 });
 
-                filterFlowCtrl = $('#MovieFilter').coverflow();
+                filterFlowCtrl = $('#MovieFilter').coverflow({index:1});
 
                 $("#Content").tabs({
                     beforeActivate: function( event, ui ) 
@@ -274,12 +277,6 @@
                 $(window).resize(function () {
                     $('#menu').multilevelpushmenu('redraw');
                 });
-
-                // //$("#LoginDialog").load("Login.aspx");
-                // $("#LoginButton").click(function(e) {
-                //     e.preventDefault();
-                //     $("#LoginDialog").dialog({dialogClass: "ui-ontop"});
-                // });
 
                 $("#LogOutButton").click(function (e) {
                     e.preventDefault();
@@ -410,30 +407,7 @@
                 })
             }); // End Doc Ready.
 
-            function getTrailer(movieId) {
-
-                var obj = { 'mov_id': movieId }
-                console.log(obj);
-                $.ajax({
-                    type: "POST",
-                    url: "MainPage.aspx/getURL",
-                    data: JSON.stringify(obj),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    async: true,
-                    success: function (response) {
-                        console.log(response);
-                        if (response.d != "") {
-                            var id = response.d;
-                            //Add video	
-                            var frame = "<iframe  type='text/html' width='425' height='349' src=' http://www.youtube.com/embed/" + id + "' frameborder='0'></iframe>";
-                            $("#trailer").html(frame);
-                        }
-                        else
-                            $("#trailer").html("");
-                    }
-                });
-            }
+ 
         </script>
 
     <asp:LoginView ID="LoginView5" runat="server">
@@ -495,31 +469,40 @@
                             });
         
                             $("#EditEntriesDialog").hide();
-                            $("#EditEntriesDialog").load("Admin/EditEntries.aspx", function(){
-                                $("#EditEntriesDialog").dialog({
-                                    dialogClass: "ui-ontop",
-                                    width: "50%",
-                                    minHeight: 350,
-                                    modal: true,
-                                    resizable: false,
-                                    title: "Edit Movies",
-                                    autoOpen: false,
-                                    draggable: false,
+                            $("#EditEntriesButton").click(function (e) {
+                                e.preventDefault();
+                                if (!$("#EditEntriesDialog").hasClass("dialog-loaded"))
+                                {
+                                    $("#EditEntriesDialog").addClass("dialog-loaded").load("Admin/EditEntries.aspx", function()
+                                    {
+                                        $("#EditEntriesDialog").dialog({
+                                            dialogClass: "ui-ontop",
+                                            width: "50%",
+                                            minHeight: 350,
+                                            modal: true,
+                                            resizable: false,
+                                            title: "Edit Movies",
+                                            autoOpen: false,
+                                            draggable: false,
 
-                                    create: function () {
-                                        $(this).css("maxHeight", 350);
-                                    },
-                                    open: function() {
-                                        $(".cover-div").addClass("cover-disabled");
-                                    },
-                                    close: function() {
-                                        $(".cover-div").removeClass("cover-disabled");
-                                    },
-                                });
-                                $("#EditEntriesButton").click(function (e) {
-                                    e.preventDefault();
+                                            create: function () {
+                                                $(this).css("maxHeight", 350);
+                                            },
+                                            open: function() {
+                                                $(".cover-div").addClass("cover-disabled");
+                                            },
+                                            close: function() {
+                                                $(".cover-div").removeClass("cover-disabled");
+                                            },
+                                        });
+                                        $("#EditEntriesDialog").dialog('open');
+
+                                    });
+                                }
+                                else
+                                {
                                     $("#EditEntriesDialog").dialog('open');
-                                });
+                                }
                             });
 
                             $("#EditUsersDialog").hide();
@@ -677,6 +660,7 @@
 
             <ul>
                 <li><a href="#tabs_info">Details</a></li>
+                <li><a href="#tabs_reviews">Reviews</a></li>
                 <li><a href="#tabs_imdb">IMDB</a></li>
                 <li><a href="#tabs_rotten_tomatoes">Rotten Tomatoes</a></li>
             </ul>
@@ -757,6 +741,18 @@
                     </div>
                 </div>
             </div>
+            <div id="tabs_reviews" class="MainBodyOffset user-review hex-background ">
+                <div id="userReviewForm" class="ui-user-review theme"> 
+                    <a id="toggleUserReview">Enter New Review</a>
+                    <div id="userReviewForm" class="ui-user-review-form"> 
+                        <text class="ui-user-review-form-text theme"> this is a sample</text>
+                        <a id="userReviewSubmitBtn"> submit review</a>
+                    </div>
+                </div>
+                <div id="UserReviewDisplay">
+                    foobar
+                </div>
+            </div>
             <div id="tabs_imdb" class="MainBodyOffset imdb-review hex-background ">
             </div>
             <div id="tabs_rotten_tomatoes" class="MainBodyOffset rotten-tomatoes-review hex-background ">
@@ -791,7 +787,6 @@
         <nav>
             <h2><i class="fa fa-reorder"></i>Menu</h2>
             <ul>
-                <li><a id="" href="#">Favorites</a></li>
                 <li><a id="MenuGridView" href="#">Grid View</a></li>
                 <asp:LoginView ID="LoginView3" runat="server">
                     <RoleGroups>
