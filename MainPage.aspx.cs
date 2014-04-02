@@ -21,11 +21,8 @@ public partial class _Default : System.Web.UI.Page
     private static Guid userid; 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Session["User"] != null)
-        {
-            string username = Session["User"].ToString();
-            userid = (Guid) Membership.GetUser(username).ProviderUserKey;
-        }
+        if (User.Identity.IsAuthenticated)
+            userid = (Guid) Membership.GetUser().ProviderUserKey;
     }
     protected void Login1_LoggedIn(object sender, EventArgs e)
     {
@@ -215,10 +212,17 @@ public partial class _Default : System.Web.UI.Page
     }
 
     [WebMethod()]
-    public static string SaveRating(string mov_id, float rating, string review)
+    public static string SaveRating(string mov_id, float rating)
     {
-        return Middleware.InsertIntoReviews(mov_id, userid, rating, review);
+        return Middleware.InsertIntoUserRatings(mov_id, userid, rating);
     }
+
+    [WebMethod()]
+    public static string SaveReview(string mov_id, string review)
+    {
+        return Middleware.InsertIntoUserReviews(mov_id, userid, review);
+    }
+
     public class userinfo
     {
         public userinfo(string rating, string review)
@@ -246,7 +250,6 @@ public partial class _Default : System.Web.UI.Page
             if (others.Count > 0) {
                 foreach (userinfo other in others)
                     sb.Append(other.UserRating).Append("<split>").Append(other.UserReview).Append("<end>");
-                sb.Remove(sb.Length - 5, 5);
             }
             
             return sb.ToString();
@@ -262,7 +265,7 @@ public partial class _Default : System.Web.UI.Page
         using (SqlDataReader sdr = Middleware.GetUserReviewContent(mov_id))
         {
             if (!sdr.HasRows)
-                return "<div><p>This movie has not been reviewed yet.</p></div>";
+                return "";
 
             while (sdr.Read())
             {

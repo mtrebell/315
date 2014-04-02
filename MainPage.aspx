@@ -125,7 +125,7 @@
                             //if (!this.readOnly()) return; //if in readOnly mode, do not submit anything
 
                             console.log("Rating clicked!");
-                            setMovieRating(score, "", mov_id, this);//MainPage.js
+                            setMovieRating(score, mov_id, this);//MainPage.js
                         }
                         //readOnly: function () {
                         //    //a simple, probably very insecure method to detect if a user is logged in
@@ -277,7 +277,7 @@
                     var review = $('#UserReview').val();
                     console.log(review);
                     console.log(mov_id);
-                    setMovieRating(2.5, review, mov_id, this);
+                    setMovieReview(review, mov_id, this);
                 });
 
                 $("#dialogContainer").hide();
@@ -771,12 +771,11 @@
                     <a id="toggleUserReview" class="ui-toggle-user-review theme">Your review of this movie.</a>
                 </div>
                 <div id="userReviewForm" class="current-user-review">
+                    <label id="UserRating" class="ui-user-review-text"></label><br />
                     <textarea id="UserReview" class = "ui-user-review-text theme" cols="50" rows="5" ></textarea><br />
                     <input id="btn_submit_review" type="button" class="Button" value="Submit Review" />
                 </div>
-                <div id="UserReviewDisplay" class="ui-user-Review-display theme">
-                    foobar
-                </div>
+                <div id="UserReviewDisplay" class="ui-user-Review-display theme"></div>
             </div>
             <div id="tabs_imdb" class="MainBodyOffset imdb-review hex-background ">
             </div>

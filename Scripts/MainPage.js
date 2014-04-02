@@ -488,27 +488,43 @@ function GetMovieUserReview(ui)
         async: true,
         success: function (msg) {
             var reviews = msg.d;
+            if (msg.d == "")
+                return;
 
+            console.log(msg.d);
             temps = reviews.split('<divide>')[0];
             tempo = reviews.split('<divide>')[1];
 
             var self = {
-                'self-rating': temps.split('<split>')[0],
-                'self-review': temps.split('<split>')[1]
+                'self_rating': temps.split('<split>')[0],
+                'self_review': temps.split('<split>')[1]
             };
             var others = [];
-            var tempoo = tempo.split('<end>');
-            console.log(tempoo);
-            for (var other in tempoo) {
-                var ora = tempoo[other].split('<split>')[0];
-                var ore = tempoo[other].split('<split>')[1];
-                others.push({
-                    'other-rating': ora,
-                    'other-review': ore
-                });
+            var tempoo = null;
+            console.log(tempo.indexOf("<end>"));
+            if (tempo.indexOf("<end>") != -1)
+                tempoo = tempo.split('<end>');
+
+            if (tempoo != null) {
+                for (var other in tempoo) {
+                    var ora = tempoo[other].split('<split>')[0];
+                    var ore = tempoo[other].split('<split>')[1];
+                    others.push({
+                        'other_rating': ora,
+                        'other_review': ore
+                    });
+                }
             }
-            console.log(self);
+            $('#UserRating').html("You've currently given this title a " + self.self_rating + " rating");
+            $('#UserReview').val(self.self_review);
+
+            others.pop();
             console.log(others);
+            if (others.length > 0)
+                for (var i in others) {
+                    $("#UserReviewDisplay").append("<hr /><div><label>Score Given: " + others[i].other_rating
+                        + "</label><br /><p>" + others[i].other_review + "</p><hr /></div>");
+                }
         },
         cache: false
     });
@@ -550,12 +566,12 @@ function getTrailer(movieId)
 //------------------------------------------------------------------------
 // Movie Rating Code
 //------------------------------------------------------------------------
-function setMovieRating(score, review, mov_id, starObj) {
+function setMovieRating(score, mov_id, starObj) {
 
     //multiply 5 scale value to 10 scale
     var finalScore = score * 2;
     //more details of raty here: http://wbotelhos.com/raty/
-    var obj = { 'mov_id': mov_id, 'rating': finalScore, 'review': review };
+    var obj = { 'mov_id': mov_id, 'rating': finalScore};
     $.ajax({
         type: "POST",
         url: "MainPage.aspx/SaveRating",
@@ -567,6 +583,30 @@ function setMovieRating(score, review, mov_id, starObj) {
             console.log(response);
             if (response.d !== "")
             {
+                //response should be the new average rating of the movie
+                //startObj.score = response or something
+            }
+            else
+                console.log("No rating response!");
+        }
+    });
+}
+
+function setMovieReview(review, mov_id, starObj) {
+
+    //multiply 5 scale value to 10 scale
+    //more details of raty here: http://wbotelhos.com/raty/
+    var obj = { 'mov_id': mov_id,'review': review };
+    $.ajax({
+        type: "POST",
+        url: "MainPage.aspx/SaveReview",
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: true,
+        success: function (response) {
+            console.log(response);
+            if (response.d !== "") {
                 //response should be the new average rating of the movie
                 //startObj.score = response or something
             }

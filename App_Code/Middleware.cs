@@ -172,7 +172,7 @@ public static class Middleware
     /// <param name="iMovID">movie id to add</param>
     /// <param name="gUser">user id to assign movie to</param>
     /// <returns>return progress message</returns>
-    public static string InsertIntoReviews(string iMovID, Guid gUser, float rating, string review)
+    public static string InsertIntoUserRatings(string iMovID, Guid gUser, float rating)
     {
         SqlDataReader reader = null; // return object
         string sReturn = "";
@@ -182,28 +182,61 @@ public static class Middleware
         {
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
-            comm.CommandText = "InsertReview";           // indicate procedure name
+            comm.CommandText = "InsertUserRating";           // indicate procedure name
             // Make Parameter
             SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
             SqlParameter pMovieID = new SqlParameter("@MovID", System.Data.SqlDbType.NVarChar, 100);
             SqlParameter pRating = new SqlParameter("@Rating", System.Data.SqlDbType.Float);
-            SqlParameter pReview = new SqlParameter("@Review", System.Data.SqlDbType.NVarChar, 2000);
             SqlParameter pOutput = new SqlParameter("@output", System.Data.SqlDbType.NVarChar, 100);
             pUserID.Value = gUser;      // assign user filter
             pMovieID.Value = iMovID;    // assign movie id filter
             pRating.Value = rating;
-            pReview.Value = review;
 
             pUserID.Direction = System.Data.ParameterDirection.Input;
             pMovieID.Direction = System.Data.ParameterDirection.Input;
             pRating.Direction = System.Data.ParameterDirection.Input;
-            pReview.Direction = System.Data.ParameterDirection.Input;
             pOutput.Direction = System.Data.ParameterDirection.Output;
 
             // Add the parameter
             comm.Parameters.Add(pUserID);
             comm.Parameters.Add(pMovieID);
             comm.Parameters.Add(pRating);
+            comm.Parameters.Add(pOutput);
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection); // execute query
+
+            sReturn = pOutput.Value.ToString(); // get output value
+        }
+        return sReturn;
+    }
+
+    public static string InsertIntoUserReviews(string iMovID, Guid gUser, string review)
+    {
+        SqlDataReader reader = null; // return object
+        string sReturn = "";
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "InsertUserReview";           // indicate procedure name
+            // Make Parameter
+            SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
+            SqlParameter pMovieID = new SqlParameter("@MovID", System.Data.SqlDbType.NVarChar, 100);
+            SqlParameter pReview = new SqlParameter("@Review", System.Data.SqlDbType.NVarChar, 2000);
+            SqlParameter pOutput = new SqlParameter("@output", System.Data.SqlDbType.NVarChar, 100);
+            pUserID.Value = gUser;      // assign user filter
+            pMovieID.Value = iMovID;    // assign movie id filter
+            pReview.Value = review;
+
+            pUserID.Direction = System.Data.ParameterDirection.Input;
+            pMovieID.Direction = System.Data.ParameterDirection.Input;
+            pReview.Direction = System.Data.ParameterDirection.Input;
+            pOutput.Direction = System.Data.ParameterDirection.Output;
+
+            // Add the parameter
+            comm.Parameters.Add(pUserID);
+            comm.Parameters.Add(pMovieID);
             comm.Parameters.Add(pReview);
             comm.Parameters.Add(pOutput);
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection); // execute query

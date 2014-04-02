@@ -176,16 +176,62 @@ if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'InsertReview'
+	where [name] = 'InsertUserRating'
 )
-drop procedure InsertReview
+drop procedure InsertUserRating
 go
 
 GO
-CREATE PROCEDURE InsertReview
+CREATE PROCEDURE InsertUserRating
     @UserID uniqueidentifier,
 	@MovID nvarchar(100),
 	@Rating float,
+    @Output varchar(100) output
+AS 
+	IF NOT Exists
+	( 
+		SELECT mov_id
+		FROM dbo.UserReviews
+		Where users_id = @UserID AND mov_id = @MovID
+	)	
+	BEGIN
+		INSERT INTO dbo.UserReviews (mov_id, users_id, rating)
+		VALUES (@MovID, @UserID, @Rating)
+	END
+	ELSE
+	BEGIN
+		UPDATE dbo.UserReviews 
+			SET rating = @Rating
+		Where users_id = @UserID AND mov_id = @MovID
+	END
+	
+	IF @@ROWCOUNT > 0
+		BEGIN
+			select @Output = 'Record Inserted'
+			return 0
+		END	
+
+	ELSE
+		BEGIN
+			select @Output = 'No Records inserted, possible error'
+			return 1
+		END
+GO
+
+/*************************************************************/ 
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'InsertUserReview'
+)
+drop procedure InsertUserReview
+go
+
+GO
+CREATE PROCEDURE InsertUserReview
+    @UserID uniqueidentifier,
+	@MovID nvarchar(100),
 	@Review nvarchar(2000),
     @Output varchar(100) output
 AS 
@@ -196,14 +242,13 @@ AS
 		Where users_id = @UserID AND mov_id = @MovID
 	)	
 	BEGIN
-		INSERT INTO dbo.UserReviews (mov_id, users_id, rating, review)
-		VALUES (@MovID, @UserID, @Rating, @Review)
+		INSERT INTO dbo.UserReviews (mov_id, users_id, review)
+		VALUES (@MovID, @UserID, @Review)
 	END
 	ELSE
 	BEGIN
 		UPDATE dbo.UserReviews 
-			SET review = @Review,
-				rating = @Rating
+			SET review = @Review
 		Where users_id = @UserID AND mov_id = @MovID
 	END
 	
