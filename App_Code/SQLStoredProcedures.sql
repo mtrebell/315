@@ -638,7 +638,7 @@ GO
 CREATE PROCEDURE GetMovieAverages
 
 AS 
-    SELECT movie_id, AVG(rating)
+    SELECT mov_id, AVG(rating)
     FROM dbo.UserReviews
 	GROUP BY mov_id
 GO
