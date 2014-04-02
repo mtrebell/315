@@ -81,10 +81,13 @@
                 }, 750);
 
                 $("#Content").tabs("option", "active", 0);
+
                 $("#tabs_imdb").empty().addClass("no-content").attr("dataUrl", mov_id);
                 $("#tabs_reviews").addClass("no-content").attr("dataUrl", mov_id);
                 $("#tabs_reviews #UserReviewDisplay").empty();
                 $("#tabs_rotten_tomatoes").empty().addClass("no-content").attr("dataUrl", mov_id);
+                $("#tabs_user_reviews").remove(".other-review").addClass("no-content").attr("dataUrl", mov_id);
+
                 $(".details-info").each(function (idx, val) {
                     var htmlData = info.find("#" + $(val).attr('id')).html();
                     if ($(val).is("img")) {
@@ -119,15 +122,15 @@
                         half: true, //enable half star selection
                         score: $('.cover-details-infoline #mov_rating').text() / 2,
                         click: function (score, evt) {
-                            if (!this.readOnly()) return; //if in readOnly mode, do not submit anything
+                            //if (!this.readOnly()) return; //if in readOnly mode, do not submit anything
 
                             console.log("Rating clicked!");
-                            setMovieRating(score, mov_id, this);//MainPage.js
-                        },
-                        readOnly: function () {
-                            //a simple, probably very insecure method to detect if a user is logged in
-                            return !$('#loggedin_bar').is(":visible");
+                            setMovieRating(score, "", mov_id, this);//MainPage.js
                         }
+                        //readOnly: function () {
+                        //    //a simple, probably very insecure method to detect if a user is logged in
+                        //    return !$('#loggedin_bar').is(":visible");
+                        //}
                     });
 
 
@@ -248,24 +251,33 @@
                 filterFlowCtrl = $('#MovieFilter').coverflow({index:1});
 
                 $("#Content").tabs({
-                    beforeActivate: function( event, ui ) 
-                    {
+                    beforeActivate: function (event, ui) {
                         var tab_id = ui.newPanel.attr("id");
 
                         if (ui.newPanel.hasClass("no-content")) {
+                            console.log(tab_id);
                             ui.newPanel.removeClass("no-content");
-                            if (tab_id === "tabs_imdb") {
-                                // TODO: REplace with actuall page url and arguments.
-                                GetMovieReviewIMDB(ui);
 
-                                //GetIMDBReviews(mov_id);
-                            }
-                            else if (tab_id === "tabs_rotten_tomatoes") {
+                            if (tab_id === "tabs_imdb") 
+                                GetMovieReviewIMDB(ui);
+ 
+                            else if (tab_id === "tabs_rotten_tomatoes")
                                 GetMovieReviewRotten(ui);
-                            }
+
+                            else if (tab_id === "tabs_user_reviews")
+                                GetMovieUserReview(ui);
                         }
                     }
                 });
+
+                $('#btn_submit_review').click(function () {
+                    var mov_id = $(this).parent().parent().attr('dataurl');
+                    var review = $('#UserReview').val();
+                    console.log(review);
+                    console.log(mov_id);
+                    setMovieRating(2.5, review, mov_id, this);
+                });
+
                 $("#dialogContainer").hide();
                 $("#LoginDialog").hide();
                 $('#menu').multilevelpushmenu({
@@ -667,6 +679,7 @@
                 <li><a href="#tabs_reviews">Reviews</a></li>
                 <li><a href="#tabs_imdb">IMDB</a></li>
                 <li><a href="#tabs_rotten_tomatoes">Rotten Tomatoes</a></li>
+                <li><a href="#tabs_user_reviews">User Reviews</a></li>
             </ul>
 
             <div id="tabs_info" class="hex-background no-tab-padding">
@@ -762,6 +775,12 @@
             <div id="tabs_imdb" class="MainBodyOffset imdb-review hex-background ">
             </div>
             <div id="tabs_rotten_tomatoes" class="MainBodyOffset rotten-tomatoes-review hex-background ">
+            </div>
+            <div id="tabs_user_reviews" class="MainBodyOffset hex-background ">
+                <div class="current-user-review">
+                    <textarea id="UserReview" cols="50" rows="5" ></textarea><br />
+                    <input id="btn_submit_review" type="button" class="Button" value="Submit Review" />
+                </div>
             </div>
         </div>
 

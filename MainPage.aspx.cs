@@ -14,11 +14,18 @@ using System.IO;
 using System.Web.Services;
 using System.Text;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 public partial class _Default : System.Web.UI.Page
 {
+    private static Guid userid; 
     protected void Page_Load(object sender, EventArgs e)
-    {       
+    {
+        if (Session["User"] != null)
+        {
+            string username = Session["User"].ToString();
+            userid = (Guid) Membership.GetUser(username).ProviderUserKey;
+        }
     }
     protected void Login1_LoggedIn(object sender, EventArgs e)
     {
@@ -30,7 +37,7 @@ public partial class _Default : System.Web.UI.Page
 
         // This is ID field in the User table if desired, but UserName is unique too,
         //  so either can be used as a "key", Guid is the primary key so it is slightly faster..
-        Guid userid = (Guid)o.ProviderUserKey;
+        userid = (Guid)o.ProviderUserKey;
     }
 
     public class Links
@@ -206,4 +213,67 @@ public partial class _Default : System.Web.UI.Page
         }
         return "";
     }
+
+    [WebMethod()]
+    public static string SaveRating(string mov_id, float rating, string review)
+    {
+        return Middleware.InsertIntoReviews(mov_id, userid, rating, review);
+    }
+    public class userinfo
+    {
+        public userinfo(string rating, string review)
+        {
+            UserRating = rating;
+            UserReview = review;
+        }
+
+        public string UserRating,
+                      UserReview;
+    }
+
+    public class results
+    {
+        public userinfo self;
+        public List<userinfo> others = new List<userinfo>();
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (self != null)
+                sb.Append(self.UserRating).Append("<split>").Append(self.UserReview);
+            sb.Append("<divide>");
+
+            if (others.Count > 0) {
+                foreach (userinfo other in others)
+                    sb.Append(other.UserRating).Append("<split>").Append(other.UserReview).Append("<end>");
+                sb.Remove(sb.Length - 5, 5);
+            }
+            
+            return sb.ToString();
+        }
+    }
+
+
+    [WebMethod()]
+    public static string GetUserReviews(string mov_id)
+    {
+        results rReviewObjects = new results();
+
+        using (SqlDataReader sdr = Middleware.GetUserReviewContent(mov_id))
+        {
+            if (!sdr.HasRows)
+                return "<div><p>This movie has not been reviewed yet.</p></div>";
+
+            while (sdr.Read())
+            {
+                if (((Guid)sdr[2]).Equals(userid))
+                    rReviewObjects.self = new userinfo(sdr[0].ToString(), sdr[1].ToString());
+                else
+                    rReviewObjects.others.Add(new userinfo(sdr[0].ToString(), sdr[1].ToString()));
+            }
+        }
+
+        return rReviewObjects.ToString();
+    }
+
 }

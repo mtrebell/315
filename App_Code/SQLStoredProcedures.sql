@@ -88,25 +88,22 @@ AS
 	WHERE mov_id = @Index
 GO
 
-/*************************************************************/
-
 if exists
 (
 	select[name]
 	from sysobjects
-	where [name] = 'MovieReviewsFilter'
+	where [name] = 'GetUserReview'
 )
-drop procedure MovieReviewsFilter
-go
+drop procedure GetUserReview
+GO
 
 GO
-CREATE PROCEDURE MovieReviewsFilter
-    @MovID uniqueidentifier
+CREATE PROCEDURE GetUserReview
+	@MovID nvarchar (100)
 AS 
-    SELECT rating, review
-    FROM dbo.UserReviews
-	Where mov_id = @MovID	
-	Order By dateModified		
+	SELECT rating, review, users_id
+	FROM dbo.UserReviews
+	Where mov_id = @MovID
 GO
 
 /*************************************************************/
@@ -150,7 +147,7 @@ CREATE PROCEDURE DeleteReviews
 AS 
 	IF Exists
 	( 
-		SELECT review_id
+		SELECT mov_id
 		FROM dbo.UserReviews
 		Where users_id = @UserID
 	)
@@ -187,14 +184,14 @@ go
 GO
 CREATE PROCEDURE InsertReview
     @UserID uniqueidentifier,
-	@MovID int,
+	@MovID nvarchar(100),
 	@Rating float,
 	@Review nvarchar(2000),
     @Output varchar(100) output
 AS 
 	IF NOT Exists
 	( 
-		SELECT review_id
+		SELECT mov_id
 		FROM dbo.UserReviews
 		Where users_id = @UserID AND mov_id = @MovID
 	)	
@@ -269,11 +266,7 @@ AS
 		WHERE users_id = @UserID
 	)
 
-	BEGIN
-		DELETE
-		FROM dbo.UserReviews
-		WHERE users_id = @UserID 
-	
+	BEGIN	
 		DELETE
 		FROM dbo.Requests
 		Where users_id =  @UserID
@@ -676,7 +669,7 @@ CREATE PROCEDURE GetSimilarMovie
 @mov_id nvarchar(100),
 @user nvarchar(100)
 AS 
-    SELECT mov_id,match,similarity,rating
+    SELECT mov_id, match,similarity,rating
     FROM dbo.UserReviews
 	WHERE [mov_id] = @mov_id OR [match] = @mov_id AND [users_id]=user;
 GO

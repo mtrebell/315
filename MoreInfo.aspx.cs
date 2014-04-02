@@ -96,7 +96,7 @@ public partial class _Default : System.Web.UI.Page
         if (sMovieIndex != "")
         {
             Guid gUserID = (Guid)Membership.GetUser().ProviderUserKey;  // get current user
-            Middleware.InsertIntoFavorites(sMovieIndex, gUserID);       // add to favorites table
+            //Middleware.InsertIntoFavorites(sMovieIndex, gUserID);       // add to favorites table
         }
     }
 }
