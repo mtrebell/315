@@ -3,15 +3,6 @@ IF EXISTS
 (
 	select [name]
 	from sys.tables
-	where [name] = 'FavoriteDetails'
-)
-DROP TABLE FavoriteDetails
-GO
-
-IF EXISTS
-(
-	select [name]
-	from sys.tables
 	where [name] = 'Recomended'
 )
 DROP TABLE Recomended
@@ -30,9 +21,9 @@ IF EXISTS
 (
 	select [name]
 	from sys.tables
-	where [name] = 'Favorites'
+	where [name] = 'UserReviews'
 )
-DROP TABLE Favorites
+DROP TABLE UserReviews
 GO
 
 
@@ -132,23 +123,17 @@ CREATE TABLE Requests
 )
 GO
 
-CREATE TABLE Favorites
+CREATE TABLE UserReviews
 (
-	favorite_id		int  identity(1,1)
+	review_id int  identity(1,1)
 		PRIMARY KEY,
-	users_id		uniqueidentifier
-		FOREIGN KEY REFERENCES aspnet_Users(UserId),
-	dateModified	datetime
-		DEFAULT GetDate()		
-)
-GO
-
-CREATE TABLE FavoriteDetails
-(
-	favorite_id		int  
-		FOREIGN KEY REFERENCES Favorites(favorite_id),
 	mov_id		[nvarchar](100)
 		FOREIGN KEY REFERENCES MovieSummary(mov_id),
+	users_id		uniqueidentifier,
+	dateModified	datetime
+		DEFAULT GetDate(),
+	rating float null,
+	review nvarchar(2000) null
 )
 GO
 

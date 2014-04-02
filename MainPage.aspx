@@ -114,15 +114,19 @@
                     }
 
                     //create movie rating object
-                    var ratingObj = document.createElement('div');
-                    $(ratingObj).addClass('Star-Rating');
-                    $(".cover-details-infoline #mov_rating .Star-Rating").remove();
-                    $('.cover-details-infoline #mov_rating').append(ratingObj);
+                    $(".cover-details-infoline #mov_rating .Star-Rating").empty();
                     $('.Star-Rating').raty({
+                        half: true, //enable half star selection
                         score: $('.cover-details-infoline #mov_rating').text() / 2,
                         click: function (score, evt) {
-                            //modify what happens here when a star rating is clicked
-                            //more details of raty here: http://wbotelhos.com/raty/
+                            if (!this.readOnly()) return; //if in readOnly mode, do not submit anything
+
+                            console.log("Rating clicked!");
+                            setMovieRating(score, mov_id, this);//MainPage.js
+                        },
+                        readOnly: function () {
+                            //a simple, probably very insecure method to detect if a user is logged in
+                            return !$('#loggedin_bar').is(":visible");
                         }
                     });
 
@@ -684,7 +688,9 @@
                             <br />
                             <span class="cover-details-infoline">
                                 <p class="cover-details-element-label theme">Rating:</p>
-                                <p id="mov_rating" class="cover-details-element-detail theme details-info"></p>
+                                <p id="mov_rating" class="cover-details-element-detail theme details-info">
+                                    <div class="Star-Rating"></div>
+                                </p>
                             </span>
                             <span class="cover-details-infoline">
                                 <p class="cover-details-element-label theme">Run Time:</p>

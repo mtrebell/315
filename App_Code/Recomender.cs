@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Data.SqlClient;
-
 
 /// <summary>
 /// Summary description for Class
@@ -11,17 +9,7 @@ using System.Data.SqlClient;
 public class Recomender
 {
     double cap = 0.65;
-
-    public void buildModel(){
-
-        Dictionary<string, double[]> normRatings = getNormalizedRatings();
-
-        //Building similatiry martix
-        Dictionary<string, Dictionary<string, double>> movieSimilarity = getSimilarity(normRatings);
-
-        writeModel(getMovieAvgs(), movieSimilarity);
-
-        }  
+    double weight=0.5;
   
     //Returns the average rating of each movie, normalized by user averages
     //This is to account for users who often very vote high or very low
@@ -69,7 +57,7 @@ public class Recomender
         SqlDataReader rdr = Middleware.GetUserAverages();
         while (rdr.Read())
         {
-            string user = rdr["user_id"].ToString();
+            string user = rdr["users_id"].ToString();
             int rating = Convert.ToInt32(rdr["rating"]);
             userAvg.Add(user, rating);
         }
@@ -87,6 +75,22 @@ public class Recomender
             movAvg.Add(user, rating);
         }
         return movAvg;
+    }
+
+
+    public Dictionary<string, List<int>> getSystemRatings()
+    {
+        Dictionary<string, List<int>> sysRating = new Dictionary<string, List<int>>();
+        SqlDataReader rdr = Middleware.GetMovieAverages();
+        while (rdr.Read())
+        {
+            List<int> rating = new List<int>();
+            string user = rdr["mov_id"].ToString();
+            rating.Add(Convert.ToInt32(rdr["mov_rating"]));
+            rating.Add(Convert.ToInt32(rdr["mov_rottenRating"]));
+            sysRating.Add(user, rating);
+        }
+        return sysRating;
     }
 
     public Dictionary<string, Dictionary<string, double>> getSimilarity(Dictionary<string, double[]> ratings)
@@ -153,19 +157,20 @@ public class Recomender
         double p = 0;
         int count = 0;
         //sql call similar that has watched
-        SqlDataReader rdr = Middleware.GetSimilarMovie(user, movie);
+        SqlDataReader rdr = Middleware.GetSimilarMovie(user,movie);
          while (rdr.Read())
          {
              count++;
              string match = rdr[0].ToString();
-             int rating =Convert.ToInt32(rdr[3]);
+             int rating =Convert.ToInt32(rdr[1]);
 
              //Extract the rating
              if (match.CompareTo(movie) == 0)
-                 rating = (int)rating/4; 
+                 rating = (int)rating/1000; 
              else
-                 rating = rating%4;
+                 rating = rating%1000;
 
+             //similarity*rating
              p += Convert.ToInt32(rdr[2])*rating;
          }
 
@@ -176,25 +181,7 @@ public class Recomender
     }
 
 
-    // web method
-    public List<string> allRecomendations(Guid user)
-    {
-        List<string> recomend = new List<string>();
-
-        SqlDataReader rdr = Middleware.GetMovieAverages();
-        while (rdr.Read())
-        {
-            string movie = rdr["mov_id"].ToString();
-
-            double prob = getProb(user, movie);
-            if (prob > cap)
-                recomend.Add(movie);
-        }
-
-       return recomend;
-    }
-
-    public class Model
+      public class Model
     {
         public string movie;
         public string match;
