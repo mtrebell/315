@@ -125,15 +125,14 @@ GO
 
 CREATE TABLE UserReviews
 (
-	review_id int  identity(1,1)
-		PRIMARY KEY,
 	mov_id		[nvarchar](100)
 		FOREIGN KEY REFERENCES MovieSummary(mov_id),
 	users_id		uniqueidentifier,
 	dateModified	datetime
 		DEFAULT GetDate(),
 	rating float null,
-	review nvarchar(2000) null
+	review nvarchar(2000) null,
+	CONSTRAINT PK_UserReviews PRIMARY KEY CLUSTERED (mov_id, users_id)
 )
 GO
 

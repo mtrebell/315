@@ -79,7 +79,7 @@ public static class Middleware
     /// </summary>
     /// <param name="gUser">unique user id for filter</param>
     /// <returns>return data set</returns>
-    public static SqlDataReader ReviewsDisplayContent(string mov_id)
+    public static SqlDataReader GetUserReviewContent(string mov_id)
     {
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(ConnectionString);
@@ -88,7 +88,7 @@ public static class Middleware
         {
             comm.Connection = conn;
             comm.CommandType = System.Data.CommandType.StoredProcedure; // query is stored procedure
-            comm.CommandText = "MovieReviewsFilter";          // call procedure name
+            comm.CommandText = "GetUserReview";          // call procedure name
             // Make Parameter
             SqlParameter pUserID = new SqlParameter("@MovID", System.Data.SqlDbType.NVarChar, 100);
             pUserID.Value = mov_id;  // apply user id filter
@@ -186,17 +186,25 @@ public static class Middleware
             // Make Parameter
             SqlParameter pUserID = new SqlParameter("@UserID", System.Data.SqlDbType.UniqueIdentifier);
             SqlParameter pMovieID = new SqlParameter("@MovID", System.Data.SqlDbType.NVarChar, 100);
+            SqlParameter pRating = new SqlParameter("@Rating", System.Data.SqlDbType.Float);
+            SqlParameter pReview = new SqlParameter("@Review", System.Data.SqlDbType.NVarChar, 2000);
             SqlParameter pOutput = new SqlParameter("@output", System.Data.SqlDbType.NVarChar, 100);
             pUserID.Value = gUser;      // assign user filter
             pMovieID.Value = iMovID;    // assign movie id filter
+            pRating.Value = rating;
+            pReview.Value = review;
 
             pUserID.Direction = System.Data.ParameterDirection.Input;
             pMovieID.Direction = System.Data.ParameterDirection.Input;
+            pRating.Direction = System.Data.ParameterDirection.Input;
+            pReview.Direction = System.Data.ParameterDirection.Input;
             pOutput.Direction = System.Data.ParameterDirection.Output;
 
             // Add the parameter
             comm.Parameters.Add(pUserID);
             comm.Parameters.Add(pMovieID);
+            comm.Parameters.Add(pRating);
+            comm.Parameters.Add(pReview);
             comm.Parameters.Add(pOutput);
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection); // execute query
 

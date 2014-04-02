@@ -476,6 +476,44 @@ function GetMovieReviewRotten(ui)
     });
 }
 
+function GetMovieUserReview(ui)
+    // This will get the rotten tomato reviews into the selected tab.
+{
+    $.ajax({
+        type: "POST",
+        url: "MainPage.aspx/GetUserReviews",
+        data: JSON.stringify({ 'mov_id': ui.newPanel.attr("dataUrl") }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: true,
+        success: function (msg) {
+            var reviews = msg.d;
+
+            temps = reviews.split('<divide>')[0];
+            tempo = reviews.split('<divide>')[1];
+
+            var self = {
+                'self-rating': temps.split('<split>')[0],
+                'self-review': temps.split('<split>')[1]
+            };
+            var others = [];
+            var tempoo = tempo.split('<end>');
+            console.log(tempoo);
+            for (var other in tempoo) {
+                var ora = tempoo[other].split('<split>')[0];
+                var ore = tempoo[other].split('<split>')[1];
+                others.push({
+                    'other-rating': ora,
+                    'other-review': ore
+                });
+            }
+            console.log(self);
+            console.log(others);
+        },
+        cache: false
+    });
+}
+
 //------------------------------------------------------------------------
 // Movie trailer Code
 //------------------------------------------------------------------------
@@ -512,27 +550,21 @@ function getTrailer(movieId)
 //------------------------------------------------------------------------
 // Movie Rating Code
 //------------------------------------------------------------------------
-function setMovieRating(score, mov_id, starObj) {
+function setMovieRating(score, review, mov_id, starObj) {
 
     //multiply 5 scale value to 10 scale
     var finalScore = score * 2;
     //more details of raty here: http://wbotelhos.com/raty/
-    var obj = { 'mov_id': mov_id, 'rating': finalScore };
+    var obj = { 'mov_id': mov_id, 'rating': finalScore, 'review': review };
     $.ajax({
         type: "POST",
-        url: "MainPage.aspx/getURL",
+        url: "MainPage.aspx/SaveRating",
         data: JSON.stringify(obj),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         async: true,
         success: function (response) {
-            console.log(response);
-            if (response.d != "") {
-                //response should be the new average rating of the movie
-                //startObj.score = response or something
-            }
-            else
-                console.log("No rating response!");
+            
         }
     });
 }
