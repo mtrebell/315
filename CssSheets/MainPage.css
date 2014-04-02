@@ -407,6 +407,13 @@ section.tableCell {
     margin-left:-24px;
 }
 
+.ui-toggle-user-review 
+{
+    background: rgba(255,255,255,0.3);
+    text-align: center;
+    width:100%;
+}
+
 .ui-user-review
 {
 

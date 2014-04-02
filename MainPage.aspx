@@ -264,7 +264,7 @@
                             else if (tab_id === "tabs_rotten_tomatoes")
                                 GetMovieReviewRotten(ui);
 
-                            else if (tab_id === "tabs_user_reviews")
+                            else if (tab_id === "tabs_reviews")
                                 GetMovieUserReview(ui);
                         }
                     }
@@ -421,6 +421,11 @@
                 $(".RecomendedMovieFilter").button().click(function (e) {
                     AddRecomendedMovieFilter();
                 })
+
+                $("#toggleUserReview").click(function(e) { 
+                    $("#userReviewForm").animate({height:"toggle"}, 200);
+                })
+                $("#userReviewForm").animate({height:"toggle"}, 0);
             }); // End Doc Ready.
 
  
@@ -679,7 +684,6 @@
                 <li><a href="#tabs_reviews">Reviews</a></li>
                 <li><a href="#tabs_imdb">IMDB</a></li>
                 <li><a href="#tabs_rotten_tomatoes">Rotten Tomatoes</a></li>
-                <li><a href="#tabs_user_reviews">User Reviews</a></li>
             </ul>
 
             <div id="tabs_info" class="hex-background no-tab-padding">
@@ -761,12 +765,12 @@
                 </div>
             </div>
             <div id="tabs_reviews" class="MainBodyOffset user-review hex-background ">
-                <div id="userReviewForm" class="ui-user-review theme"> 
-                    <a id="toggleUserReview">Enter New Review</a>
-                    <div id="userReviewForm" class="ui-user-review-form"> 
-                        <text class="ui-user-review-form-text theme"> this is a sample</text>
-                        <a id="userReviewSubmitBtn"> submit review</a>
-                    </div>
+                <div class="ui-user-review theme"> 
+                    <a id="toggleUserReview" class="ui-toggle-user-review theme">Enter New Review</a>
+                </div>
+                <div id="userReviewForm" class="current-user-review">
+                    <textarea id="UserReview" cols="50" rows="5" ></textarea><br />
+                    <input id="btn_submit_review" type="button" class="Button" value="Submit Review" />
                 </div>
                 <div id="UserReviewDisplay">
                     foobar
@@ -775,12 +779,6 @@
             <div id="tabs_imdb" class="MainBodyOffset imdb-review hex-background ">
             </div>
             <div id="tabs_rotten_tomatoes" class="MainBodyOffset rotten-tomatoes-review hex-background ">
-            </div>
-            <div id="tabs_user_reviews" class="MainBodyOffset hex-background ">
-                <div class="current-user-review">
-                    <textarea id="UserReview" cols="50" rows="5" ></textarea><br />
-                    <input id="btn_submit_review" type="button" class="Button" value="Submit Review" />
-                </div>
             </div>
         </div>
 
