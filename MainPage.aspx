@@ -270,7 +270,9 @@
                     }
                 });
 
-                $('#btn_submit_review').click(function () {
+                $('#btn_submit_review').click(function () 
+                {
+                    $("#userReviewForm").animate({height:"toggle"}, 100); // collaps user review form
                     var mov_id = $(this).parent().parent().attr('dataurl');
                     var review = $('#UserReview').val();
                     console.log(review);
@@ -766,13 +768,13 @@
             </div>
             <div id="tabs_reviews" class="MainBodyOffset user-review hex-background ">
                 <div class="ui-user-review theme"> 
-                    <a id="toggleUserReview" class="ui-toggle-user-review theme">Enter New Review</a>
+                    <a id="toggleUserReview" class="ui-toggle-user-review theme">Your review of this movie.</a>
                 </div>
                 <div id="userReviewForm" class="current-user-review">
-                    <textarea id="UserReview" cols="50" rows="5" ></textarea><br />
+                    <textarea id="UserReview" class = "ui-user-review-text theme" cols="50" rows="5" ></textarea><br />
                     <input id="btn_submit_review" type="button" class="Button" value="Submit Review" />
                 </div>
-                <div id="UserReviewDisplay">
+                <div id="UserReviewDisplay" class="ui-user-Review-display theme">
                     foobar
                 </div>
             </div>
