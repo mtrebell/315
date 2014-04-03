@@ -711,12 +711,12 @@ go
 
 GO
 CREATE PROCEDURE GetSimilarMovie
-@mov_id nvarchar(100),
-@user nvarchar(100)
+@mov_id nvarchar(100)
 AS 
-    SELECT mov_id, match,similarity,rating
-    FROM dbo.UserReviews
-	WHERE [mov_id] = @mov_id OR [match] = @mov_id AND [users_id]=user;
+    SELECT TOP 50 mov_id, match_id,similarity,mov_rating
+    FROM dbo.similar
+	WHERE [mov_id] = @mov_id OR [match_id] = @mov_id 
+	ORDER BY similarity DESC
 GO
 
 /*************************************************************/
@@ -734,11 +734,30 @@ CREATE PROCEDURE GetWatchedMovie
 @user_id nvarchar(100)
 
 AS 
-    SELECT mov_id
+    SELECT mov_id,rating
     FROM dbo.UserReviews AS t1
 	WHERE t1.mov_id NOT IN (SELECT mov_id FROM dbo.UserReviews AS t2 WHERE [users_id] = @user_id)
 GO
 
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'GetUnwatchedMovie'
+)
+drop procedure GetUnwatchedMovie
+go
+
+GO
+CREATE PROCEDURE GetUnwatchedMovie
+@user_id nvarchar(100)
+
+AS 
+    SELECT mov_id,rating
+    FROM dbo.UserReviews AS t1
+	WHERE t1.mov_id NOT IN (SELECT mov_id FROM dbo.UserReviews AS t2 WHERE [users_id] = @user_id)
+GO
 /*************************************************************/
 if exists
 (
@@ -761,7 +780,24 @@ BEGIN
  VALUES (@mov_id, @match, @similar, @rating)
 END
 GO
+/*****************************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'DeleteSimilar'
+)
+drop procedure DeleteSimilar
+GO
 
+GO
+CREATE PROCEDURE DeleteSimilar
+AS
+BEGIN
+DELETE FROM table_name;
+END
+GO
+/****************************************************************************/
 if exists
 (
 	select[name]
@@ -832,11 +868,47 @@ GO
 
 CREATE PROCEDURE IMDBRottenRating
 AS
-	SELECT	mov_id,mov_rating,mov_rottenID
+	SELECT	mov_id,mov_rating,mov_rottenRating
 	FROM MovieSummary 
 	Order By mov_id
 GO
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'IMDBRottenAvg'
+)
+drop procedure IMDBrottenAvg
+go
 
+GO
+CREATE PROCEDURE IMDBRottenAvg
+
+AS 
+    SELECT AVG(mov_rating),AVG(mov_rottenRating)
+    FROM dbo.MovieSummary
+GO
+/*************************************************************/
+if exists
+(
+	select[name]
+	from sysobjects
+	where [name] = 'GetTopAverages'
+)
+drop procedure GetTopAverages
+go
+
+GO
+CREATE PROCEDURE GetTopAverages
+
+AS 
+    SELECT TOP 10 mov_id, AVG(mov_rating) as r
+    FROM dbo.MovieSummary
+	GROUP BY mov_id
+	ORDER BY r DESC
+GO
+/*************************************************************/
 
 
 

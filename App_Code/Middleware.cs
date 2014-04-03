@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Data;
 
 /// <summary>
 /// Summary description for Middleware
@@ -592,6 +593,23 @@ public static class Middleware
         return reader;      // return filtered datase
     }
 
+
+    public static SqlDataReader GetTopMovie()
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "GetTopAverages";           // indicate procedure name
+
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+        }
+        return reader;      // return filtered datase
+    }
+
     public static SqlDataReader GetMovieRatings()
     {
         SqlDataReader reader = null; // return object
@@ -608,7 +626,7 @@ public static class Middleware
         return reader;      // return filtered dataset
     }
 
-    public static SqlDataReader GetSimilarMovie(Guid user,string movie)
+    public static SqlDataReader GetSimilarMovie(string movie)
     {
         SqlDataReader reader = null; // return object
         SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
@@ -619,16 +637,13 @@ public static class Middleware
             comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
             comm.CommandText = "GetSimilarMovie";           // indicate procedure name
 
-            //for each movie in movies???
+            
             SqlParameter pMovieID = new SqlParameter("@mov_id", System.Data.SqlDbType.NVarChar, 100);
-            SqlParameter pUserID = new SqlParameter("@user", System.Data.SqlDbType.NVarChar, 100);
 
             pMovieID.Value = movie;    // assign movie id filter
-            pUserID.Value = movie;
 
             pMovieID.Direction = System.Data.ParameterDirection.Input;
-            pUserID.Direction = System.Data.ParameterDirection.Input;
-
+            comm.Parameters.Add(pMovieID);
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
         return reader;      // return filtered dataset
@@ -646,57 +661,66 @@ public static class Middleware
             comm.CommandText = "GetUnwatchedMovie";           // indicate procedure name
 
             //for each movie in movies
-            SqlParameter pUserID = new SqlParameter("@user_id", System.Data.SqlDbType.NVarChar, 100);
+            SqlParameter pUserID = new SqlParameter("@user_id", System.Data.SqlDbType.UniqueIdentifier);
             pUserID.Value = user;    // assign movie id filter
             pUserID.Direction = System.Data.ParameterDirection.Input;
+            comm.Parameters.Add(pUserID);
+            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+        }
+        return reader;      // return filtered dataset
+    }
 
+
+    public static SqlDataReader GetWatchedMovie(Guid user)
+    {
+        SqlDataReader reader = null; // return object
+        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
+        conn.Open();
+        using (SqlCommand comm = new SqlCommand())      // create query
+        {
+            comm.Connection = conn;
+            comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+            comm.CommandText = "GetWatchedMovie";           // indicate procedure name
+
+            //for each movie in movies
+            SqlParameter pUserID = new SqlParameter("@user_id", System.Data.SqlDbType.UniqueIdentifier);
+            pUserID.Value = user;    // assign movie id filter
+            pUserID.Direction = System.Data.ParameterDirection.Input;
+            comm.Parameters.Add(pUserID);
             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
         }
         return reader;      // return filtered dataset
     }
     
-    public static string AddSimilar(List<Recomender.Model> movies)
+    public static void AddSimilar(List<Recomender.Model> movies)
    {
        SqlDataReader reader = null; 
        string sReturn;
        SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
-       conn.Open();
-       using (SqlCommand comm = new SqlCommand())      // create query
+        
+       DataTable table = new DataTable("similarity");
+
+       // construct DataTable
+       table.Columns.Add(new DataColumn("mov_id", typeof(string)));
+       table.Columns.Add(new DataColumn("match_id", typeof(string)));
+       table.Columns.Add(new DataColumn("similarity", typeof(double)));
+       table.Columns.Add(new DataColumn("rating", typeof(int)));
+
+       foreach (Recomender.Model m in movies)
        {
-            comm.CommandText = "AddSimilar";           // indicate procedure name
-            // Make Parameter
-            SqlParameter pMovieID = new SqlParameter("@mov_id", System.Data.SqlDbType.NVarChar, 100);
-            SqlParameter pMatch = new SqlParameter("@match", System.Data.SqlDbType.NVarChar, 100);
-            SqlParameter pSimilar = new SqlParameter("@similar", System.Data.SqlDbType.NVarChar, 100);
-            SqlParameter pRating = new SqlParameter("@rating", System.Data.SqlDbType.NVarChar, 100);
-            SqlParameter pOutput = new SqlParameter("@output", System.Data.SqlDbType.NVarChar, 100);
+           table.Rows.Add(m.movie,m.match,m.similarity,m.rating);
+       }
 
-            pMovieID.Direction = System.Data.ParameterDirection.Input;
-            pMatch.Direction = System.Data.ParameterDirection.Input;
-            pSimilar.Direction = System.Data.ParameterDirection.Input;
-            pRating.Direction = System.Data.ParameterDirection.Input;
-            pOutput.Direction = System.Data.ParameterDirection.Output;
+       using (SqlBulkCopy bulkCopy = new SqlBulkCopy(ConnectionString))
+       {
+           bulkCopy.BulkCopyTimeout = 600; // in seconds
+           bulkCopy.DestinationTableName = "similar";
+           bulkCopy.WriteToServer(table);
+       }
+   
 
-                 foreach (Recomender.Model m in movies)
-                 {
-                     pMovieID.Value = m.movie;
-                     pMatch.Value = m.match;
-                     pSimilar.Value = m.similarity;
-                     pRating.Value = m.rating;
-
-                     comm.Parameters.Add(pMovieID);
-                     comm.Parameters.Add(pMatch);
-                     comm.Parameters.Add(pSimilar);
-                     comm.Parameters.Add(pRating);
-                     }
-                 
-            reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection); // execute query
-
-            sReturn = pOutput.Value.ToString(); // get output value
-        }
-        return sReturn;
     }
-
+    
     public static SqlDataReader GetRottenID(string mov_id)
     {
         SqlDataReader reader = null; // return object
@@ -732,6 +756,46 @@ public static class Middleware
         }
         return reader;      // return filtered dataset
     }
+
+     public static double[] IMDBRottenAvg()
+     {
+         SqlDataReader reader = null; // return object
+         SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
+         conn.Open();
+         using (SqlCommand comm = new SqlCommand())      // create query
+         {
+             comm.Connection = conn;
+             comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+
+             comm.CommandText = "IMDBRottenAvg";           // indicate procedure name
+
+             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+         }
+         double[] sys = new double[] { 0, 0 };
+
+         if (reader.Read())
+         {
+             sys[0] = Convert.ToDouble(reader[0]);
+             sys[1] = Convert.ToDouble(reader[1]);
+         }
+
+         return sys;      // return filtered dataset
+     }
+
+     public static void DeleteSimilar()
+     {
+         SqlDataReader reader = null; // return object
+         SqlConnection conn = new SqlConnection(ConnectionString); // create database connection
+         conn.Open();
+         using (SqlCommand comm = new SqlCommand())      // create query
+         {
+             comm.Connection = conn;
+             comm.CommandType = System.Data.CommandType.StoredProcedure; // indicate query as procedure
+             comm.CommandText = "DeleteSimilar";           // indicate procedure name
+
+             reader = comm.ExecuteReader(System.Data.CommandBehavior.CloseConnection);   // execute query
+         }
+     }
     
 
 }

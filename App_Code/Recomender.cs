@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Based off http://infolab.stanford.edu/~ullman/mmds/ch9.pdf
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.SqlClient;
@@ -9,51 +11,76 @@ using System.Data.SqlClient;
 public class Recomender
 {
     double cap = 0.65;
-    double weight=0.5;
-  
+    double weight = 0.5;
     //Returns the average rating of each movie, normalized by user averages
     //This is to account for users who often very vote high or very low
-    public Dictionary<String,double[]> getNormalizedRatings()
+    public Dictionary<String, Dictionary<String, double>> getNormalizedRatings()
     {
-        Dictionary<String,double[]> ratings = new Dictionary<String,double[]>();
-        Dictionary<String,int> userAvg = getUserAvgs();
+        Dictionary<String, Dictionary<String, double>> ratings = new Dictionary<String, Dictionary<String, double>>();
+        Dictionary<String, int> userAvg = getUserAvgs();
+        Dictionary<string, double[]> sysRating = getSystemRatings();
 
         SqlDataReader rdr = Middleware.GetMovieRatings();
 
         while (rdr.Read())
         {
             string movie = rdr["mov_id"].ToString();
-            string user = rdr["user_id"].ToString();
-            int rating = Convert.ToInt32(rdr["rating"]);
+            string user = rdr["users_id"].ToString();
+            double rating = Convert.ToInt32(rdr["rating"]);
 
-            //These variables will be used to calculate movie normalized cosine dist
-            if (rating != 0)
+            //NORMALIZE RATING HERE
+
+            Dictionary<String, double> value;
+
+            if (rating != 0 )
             {
-               int avg;
-               userAvg.TryGetValue(user, out avg);
-               double value = rating - avg;
-
-                double[] var = new double[2];
-                if( ratings.TryGetValue( movie, out var ) )
+                if (ratings.TryGetValue(movie, out value))
                 {
-                    var[0] = var[0] + value;
-                    var[1] = var[1] + value*value;
+                    ratings.Remove(movie);
                 }
                 else
                 {
-                    var[0] = value;
-                    var[1] = value*value;
+                    value = new Dictionary<string, double>();
                 }
-                ratings.Add(movie,var);
+
+                value.Add(user, rating);
+                ratings.Add(movie, value);
             }
+        }
+
+        //Add system ratings
+        double[] IRating = Middleware.IMDBRottenAvg();
+       foreach(string movie in sysRating.Keys)
+        {
+            double IMDB = IRating[0];
+            double rotten = IRating[1];
+
+            double[] s;
+            if (sysRating.TryGetValue(movie, out s))
+            {
+                s[0] -= IMDB;
+                s[1] -= rotten;
+
+                Dictionary<string, double> value;
+                if (ratings.TryGetValue(movie, out value))
+                {
+                    ratings.Remove(movie);
+                }
+                else
+                {
+                    value = new Dictionary<string, double>();
+                }
+                value.Add("1", s[0]);
+                value.Add("2", s[1]);
+                ratings.Add(movie, value);
             }
-            
+        }
         return ratings;
-}
+    }
 
     public Dictionary<string, int> getUserAvgs()
     {
-        Dictionary<string,int> userAvg = new Dictionary<string,int>();
+        Dictionary<string, int> userAvg = new Dictionary<string, int>();
         SqlDataReader rdr = Middleware.GetUserAverages();
         while (rdr.Read())
         {
@@ -71,54 +98,100 @@ public class Recomender
         while (rdr.Read())
         {
             string user = rdr["mov_id"].ToString();
-            int rating = Convert.ToInt32(rdr["rating"]);
+            int rating = Convert.ToInt32(rdr[1]);
             movAvg.Add(user, rating);
         }
         return movAvg;
     }
 
 
-    public Dictionary<string, List<int>> getSystemRatings()
+    public Dictionary<string, double[]> getSystemRatings()
     {
-        Dictionary<string, List<int>> sysRating = new Dictionary<string, List<int>>();
-        SqlDataReader rdr = Middleware.GetMovieAverages();
+        Dictionary<string, double[]> sysRating = new Dictionary<string, double[]>();
+        SqlDataReader rdr = Middleware.GetSystemRatings();
         while (rdr.Read())
         {
-            List<int> rating = new List<int>();
+            double[] rating = new double[2];
             string user = rdr["mov_id"].ToString();
-            rating.Add(Convert.ToInt32(rdr["mov_rating"]));
-            rating.Add(Convert.ToInt32(rdr["mov_rottenRating"]));
+            rating[0] = (Convert.ToInt32(rdr["mov_rating"]));
+            rating[1] = (Convert.ToInt32(rdr["mov_rottenRating"]));
             sysRating.Add(user, rating);
         }
         return sysRating;
     }
 
-    public Dictionary<string, Dictionary<string, double>> getSimilarity(Dictionary<string, double[]> ratings)
+
+    public Dictionary<String, Dictionary<String, double>> getSimilarity(Dictionary<String, Dictionary<String, double>> ratings)
     {
         Dictionary<string, Dictionary<String, double>> similarity = new Dictionary<string, Dictionary<string, double>>();
         foreach (string key in ratings.Keys)
         {
             int count = 0;
-            double[] movie;
+            Dictionary<String, double> movie;
             ratings.TryGetValue(key, out movie);
 
-            Dictionary<string, double> temp = new Dictionary<string, double>();
+            Dictionary<string, double> temp = new Dictionary<string, double>(); ;
             foreach (string comp in ratings.Keys)
             {
-                double[] movieComp;
-                if (similarity.TryGetValue(comp, out temp))
+
+
+                Dictionary<string, double> test = new Dictionary<string, double>();
+                //Dont add the movie to a dictionary if it already added as key
+                if (similarity.ContainsKey(comp))
+                    continue;
+                //Dont compare movie to itself
+                if (comp.CompareTo(key) == 0)
                     continue;
 
-                ratings.TryGetValue(comp, out movieComp);
+                Dictionary<String, double> movieComp;
+                double sim = 0;
 
-                //Normalized Cosine Dist
-                double sim = movie[0] * movieComp[0] / (movie[1] * movie[1]);
-                if ( sim > 0.7 && count <50 ) //stops our model from growing to large
+                if (ratings.TryGetValue(comp, out movieComp))
                 {
-                    temp.Add(comp, sim);
-                    count++;
+                    double m = 0;
+                    double p = 0;
+                    double MP = 0;
+
+                    foreach (string user in movie.Keys)
+                    {
+                        double rating;
+
+                        if (!movie.TryGetValue(user, out rating))
+                            rating = 0;
+
+                        p += rating * rating;
+
+                        if (!movieComp.ContainsKey(user))
+                            continue;
+
+                        double compRating;
+
+                        if (!movie.TryGetValue(user, out compRating))
+                            compRating = 0;
+                        //Almost always 0
+                        MP += rating * compRating;
+                    }
+
+                    foreach (string user in movieComp.Keys)
+                    {
+                        double rating;
+
+                        if (!movieComp.TryGetValue(user, out rating))
+                            rating = 0;
+
+                        m += rating * rating;
+                    }
+                    //Normalized Cosine Dist
+                    if (p == 0 && m == 0)
+                        sim = 0;
+                    else
+                        sim = MP / (Math.Sqrt(p)+Math.Sqrt(m));
                 }
-            
+
+                //With better data this should be limited to 50 matches
+                temp.Add(comp, sim);
+                count++;
+
             }
             similarity.Add(key, temp);
         }
@@ -126,9 +199,10 @@ public class Recomender
     }
 
 
-    //This is being reworked to be more effeciet
-    public void writeModel(Dictionary<string,int> ratings,Dictionary<string, Dictionary<string, double>> values)
+    public void writeModel(Dictionary<string, int> ratings, Dictionary<string, Dictionary<string, double>> values)
     {
+        Middleware.DeleteSimilar();
+
         List<Model> model = new List<Model>();
 
         foreach (string key in ratings.Keys)
@@ -143,45 +217,60 @@ public class Recomender
 
                 ratings.TryGetValue(key, out r1);
                 ratings.TryGetValue(match, out r2);
-                value.TryGetValue(match, out similarity);
-
-                Model m = new Model(key, match, similarity, r1 * 1000 + r2);
-                model.Add(m);
+                if (value.TryGetValue(match, out similarity))
+                {
+                    Model m = new Model(key, match, similarity, r1 * 1000 + r2);
+                    model.Add(m);
+                }
             }
         }
         Middleware.AddSimilar(model);
     }
 
-    public double getProb(Guid user,string movie)
+    public double getProb(Guid user, string movie)
     {
         double p = 0;
         int count = 0;
-        //sql call similar that has watched
-        SqlDataReader rdr = Middleware.GetSimilarMovie(user,movie);
-         while (rdr.Read())
-         {
-             count++;
-             string match = rdr[0].ToString();
-             int rating =Convert.ToInt32(rdr[1]);
+        Dictionary<string, int> similar = getSimilarMovie(movie);
+        SqlDataReader rdr = Middleware.GetWatchedMovie(user);
+        while (rdr.Read())
+        {
+            int s;
+            string key = rdr["mov_id"].ToString();
 
-             //Extract the rating
-             if (match.CompareTo(movie) == 0)
-                 rating = (int)rating/1000; 
-             else
-                 rating = rating%1000;
+            if (!similar.TryGetValue(key, out s))
+                continue;
 
-             //similarity*rating
-             p += Convert.ToInt32(rdr[2])*rating;
-         }
+            count++;
+            //similarity*rating
+            p += Convert.ToInt32(rdr["similarity"]) * s;
+        }
 
-         if (count == 0)
-             return 0;
+        if (count == 0)
+            return 0;
 
-        return p/count;
+        return p / count;
     }
 
+    public Dictionary<string, int> getSimilarMovie(string movie)
+    {
+        Dictionary<string, int> similar = new Dictionary<string, int>();
+        SqlDataReader rdr = Middleware.GetSimilarMovie(movie);
+        while (rdr.Read())
+        {
+            string match = rdr[0].ToString();
+            int similarity = Convert.ToInt32(rdr["similarity"]);
 
-      public class Model
+            if (match.CompareTo(movie) == 0)
+                similar.Add(rdr[1].ToString(), similarity);
+            else
+                similar.Add(match, similarity);
+        }
+
+        return similar;
+    }
+
+    public class Model
     {
         public string movie;
         public string match;
@@ -197,6 +286,3 @@ public class Recomender
         }
     }
 }
-
-
-    
