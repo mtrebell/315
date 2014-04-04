@@ -185,7 +185,7 @@ public class Recomender
                     if (p == 0 && m == 0)
                         sim = 0;
                     else
-                        sim = MP / (Math.Sqrt(p)+Math.Sqrt(m));
+                        sim = MP / (Math.Sqrt(p)*Math.Sqrt(m)); //CHECK THE EQ
                 }
 
                 //With better data this should be limited to 50 matches
