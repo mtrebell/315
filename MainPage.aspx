@@ -100,7 +100,8 @@
                             htmlData.split(",").forEach(function (value, idx) {
                                 var v = value.trim();
                                 if (v !== undefined && v.length > 0) {
-                                    var genreStr = value.replace(",", "").trim();
+                                    var genreStr = value.replace(/,/g, "").replace(/ |\./g,"-");
+                                    console.log("1 ",value, genreStr, info, htmlData);
                                     var selectedStr = ""
                                     if ($('#FilterGenreList#genre_' + genreStr).hasClass("genre-selected")) {
                                         selectedStr = "genre-selected";
@@ -196,7 +197,9 @@
                     var filter_genre_list = $("#FilterGenreList").empty();
                     $.each(genre_list, function (name) {
                         genreList.push(name);
-                        $(filter_genre_list).append('<span id="genre_' + name + '" class="GenreFilterButton theme">' + name + '</span>');
+                        var genreStr = name.replace(/,/g, "").trim().replace(/ |\./g,"-");
+                        console.log(name, genreStr);
+                        $(filter_genre_list).append('<span id="genre_' + genreStr + '" class="GenreFilterButton theme">' + name + '</span>');
                     });
                     $(".GenreFilterButton").button().click(GenreFilterButtonClick);
 

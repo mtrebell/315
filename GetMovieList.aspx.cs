@@ -65,7 +65,7 @@ public partial class GetMovieList : System.Web.UI.Page
             {
                 cell.Attributes.Add("class", "cover cover-not-loaded");
 
-                if (!sdr["mov_smPoster"].ToString().Equals("NOTFOUNDs"))
+                if (!sdr["mov_smPoster"].ToString().Equals("NOTFOUND"))
                 {
                     cell.Attributes.Add("dataClass", "missing_poster");
                     cell.Attributes.Add("dataUrl", sdr["mov_smPoster"].ToString().Replace("~/", ""));
