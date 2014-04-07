@@ -615,4 +615,44 @@ function setMovieReview(review, mov_id, starObj) {
         }
     });
 }
+//-------------------------------------------------------------
+//Recomender Calls
+//-------------------------------------------------------------
 
+//-----------------Get Recomendations-------------------
+function recomender(){
+    var recomended;
+    $.ajax({
+        type: "POST",
+        url: "Members/Recomend.aspx/allRecomendations",
+        data: "{}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            recomended = result['d'];
+            for (var i = 0; i < recomended.length; i++) {
+                $("#movID_" + recomended[i]).prepend('<span class ="ui-recommended-movie-label theme"><h1 class="ui-recommended-movie-text theme fa fa-star"></h1></span>').addClass("recommended-movie");
+            }
+        }
+    });
+}
+
+//Build the similarity Table
+function buildModel() {
+    $('<div id="updateRecDialog">Updating....</div>').dialog({
+        dialogClass: "ui-ontop",
+        resizable: false,
+        title: "Update Recomendations"
+        });
+
+    $.ajax({
+        type: "POST",
+        url: "Members/Recomend.aspx/buildModel",
+        data: "{}",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function () {
+            $('#updateRecDialog').append("Done");
+        }
+    });
+}

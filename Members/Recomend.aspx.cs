@@ -36,7 +36,14 @@ public partial class _Default : System.Web.UI.Page
 
         Guid gUser;
         MembershipUser user = Membership.GetUser();
+        if (user == null)
+        {
+            gUser = new Guid();
+        }
+        else
+        {
             gUser = (Guid)user.ProviderUserKey;
+        }
         
         SqlDataReader rdr = Middleware.GetUnwatchedMovie(gUser);
         while (rdr.Read())

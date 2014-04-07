@@ -161,14 +161,11 @@ public class Recomender
 
                         p += rating * rating;
 
-                        if (!movieComp.ContainsKey(user))
-                            continue;
-
                         double compRating;
 
                         if (!movie.TryGetValue(user, out compRating))
                             compRating = 0;
-                        //Almost always 0
+ 
                         MP += rating * compRating;
                     }
 
@@ -181,14 +178,13 @@ public class Recomender
 
                         m += rating * rating;
                     }
-                    //Normalized Cosine Dist
-                    if (p == 0 && m == 0)
+                    
+                    if (p == 0 || m == 0)
                         sim = 0;
                     else
-                        sim = MP / (Math.Sqrt(p)*Math.Sqrt(m)); //CHECK THE EQ
+                        sim =MP / (Math.Sqrt(p)*Math.Sqrt(m)); 
                 }
 
-                //With better data this should be limited to 50 matches
                 temp.Add(comp, sim);
                 count++;
 

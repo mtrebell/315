@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="MainPage.aspx.cs" Inherits="_Default" %>
+﻿ <%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="MainPage.aspx.cs" Inherits="_Default" %>
 <asp:Content ContentPlaceHolderID="body" Runat="Server">
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -427,8 +427,9 @@
                 $("#toggleUserReview").click(function(e) { 
                     $("#userReviewForm").animate({height:"toggle"}, 200);
                 })
-                $("#userReviewForm").animate({height:"toggle"}, 0);
-            }); // End Doc Ready.
+                $("#userReviewForm").animate({ height: "toggle" }, 0);
+                recomender();
+            }) // End Doc Ready.
 
  
         </script>
@@ -455,6 +456,14 @@
                 });
             </script>
         </AnonymousTemplate> 
+    </asp:LoginView>
+    
+       <asp:LoginView ID="LoginView2" runat="server">
+        <LoggedInTemplate>
+            <script>
+                
+            </script>
+        </LoggedInTemplate>
     </asp:LoginView>
 
     <asp:LoginView ID="LoginView1" runat="server">
@@ -550,6 +559,9 @@
                                     e.preventDefault();
                                     $("#EditUsersDialog").dialog('open');
                                 });                            
+                            });
+                            $("#UpdateRecomendedButton").click(function (e) {
+                                buildModel();
                             });
                         })
                     </script>
@@ -824,6 +836,7 @@
                                         <li><a id="AddContentButton" href="#">Add Content</a></li>
                                         <li><a id="EditEntriesButton" href="#">Edit Movies</a></li>
                                         <li><a id="EditUsersButton" href="#">Edit Users</a></li>
+                                        <li><a id ="UpdateRecommendButton" href="#">Update Recommendations</a></li>
                                     </ul>
                                 </li>
                             </ContentTemplate>

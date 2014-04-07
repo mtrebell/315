@@ -718,8 +718,9 @@ AS
 	WHERE [mov_id] = @mov_id OR [match_id] = @mov_id 
 	ORDER BY similarity DESC
 GO
-
-/*************************************************************/
+/**************************************************************
+*Note only 50 items are chosen to reduce computation time
+*************************************************************/
 if exists
 (
 	select[name]
@@ -794,7 +795,7 @@ GO
 CREATE PROCEDURE DeleteSimilar
 AS
 BEGIN
-DELETE FROM table_name;
+DELETE FROM similar;
 END
 GO
 /****************************************************************************/
