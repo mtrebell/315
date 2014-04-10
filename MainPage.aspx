@@ -562,7 +562,7 @@
                                     $("#EditUsersDialog").dialog('open');
                                 });                            
                             });
-                            $("#UpdateRecomendedButton").click(function (e) {
+                            $("#UpdateRecommendButton").click(function (e) {
                                 buildModel();
                             });
                         })
@@ -838,7 +838,7 @@
                                         <li><a id="AddContentButton" href="#">Add Content</a></li>
                                         <li><a id="EditEntriesButton" href="#">Edit Movies</a></li>
                                         <li><a id="EditUsersButton" href="#">Edit Users</a></li>
-                                        <li><a id ="UpdateRecommendButton" href="#">Update Recommendations</a></li>
+                                        <li><a id="UpdateRecommendButton" href="#">Update Recommendations</a></li>
                                     </ul>
                                 </li>
                             </ContentTemplate>
