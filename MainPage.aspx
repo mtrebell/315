@@ -100,7 +100,8 @@
                             htmlData.split(",").forEach(function (value, idx) {
                                 var v = value.trim();
                                 if (v !== undefined && v.length > 0) {
-                                    var genreStr = v.replace(/,/g, "").replace(/ |\./g,"-");
+                                    var genreStr = v.replace(/,#;/g, "").replace(/ |\./g,"-");
+
                                     var selectedStr = ""
                                     if ($('#FilterGenreList#genre_' + genreStr).hasClass("genre-selected")) {
                                         selectedStr = "genre-selected";
