@@ -112,7 +112,6 @@
                     }
 
                     else {
-                        //console.log("default");
                         $(val).html(htmlData);
                     }
 
@@ -122,15 +121,8 @@
                         half: true, //enable half star selection
                         score: $('.cover-details-infoline #mov_rating').text() / 2,
                         click: function (score, evt) {
-                            //if (!this.readOnly()) return; //if in readOnly mode, do not submit anything
-
-                            console.log("Rating clicked!");
                             setMovieRating(score, mov_id, this);//MainPage.js
                         }
-                        //readOnly: function () {
-                        //    //a simple, probably very insecure method to detect if a user is logged in
-                        //    return !$('#loggedin_bar').is(":visible");
-                        //}
                     });
 
 
@@ -197,7 +189,6 @@
                     $.each(genre_list, function (name) {
                         genreList.push(name);
                         var genreStr = name.replace(/,/g, "").trim().replace(/ |\./g,"-");
-                        console.log(name, genreStr);
                         $(filter_genre_list).append('<span id="genre_' + genreStr + '" class="GenreFilterButton theme">' + name + '</span>');
                     });
                     $(".GenreFilterButton").button().click(GenreFilterButtonClick);
@@ -209,7 +200,7 @@
                     l.sort().forEach(function(prop, idx){
                         $("#PlotKeywords").append('<option value="' + plot_keyword_list[prop] + '">' + prop + "</option>");
                     });
-
+                    $("#PlotKeywords").val('');
                     coverFlowCtrl = $('#CoverFlow').coverflow(
                     {
                         index: 6,
@@ -257,7 +248,6 @@
                         var tab_id = ui.newPanel.attr("id");
 
                         if (ui.newPanel.hasClass("no-content")) {
-                            console.log(tab_id);
                             ui.newPanel.removeClass("no-content");
 
                             if (tab_id === "tabs_imdb") 
@@ -277,8 +267,6 @@
                     $("#userReviewForm").animate({height:"toggle"}, 100); // collaps user review form
                     var mov_id = $(this).parent().parent().attr('dataurl');
                     var review = $('#UserReview').val();
-                    console.log(review);
-                    console.log(mov_id);
                     setMovieReview(review, mov_id, this);
                 });
 
@@ -325,7 +313,6 @@
 
                             $('.gridContainer').empty();
                             var _numperRow = parseInt($(this).outerWidth() / 200);
-                            console.log("movies per row: " + _numperRow);
 
                             GenerateMovieGrid('#CoverFlow', '.gridContainer', _numperRow);
                         },
@@ -361,7 +348,6 @@
 
                             $('.recContainer').empty();
                             var _numperRow = parseInt($(this).outerWidth() / 200);
-                            console.log("movies per row: " + _numperRow);
 
                             GenerateMovieGrid('#CoverFlow', '.recContainer', _numperRow);
                         },
@@ -400,14 +386,13 @@
                 // the general filter Keywords                
                 $(".TagFilterButton").button().click(function (e) {
                     e.preventDefault();
-                    if ($("#PlotKeywords").val().length > 0)
+                    if ($("#PlotKeywords").val() && $("#PlotKeywords").val().length > 0)
                     {
                         AddTagFilter($("#PlotKeywords").val());
                     }
                 }).keypress(function(event){
                     // 
                     if ( event.keyCode == 10 || event.keyCode == 13 ||event.keyCode == 32) {
-                        console.log(" TagFilterButton keypress ", event.keyCode);
                         event.keyCode = null;
                         event.preventDefault();
                     }
@@ -415,7 +400,6 @@
                 $("#PlotKeywords").keypress(function(event){
                     // 
                     if ( event.keyCode == 10 || event.keyCode == 13 ||event.keyCode == 32) {
-                        console.log(" PlotKeywords keypress ", event.keyCode);
                         event.preventDefault();
                     }
                 });
@@ -440,7 +424,6 @@
         <LoggedInTemplate>
             <script>
                 $(function () {
-                    console.log("loggedin template");
                     $("#loggedin_bar").show();
                     $("#login_bar").hide();
                     $("#body_Login1_LoginButton").button();
@@ -450,7 +433,6 @@
         <AnonymousTemplate> 
             <script>
                 $(function () {
-                    console.log("anon template");
                     $("#loggedin_bar").hide();
                     $("#login_bar").show();
                     $("#body_Login1_LoginButton").button();

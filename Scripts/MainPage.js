@@ -80,20 +80,17 @@ function GenreFilterButtonClick(e)
     e.preventDefault();
     if ( filterFlowCtrl.coverflow('index') !== FILTER_COVER_GENRE)
     {
-        console.log("GenreFilterButtonClick %s", filterFlowCtrl.coverflow('index'));
         return;
     }
     $(this).toggleClass('genre-selected');
     var idStr = $(this).attr('id');
     if ($("#FilterBar #Filter_" + idStr).length !== 0)
     {
-        console.log(" remove selected %o", $("." + idStr));
         $("." + idStr).removeClass("genre-selected");
         DelGenreFilter($(this).attr('id'));
     }
     else
     {
-        console.log(" add selected %o", $("." + idStr));
         $("." + idStr).addClass("genre-selected");
         AddGenreFilter($(this).attr('id'), $(this).find("span").html());
     }
@@ -103,7 +100,6 @@ function AddGenreFilter(filterID, key)
 // Add a Filter span to the filter bar.
 {
     var filterBar = $("#FilterBar");
-    console.log("add genere %o", filterID);
     filterBar.append(
         '<span class = "filter filter_genre theme" ' +
         'id="Filter_' + filterID + '" ' +
@@ -440,7 +436,6 @@ MoviesGridShowInView
 function GetMovieReviewIMDB(ui)
 // this will get the IMDB reviews into the new tab
 {
-    console.log("IMDB: %o", ui.newPanel.attr("dataUrl"));
     $.ajax({
         type: "POST",
         url: "MainPage.aspx/GetIMDbReviews",
@@ -450,7 +445,6 @@ function GetMovieReviewIMDB(ui)
         async: true,
         success: function (msg) {
             var div = msg.d;
-            console.log(msg);
             ui.newPanel.html(div);
         },
         cache: false
@@ -469,7 +463,6 @@ function GetMovieReviewRotten(ui)
         async: true,
         success: function (msg) {
             var div = msg.d;
-            console.log(msg);
             ui.newPanel.html(div);
         },
         cache: false
@@ -491,7 +484,6 @@ function GetMovieUserReview(ui)
             if (msg.d == "")
                 return;
 
-            console.log(msg.d);
             temps = reviews.split('<divide>')[0];
             tempo = reviews.split('<divide>')[1];
 
@@ -501,7 +493,6 @@ function GetMovieUserReview(ui)
             };
             var others = [];
             var tempoo = null;
-            console.log(tempo.indexOf("<end>"));
             if (tempo.indexOf("<end>") != -1)
                 tempoo = tempo.split('<end>');
 
@@ -519,7 +510,6 @@ function GetMovieUserReview(ui)
             $('#UserReview').val(self.self_review);
 
             others.pop();
-            console.log(others);
             if (others.length > 0)
                 for (var i in others) {
                     $("#UserReviewDisplay").append("<hr /><div><label>Score Given: " + others[i].other_rating
@@ -580,7 +570,6 @@ function setMovieRating(score, mov_id, starObj) {
         dataType: "json",
         async: true,
         success: function (response) {
-            console.log(response);
             if (response.d !== "")
             {
                 //response should be the new average rating of the movie
@@ -605,7 +594,6 @@ function setMovieReview(review, mov_id, starObj) {
         dataType: "json",
         async: true,
         success: function (response) {
-            console.log(response);
             if (response.d !== "") {
                 //response should be the new average rating of the movie
                 //startObj.score = response or something
