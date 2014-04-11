@@ -26,7 +26,8 @@ public class Recomender
         {
             string movie = rdr["mov_id"].ToString();
             string user = rdr["users_id"].ToString();
-            double rating = Convert.ToInt32(rdr["rating"]);
+
+            double rating = rdr["rating"] == DBNull.Value ? 0 :Convert.ToInt32(rdr["rating"]);
 
             //NORMALIZE RATING HERE
 
@@ -98,7 +99,7 @@ public class Recomender
         while (rdr.Read())
         {
             string user = rdr["mov_id"].ToString();
-            int rating = Convert.ToInt32(rdr[1]);
+            int rating = rdr[1] == DBNull.Value ? 0 : Convert.ToInt32(rdr[1]);
             movAvg.Add(user, rating);
         }
         return movAvg;
